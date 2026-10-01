@@ -1,1 +1,1240 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DROPZONE</title>
 
+<style>
+*{
+  box-sizing:border-box;
+  margin:0;
+  padding:0;
+  font-family:Arial,Helvetica,sans-serif;
+}
+
+body{
+  background:#080b12;
+  color:#fff;
+  min-height:100vh;
+}
+
+button,input{
+  font:inherit;
+}
+
+button{
+  cursor:pointer;
+}
+
+.hidden{
+  display:none!important;
+}
+
+.page{
+  min-height:100vh;
+}
+
+.header{
+  position:sticky;
+  top:0;
+  z-index:50;
+  background:#0d111a;
+  border-bottom:1px solid #202735;
+  padding:14px 18px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+}
+
+.logo{
+  font-size:24px;
+  font-weight:900;
+  letter-spacing:1px;
+  color:#ffb000;
+}
+
+.logo span{
+  color:#fff;
+}
+
+.header-right{
+  display:flex;
+  gap:8px;
+  align-items:center;
+}
+
+.btn{
+  border:0;
+  border-radius:10px;
+  padding:11px 15px;
+  font-weight:700;
+  color:#fff;
+  background:#202735;
+}
+
+.btn-primary{
+  background:#ff9f00;
+  color:#111;
+}
+
+.btn-danger{
+  background:#d93636;
+}
+
+.container{
+  width:100%;
+  max-width:1100px;
+  margin:auto;
+  padding:20px;
+}
+
+.hero{
+  background:linear-gradient(135deg,#181d2a,#0e1119);
+  border:1px solid #252d3b;
+  border-radius:18px;
+  padding:28px;
+  margin-bottom:20px;
+}
+
+.hero h1{
+  font-size:34px;
+  margin-bottom:8px;
+}
+
+.hero p{
+  color:#aeb6c5;
+}
+
+.cards{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(240px,1fr));
+  gap:15px;
+}
+
+.card{
+  background:#111621;
+  border:1px solid #252d3b;
+  border-radius:16px;
+  padding:18px;
+  margin-bottom:15px;
+}
+
+.card h3{
+  margin-bottom:10px;
+}
+
+.muted{
+  color:#9da7b7;
+}
+
+.stat{
+  font-size:28px;
+  font-weight:900;
+  color:#ffb000;
+}
+
+.tournament{
+  overflow:hidden;
+  padding:0;
+}
+
+.tournament-banner{
+  width:100%;
+  height:170px;
+  object-fit:cover;
+  background:#1b2230;
+}
+
+.tournament-body{
+  padding:18px;
+}
+
+.tournament-title{
+  font-size:21px;
+  font-weight:800;
+  margin-bottom:10px;
+}
+
+.tags{
+  display:flex;
+  flex-wrap:wrap;
+  gap:7px;
+  margin:12px 0;
+}
+
+.tag{
+  background:#202735;
+  color:#dfe5ef;
+  border-radius:8px;
+  padding:6px 9px;
+  font-size:12px;
+}
+
+.price{
+  color:#ffb000;
+  font-size:22px;
+  font-weight:900;
+}
+
+.section-title{
+  margin:25px 0 12px;
+  font-size:23px;
+}
+
+.modal{
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,.75);
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  z-index:100;
+  padding:15px;
+}
+
+.modal-box{
+  width:100%;
+  max-width:500px;
+  max-height:90vh;
+  overflow:auto;
+  background:#111621;
+  border:1px solid #30394b;
+  border-radius:18px;
+  padding:22px;
+}
+
+.modal-head{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-bottom:18px;
+}
+
+.close{
+  background:#222a38;
+  border:0;
+  color:#fff;
+  width:36px;
+  height:36px;
+  border-radius:50%;
+  font-size:20px;
+}
+
+.form-group{
+  margin-bottom:14px;
+}
+
+.form-group label{
+  display:block;
+  margin-bottom:6px;
+  color:#c8cfdb;
+  font-size:14px;
+}
+
+.form-group input{
+  width:100%;
+  padding:12px;
+  border-radius:10px;
+  border:1px solid #30394b;
+  background:#0a0e15;
+  color:#fff;
+  outline:none;
+}
+
+.form-group input:focus{
+  border-color:#ffb000;
+}
+
+.tabs{
+  display:flex;
+  gap:8px;
+  margin-bottom:18px;
+}
+
+.tab{
+  flex:1;
+  padding:11px;
+  border:0;
+  border-radius:9px;
+  background:#202735;
+  color:#fff;
+  font-weight:700;
+}
+
+.tab.active{
+  background:#ff9f00;
+  color:#111;
+}
+
+.notice{
+  padding:13px;
+  border-radius:10px;
+  background:#17202e;
+  color:#cbd3df;
+  margin-bottom:15px;
+}
+
+.success{
+  background:#123322;
+  color:#7ff0a5;
+}
+
+.error{
+  background:#391b20;
+  color:#ff9ca5;
+}
+
+.qr{
+  width:220px;
+  height:220px;
+  object-fit:contain;
+  background:#fff;
+  border-radius:10px;
+  padding:8px;
+  display:block;
+  margin:15px auto;
+}
+
+.room-box{
+  border:1px solid #35425a;
+  background:#151d2a;
+  border-radius:12px;
+  padding:15px;
+  margin-top:12px;
+}
+
+.room-value{
+  font-size:20px;
+  color:#ffb000;
+  font-weight:800;
+  margin:5px 0 12px;
+}
+
+.loading{
+  text-align:center;
+  padding:30px;
+  color:#9da7b7;
+}
+
+.empty{
+  text-align:center;
+  padding:30px;
+  color:#9da7b7;
+}
+
+.footer{
+  text-align:center;
+  padding:30px;
+  color:#667083;
+}
+
+.profile-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
+  gap:10px;
+}
+
+.profile-item{
+  background:#171e2a;
+  padding:13px;
+  border-radius:10px;
+}
+
+.profile-item small{
+  display:block;
+  color:#8f99aa;
+  margin-bottom:4px;
+}
+
+@media(max-width:600px){
+  .hero h1{
+    font-size:28px;
+  }
+
+  .container{
+    padding:13px;
+  }
+
+  .header{
+    padding:12px;
+  }
+
+  .logo{
+    font-size:20px;
+  }
+
+  .header .btn{
+    padding:8px 10px;
+    font-size:12px;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<div id="app">
+
+  <!-- HEADER -->
+  <header class="header">
+    <div class="logo">
+      DROP<span>ZONE</span>
+    </div>
+
+    <div class="header-right">
+      <button id="loginBtn" class="btn btn-primary" onclick="openAuth('login')">
+        Login
+      </button>
+
+      <button id="registerBtn" class="btn" onclick="openAuth('register')">
+        Register
+      </button>
+
+      <button id="logoutBtn" class="btn btn-danger hidden" onclick="logout()">
+        Logout
+      </button>
+    </div>
+  </header>
+
+
+  <!-- MAIN -->
+  <main class="container">
+
+    <!-- HERO -->
+    <section class="hero">
+      <h1 id="siteName">DROPZONE</h1>
+      <p id="tagline">Free Fire Tournament Platform</p>
+
+      <div style="margin-top:18px">
+        <button class="btn btn-primary" onclick="scrollToTournaments()">
+          View Tournaments
+        </button>
+      </div>
+    </section>
+
+
+    <!-- USER INFO -->
+    <section id="userSection" class="card hidden">
+      <h3>Welcome, <span id="userName"></span> 👋</h3>
+
+      <div class="profile-grid" style="margin-top:14px">
+        <div class="profile-item">
+          <small>Email</small>
+          <span id="userEmail">-</span>
+        </div>
+
+        <div class="profile-item">
+          <small>Free Fire Username</small>
+          <span id="userFF">-</span>
+        </div>
+
+        <div class="profile-item">
+          <small>Free Fire UID</small>
+          <span id="userUID">-</span>
+        </div>
+
+        <div class="profile-item">
+          <small>Role</small>
+          <span id="userRole">PLAYER</span>
+        </div>
+      </div>
+    </section>
+
+
+    <!-- ANNOUNCEMENTS -->
+    <section id="announcementSection" class="hidden">
+      <h2 class="section-title">📢 Announcements</h2>
+      <div id="announcements"></div>
+    </section>
+
+
+    <!-- TOURNAMENTS -->
+    <section id="tournamentSection">
+      <h2 class="section-title">🔥 Active Tournaments</h2>
+
+      <div id="tournaments" class="cards">
+        <div class="loading">
+          Loading tournaments...
+        </div>
+      </div>
+    </section>
+
+
+    <!-- MY REGISTRATIONS -->
+    <section id="mySection" class="hidden">
+
+      <h2 class="section-title">
+        🎮 My Tournaments
+      </h2>
+
+      <div id="myRegistrations"></div>
+
+    </section>
+
+
+    <!-- LEADERBOARD -->
+    <section>
+
+      <h2 class="section-title">
+        🏆 Leaderboard
+      </h2>
+
+      <div id="leaderboard"></div>
+
+    </section>
+
+  </main>
+
+
+  <footer class="footer">
+    © 2026 DROPZONE — Free Fire Tournament Platform
+  </footer>
+
+</div>
+
+
+<!-- AUTH MODAL -->
+
+<div id="authModal" class="modal hidden">
+
+  <div class="modal-box">
+
+    <div class="modal-head">
+      <h2 id="authTitle">Login</h2>
+
+      <button class="close" onclick="closeAuth()">
+        ×
+      </button>
+    </div>
+
+
+    <div class="tabs">
+
+      <button
+        id="loginTab"
+        class="tab active"
+        onclick="switchAuth('login')">
+        Login
+      </button>
+
+      <button
+        id="registerTab"
+        class="tab"
+        onclick="switchAuth('register')">
+        Register
+      </button>
+
+    </div>
+
+
+    <div id="authMessage"></div>
+
+
+    <!-- LOGIN -->
+
+    <form id="loginForm">
+
+      <div class="form-group">
+        <label>Email</label>
+
+        <input
+          id="loginEmail"
+          type="email"
+          required
+          placeholder="Enter email">
+      </div>
+
+
+      <div class="form-group">
+        <label>Password</label>
+
+        <input
+          id="loginPassword"
+          type="password"
+          required
+          placeholder="Enter password">
+      </div>
+
+
+      <button class="btn btn-primary" style="width:100%">
+        Login
+      </button>
+
+    </form>
+
+
+    <!-- REGISTER -->
+
+    <form id="registerForm" class="hidden">
+
+      <div class="form-group">
+        <label>Full Name / Player Name</label>
+
+        <input
+          id="regName"
+          required
+          placeholder="Your name">
+      </div>
+
+
+      <div class="form-group">
+        <label>Email</label>
+
+        <input
+          id="regEmail"
+          type="email"
+          required
+          placeholder="Your email">
+      </div>
+
+
+      <div class="form-group">
+        <label>Password</label>
+
+        <input
+          id="regPassword"
+          type="password"
+          minlength="6"
+          required
+          placeholder="Minimum 6 characters">
+      </div>
+
+
+      <div class="form-group">
+        <label>Confirm Password</label>
+
+        <input
+          id="regConfirm"
+          type="password"
+          required
+          placeholder="Confirm password">
+      </div>
+
+
+      <div class="form-group">
+        <label>Free Fire Username</label>
+
+        <input
+          id="regFFUsername"
+          placeholder="Free Fire name">
+      </div>
+
+
+      <div class="form-group">
+        <label>Free Fire UID</label>
+
+        <input
+          id="regFFUID"
+          placeholder="Free Fire UID">
+      </div>
+
+
+      <button class="btn btn-primary" style="width:100%">
+        Create Account
+      </button>
+
+    </form>
+
+  </div>
+
+</div>
+
+
+<!-- TOURNAMENT MODAL -->
+
+<div id="tournamentModal" class="modal hidden">
+
+  <div class="modal-box">
+
+    <div class="modal-head">
+      <h2 id="joinTitle">Join Tournament</h2>
+
+      <button class="close" onclick="closeTournament()">
+        ×
+      </button>
+    </div>
+
+    <div id="joinMessage"></div>
+
+    <div id="joinTournamentInfo"></div>
+
+    <form id="joinForm">
+
+      <div class="form-group">
+        <label>Free Fire Username</label>
+
+        <input
+          id="joinFFUsername"
+          required
+          placeholder="Free Fire Username">
+      </div>
+
+
+      <div class="form-group">
+        <label>Free Fire UID</label>
+
+        <input
+          id="joinFFUID"
+          required
+          placeholder="Free Fire UID">
+      </div>
+
+
+      <div id="paymentBox" class="hidden">
+
+        <div class="notice">
+          💳 Payment is required for this tournament.
+        </div>
+
+        <div id="paymentDetails"></div>
+
+        <div class="form-group">
+          <label>Transaction / UTR ID</label>
+
+          <input
+            id="paymentRef"
+            placeholder="Enter transaction ID / UTR">
+        </div>
+
+      </div>
+
+
+      <button
+        id="joinSubmit"
+        class="btn btn-primary"
+        style="width:100%">
+        Confirm Slot
+      </button>
+
+    </form>
+
+  </div>
+
+</div>
+
+
+<script>
+
+let config = {
+  site_name: "DROPZONE",
+  tagline: "Free Fire Tournament Platform",
+  payment_enabled: false,
+  payment_mode: "MANUAL",
+  payment_display_name: "",
+  payment_upi: "",
+  payment_qr_url: "",
+  currency: "INR"
+};
+
+let currentUser = null;
+let selectedTournament = null;
+
+
+/* =========================
+   API HELPER
+========================= */
+
+async function api(url, options = {}) {
+
+  const response = await fetch(url, {
+    credentials: "include",
+    headers: {
+      "Content-Type": "application/json",
+      ...(options.headers || {})
+    },
+    ...options
+  });
+
+  let data = {};
+
+  try {
+    data = await response.json();
+  } catch(e) {}
+
+  if (!response.ok) {
+
+    throw new Error(
+      data.error ||
+      data.message ||
+      "Something went wrong"
+    );
+
+  }
+
+  return data;
+}
+
+
+/* =========================
+   LOAD CONFIG
+========================= */
+
+async function loadConfig(){
+
+  try{
+
+    const data = await api("/api/config");
+
+    config = {
+      ...config,
+      ...data
+    };
+
+    document.getElementById("siteName").textContent =
+      config.site_name || "DROPZONE";
+
+    document.getElementById("tagline").textContent =
+      config.tagline || "Free Fire Tournament Platform";
+
+    document.title =
+      config.site_name || "DROPZONE";
+
+  }catch(error){
+
+    console.log("Config error:", error);
+
+  }
+
+}
+
+
+/* =========================
+   CHECK LOGIN
+========================= */
+
+async function checkLogin(){
+
+  try{
+
+    const data = await api("/api/me");
+
+    currentUser =
+      data.user ||
+      data;
+
+    showLoggedIn();
+
+  }catch(error){
+
+    currentUser = null;
+
+    showLoggedOut();
+
+  }
+
+}
+
+
+/* =========================
+   LOGIN STATE
+========================= */
+
+function showLoggedIn(){
+
+  document.getElementById("loginBtn")
+    .classList.add("hidden");
+
+  document.getElementById("registerBtn")
+    .classList.add("hidden");
+
+  document.getElementById("logoutBtn")
+    .classList.remove("hidden");
+
+  document.getElementById("userSection")
+    .classList.remove("hidden");
+
+  document.getElementById("mySection")
+    .classList.remove("hidden");
+
+
+  document.getElementById("userName").textContent =
+    currentUser.name || "-";
+
+  document.getElementById("userEmail").textContent =
+    currentUser.email || "-";
+
+  document.getElementById("userFF").textContent =
+    currentUser.ff_username || "-";
+
+  document.getElementById("userUID").textContent =
+    currentUser.ff_uid || "-";
+
+  document.getElementById("userRole").textContent =
+    currentUser.role || "PLAYER";
+
+
+  loadMyRegistrations();
+
+}
+
+
+function showLoggedOut(){
+
+  document.getElementById("loginBtn")
+    .classList.remove("hidden");
+
+  document.getElementById("registerBtn")
+    .classList.remove("hidden");
+
+  document.getElementById("logoutBtn")
+    .classList.add("hidden");
+
+  document.getElementById("userSection")
+    .classList.add("hidden");
+
+  document.getElementById("mySection")
+    .classList.add("hidden");
+
+}
+
+
+/* =========================
+   AUTH MODAL
+========================= */
+
+function openAuth(type){
+
+  document.getElementById("authModal")
+    .classList.remove("hidden");
+
+  switchAuth(type);
+
+}
+
+
+function closeAuth(){
+
+  document.getElementById("authModal")
+    .classList.add("hidden");
+
+  document.getElementById("authMessage")
+    .innerHTML = "";
+
+}
+
+
+function switchAuth(type){
+
+  const login =
+    type === "login";
+
+  document.getElementById("authTitle").textContent =
+    login ? "Login" : "Create Account";
+
+  document.getElementById("loginForm")
+    .classList.toggle("hidden", !login);
+
+  document.getElementById("registerForm")
+    .classList.toggle("hidden", login);
+
+  document.getElementById("loginTab")
+    .classList.toggle("active", login);
+
+  document.getElementById("registerTab")
+    .classList.toggle("active", !login);
+
+}
+
+
+/* =========================
+   LOGIN
+========================= */
+
+document.getElementById("loginForm")
+.addEventListener("submit", async function(e){
+
+  e.preventDefault();
+
+  const message =
+    document.getElementById("authMessage");
+
+  message.innerHTML =
+    '<div class="notice">Logging in...</div>';
+
+  try{
+
+    await api("/api/login", {
+
+      method:"POST",
+
+      body:JSON.stringify({
+
+        email:
+          document.getElementById("loginEmail").value,
+
+        password:
+          document.getElementById("loginPassword").value
+
+      })
+
+    });
+
+    message.innerHTML =
+      '<div class="notice success">Login successful!</div>';
+
+    await checkLogin();
+
+    setTimeout(() => {
+
+      closeAuth();
+
+    },500);
+
+  }catch(error){
+
+    message.innerHTML =
+      `<div class="notice error">${escapeHTML(error.message)}</div>`;
+
+  }
+
+});
+
+
+/* =========================
+   REGISTER
+========================= */
+
+document.getElementById("registerForm")
+.addEventListener("submit", async function(e){
+
+  e.preventDefault();
+
+  const password =
+    document.getElementById("regPassword").value;
+
+  const confirm =
+    document.getElementById("regConfirm").value;
+
+  if(password !== confirm){
+
+    document.getElementById("authMessage").innerHTML =
+      '<div class="notice error">Passwords do not match.</div>';
+
+    return;
+
+  }
+
+
+  const message =
+    document.getElementById("authMessage");
+
+  message.innerHTML =
+    '<div class="notice">Creating account...</div>';
+
+
+  try{
+
+    await api("/api/register", {
+
+      method:"POST",
+
+      body:JSON.stringify({
+
+        name:
+          document.getElementById("regName").value,
+
+        email:
+          document.getElementById("regEmail").value,
+
+        password:password,
+
+        confirmPassword:confirm,
+
+        ff_username:
+          document.getElementById("regFFUsername").value,
+
+        ff_uid:
+          document.getElementById("regFFUID").value
+
+      })
+
+    });
+
+
+    message.innerHTML =
+      '<div class="notice success">Account created. Please login.</div>';
+
+    document.getElementById("registerForm")
+      .reset();
+
+    setTimeout(() => {
+
+      switchAuth("login");
+
+    },700);
+
+
+  }catch(error){
+
+    message.innerHTML =
+      `<div class="notice error">${escapeHTML(error.message)}</div>`;
+
+  }
+
+});
+
+
+/* =========================
+   LOGOUT
+========================= */
+
+async function logout(){
+
+  try{
+
+    await api("/api/logout", {
+      method:"POST"
+    });
+
+  }catch(error){}
+
+  currentUser = null;
+
+  showLoggedOut();
+
+  alert("Logged out successfully.");
+
+}
+
+
+/* =========================
+   TOURNAMENTS
+========================= */
+
+async function loadTournaments(){
+
+  const box =
+    document.getElementById("tournaments");
+
+  box.innerHTML =
+    '<div class="loading">Loading tournaments...</div>';
+
+
+  try{
+
+    const data =
+      await api("/api/tournaments");
+
+    const tournaments =
+      data.tournaments ||
+      data ||
+      [];
+
+
+    if(!tournaments.length){
+
+      box.innerHTML =
+        '<div class="empty">No tournaments available right now.</div>';
+
+      return;
+
+    }
+
+
+    box.innerHTML =
+      tournaments.map(tournamentCard).join("");
+
+
+  }catch(error){
+
+    box.innerHTML =
+      `<div class="notice error">${escapeHTML(error.message)}</div>`;
+
+  }
+
+}
+
+
+function tournamentCard(t){
+
+  const banner =
+    t.banner ||
+    "https://images.unsplash.com/photo-1542751371-adc38448a05e?auto=format&fit=crop&w=1000&q=80";
+
+
+  const booked =
+    Number(t.booked_slots || t.booked || 0);
+
+  const total =
+    Number(t.total_slots || 0);
+
+  const remaining =
+    Math.max(0,total-booked);
+
+
+  return `
+
+    <div class="card tournament">
+
+      <img
+        class="tournament-banner"
+        src="${escapeAttr(banner)}"
+        onerror="this.style.display='none'">
+
+      <div class="tournament-body">
+
+        <div class="tournament-title">
+          ${escapeHTML(t.name || "Tournament")}
+        </div>
+
+        <div class="tags">
+
+          <span class="tag">
+            🎮 ${escapeHTML(t.mode || "SQUAD")}
+          </span>
+
+          <span class="tag">
+            👥 ${remaining} slots left
+          </span>
+
+          <span class="tag">
+            📅 ${formatDate(t.event_at)}
+          </span>
+
+          <span class="tag">
+            ${escapeHTML(t.status || "OPEN")}
+          </span>
+
+        </div>
+
+        <p class="muted">
+          ${escapeHTML(t.description || "Free Fire Tournament")}
+        </p>
+
+        <div style="margin-top:14px">
+
+          <div class="muted">
+            Entry Fee
+          </div>
+
+          <div class="price">
+            ${formatMoney(t.entry_fee || 0)}
+          </div>
+
+        </div>
+
+        <div style="margin-top:8px" class="muted">
+          Prize Pool:
+          <strong style="color:#fff">
+            ${formatMoney(t.prize_pool || 0)}
+          </strong>
+        </div>
+
+        <button
+          class="btn btn-primary"
+          style="width:100%;margin-top:15px"
+          onclick='openTournament(${JSON.stringify(t)})'>
+
+          JOIN TOURNAMENT
+
+        </button>
+
+      </div>
+
+    </div>
+  `;
+}
+
+
+/* ======================
