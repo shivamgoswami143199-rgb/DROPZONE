@@ -1,1 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DROPZONE - Free Fire Tournaments</title>
 
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: Arial, sans-serif;
+    }
+
+    body {
+      background: #0b0f14;
+      color: white;
+    }
+
+    header {
+      background: #111820;
+      padding: 18px;
+      text-align: center;
+      border-bottom: 1px solid #26313d;
+    }
+
+    header h1 {
+      color: #00e5ff;
+      font-size: 30px;
+    }
+
+    header p {
+      color: #aab4bf;
+      margin-top: 5px;
+    }
+
+    .hero {
+      padding: 35px 20px;
+      text-align: center;
+      background: linear-gradient(135deg, #111827, #07131a);
+    }
+
+    .hero h2 {
+      font-size: 32px;
+      margin-bottom: 12px;
+    }
+
+    .hero span {
+      color: #00e5ff;
+    }
+
+    .hero p {
+      color: #b8c2cc;
+      margin-bottom: 20px;
+    }
+
+    .btn {
+      display: inline-block;
+      background: #00e5ff;
+      color: #001014;
+      padding: 12px 22px;
+      border-radius: 8px;
+      text-decoration: none;
+      font-weight: bold;
+    }
+
+    .container {
+      max-width: 900px;
+      margin: auto;
+      padding: 25px 15px;
+    }
+
+    .title {
+      text-align: center;
+      margin-bottom: 20px;
+      font-size: 25px;
+    }
+
+    .tournaments {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 18px;
+    }
+
+    .card {
+      background: #151c24;
+      border: 1px solid #263441;
+      border-radius: 12px;
+      padding: 20px;
+    }
+
+    .card h3 {
+      color: #00e5ff;
+      margin-bottom: 15px;
+    }
+
+    .card p {
+      color: #c2cbd3;
+      margin: 8px 0;
+    }
+
+    .join {
+      width: 100%;
+      margin-top: 15px;
+      padding: 12px;
+      border: none;
+      border-radius: 7px;
+      background: #00e5ff;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    footer {
+      text-align: center;
+      padding: 25px;
+      color: #7f8b96;
+      border-top: 1px solid #26313d;
+      margin-top: 30px;
+    }
+  </style>
+</head>
+
+<body>
+
+  <header>
+    <h1>DROPZONE</h1>
+    <p>Free Fire Tournament Platform</p>
+  </header>
+
+  <section class="hero">
+    <h2>Welcome to <span>DROPZONE</span></h2>
+    <p>Join tournaments, compete with players and win rewards.</p>
+    <a href="#tournaments" class="btn">View Tournaments</a>
+  </section>
+
+  <main class="container" id="tournaments">
+
+    <h2 class="title">🔥 Upcoming Tournaments</h2>
+
+    <div class="tournaments">
+
+      <div class="card">
+        <h3>Free Fire Solo</h3>
+        <p>🎮 Mode: Solo</p>
+        <p>👥 Slots: 48</p>
+        <p>🏆 Prize Pool: ₹500</p>
+        <p>💰 Entry: ₹20</p>
+
+        <button class="join" onclick="joinTournament('Free Fire Solo')">
+          JOIN TOURNAMENT
+        </button>
+      </div>
+
+      <div class="card">
+        <h3>Free Fire Squad</h3>
+        <p>🎮 Mode: Squad</p>
+        <p>👥 Slots: 12 Teams</p>
+        <p>🏆 Prize Pool: ₹1,000</p>
+        <p>💰 Entry: ₹50</p>
+
+        <button class="join" onclick="joinTournament('Free Fire Squad')">
+          JOIN TOURNAMENT
+        </button>
+      </div>
+
+      <div class="card">
+        <h3>DROPZONE Special</h3>
+        <p>🎮 Mode: Squad</p>
+        <p>👥 Slots: 24 Teams</p>
+        <p>🏆 Prize Pool: ₹2,000</p>
+        <p>💰 Entry: ₹100</p>
+
+        <button class="join" onclick="joinTournament('DROPZONE Special')">
+          JOIN TOURNAMENT
+        </button>
+      </div>
+
+    </div>
+
+  </main>
+
+  <footer>
+    © 2026 DROPZONE • Free Fire Tournament Platform
+  </footer>
+
+  <script>
+    function joinTournament(name) {
+      alert(
+        "You selected: " + name +
+        "\\n\\nRegistration system will be added in the next step."
+      );
+    }
+  </script>
+
+</body>
+</html>
