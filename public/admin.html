@@ -1,1 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>DROPZONE Admin Panel</title>
+<style>
+*{box-sizing:border-box}body{margin:0;font-family:Arial,sans-serif;background:#0b1020;color:#fff}
+header{padding:18px;background:#111936;position:sticky;top:0;z-index:5;border-bottom:1px solid #263154}
+h1,h2,h3{margin:0 0 12px}.wrap{max-width:1200px;margin:auto;padding:16px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:12px}
+.card{background:#121a35;border:1px solid #27335b;border-radius:14px;padding:14px;margin-bottom:14px}
+.stat b{font-size:28px;display:block;margin-top:8px}
+button{border:0;border-radius:10px;padding:10px 13px;cursor:pointer;font-weight:700}
+.primary{background:#fff;color:#111}.danger{background:#d33;color:#fff}.muted{opacity:.75}
+input,select,textarea{width:100%;padding:10px;border-radius:9px;border:1px solid #39466f;background:#0d1430;color:#fff;margin:5px 0 10px}
+textarea{min-height:90px}.row{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:10px}
+table{width:100%;border-collapse:collapse;min-width:800px}th,td{padding:9px;border-bottom:1px solid #293456;text-align:left;font-size:13px}
+.tablewrap{overflow:auto}.tabs{display:flex;gap:7px;overflow:auto;margin:12px 0}.tabs button{white-space:nowrap;background:#202b50;color:#fff}.tabs button.active{background:#fff;color:#111}
+.hidden{display:none}.msg{padding:10px;border-radius:8px;margin:8px 0;background:#1c284b}.ok{background:#16472e}.err{background:#54222b}
+.small{font-size:12px}.pill{display:inline-block;padding:4px 7px;border-radius:20px;background:#26345f}
+</style>
+</head>
+<body>
+<header><div class="wrap"><h1>DROPZONE ADMIN</h1><div id="who" class="muted">Checking login...</div></div></header>
 
+<div class="wrap">
+<div id="loginBox" class="card hidden">
+<h2>Admin Login</h2>
+<input id="email" placeholder="Owner/Admin email">
+<input id="password" type="password" placeholder="Password">
+<button class="primary" onclick="login()">Login</button>
+<div id="loginMsg"></div>
+</div>
+
+<div id="app" class="hidden">
+<div class="tabs">
+<button onclick="tab('dash')" id="t-dash">Dashboard</button>
+<button onclick="tab('tournaments')" id="t-tournaments">Tournaments</button>
+<button onclick="tab('regs')" id="t-regs">Registrations & Payments</button>
+<button onclick="tab('players')" id="t-players">Players & Admins</button>
+<button onclick="tab('settings')" id="t-settings">Website & Payment</button>
+<button onclick="tab('score')" id="t-score">Scoring</button>
+<button onclick="tab('results')" id="t-results">Results</button>
+<button onclick="tab('announce')" id="t-announce">Announcements</button>
+<button onclick="logout()">Logout</button>
+</div>
+
+<section id="dash" class="page">
+<div class="grid">
+<div class="card stat">Players<b id="sPlayers">0</b></div>
+<div class="card stat">Tournaments<b id="sTournaments">0</b></div>
+<div class="card stat">Registrations<b id="sRegs">0</b></div>
+<div class="card stat">Confirmed<b id="sConfirmed">0</b></div>
+<div class="card stat">Pending payments<b id="sPendingPay">0</b></div>
+<div class="card stat">Collected<b id="sCollected">₹0</b></div>
+</div>
+</section>
+
+<section id="tournaments" class="page hidden">
+<div class="card">
+<h2>Add / Edit Tournament</h2>
+<input type="hidden" id="tid">
+<div class="row">
+<input id="tn" placeholder="Tournament name">
+<select id="tm"><option>SOLO</option><option>DUO</option><option selected>SQUAD</option></select>
+<input id="te" type="number" placeholder="Entry fee">
+<input id="tp" type="number" placeholder="Prize pool">
+<input id="ts" type="number" value="48" placeholder="Total slots">
+<input id="td" type="datetime-local" placeholder="Date/time">
+<select id="tstatus"><option>OPEN</option><option>CLOSED</option><option>LIVE</option><option>COMPLETED</option><option>CANCELLED</option></select>
+<input id="tb" placeholder="Banner image URL">
+</div>
+<textarea id="tdesc" placeholder="Description"></textarea>
+<div class="row">
+<input id="trid" placeholder="Room ID">
+<input id="trpass" placeholder="Room Password">
+<input id="trtime" type="datetime-local" placeholder="Room publish time">
+</div>
+<button class="primary" onclick="saveTournament()">Save Tournament</button>
+<button onclick="clearTournament()">Clear</button>
+<div id="tmsg"></div>
+</div>
+<div class="card"><h2>Tournaments</h2><div class="tablewrap"><table><thead><tr><th>ID</th><th>Name</th><th>Mode</th><th>Fee</th><th>Slots</th><th>Status</th><th>Room</th><th>Actions</th></tr></thead><tbody id="tourBody"></tbody></table></div></div>
+</section>
+
+<section id="regs" class="page hidden">
+<div class="card"><h2>Registrations / Payments</h2><p class="muted small">Payment is manual in this version. Mark PAID only after checking the payment provider/UTR.</p><div class="tablewrap"><table><thead><tr><th>ID</th><th>Player</th><th>Tournament</th><th>Slot</th><th>Payment</th><th>Ref</th><th>Status</th><th>Actions</th></tr></thead><tbody id="regBody"></tbody></table></div></div>
+</section>
+
+<section id="players" class="page hidden">
+<div class="card"><h2>Players / Admin roles</h2><p class="muted small">Only OWNER can grant or remove ADMIN. OWNER cannot be removed.</p><div class="tablewrap"><table><thead><tr><th>ID</th><th>Name</th><th>Email</th><th>FF UID</th><th>Role</th><th>Action</th></tr></thead><tbody id="playerBody"></tbody></table></div></div>
+</section>
+
+<section id="settings" class="page hidden">
+<div class="card">
+<h2>Website Settings</h2>
+<div class="row">
+<input id="site_name" placeholder="Website name">
+<input id="tagline" placeholder="Tagline">
+<input id="logo_url" placeholder="Logo URL">
+<input id="app_icon_url" placeholder="App icon URL">
+<input id="favicon_url" placeholder="Favicon URL">
+<input id="banner_url" placeholder="Banner URL">
+<input id="background_url" placeholder="Background URL">
+<input id="theme_color" placeholder="Theme color">
+<input id="currency" placeholder="Currency">
+</div>
+<h2>Payment</h2>
+<label><input id="payment_enabled" type="checkbox" style="width:auto"> Enable payment</label>
+<div class="row">
+<select id="payment_mode"><option>MANUAL</option><option>AUTO</option></select>
+<input id="payment_display_name" placeholder="Payment display name">
+<input id="payment_upi" placeholder="UPI ID">
+<input id="payment_qr_url" placeholder="QR image URL">
+</div>
+<button class="primary" onclick="saveSettings()">Save Website & Payment Settings</button>
+<div id="setmsg"></div>
+</div>
+</section>
+
+<section id="score" class="page hidden">
+<div class="card">
+<h2>Scoring</h2>
+<input id="kill_points" type="number" step="0.1" placeholder="Points per kill">
+<textarea id="placement_points" placeholder='{"1":10,"2":7,"3":5,"4":3,"5":2}'></textarea>
+<button class="primary" onclick="saveScoring()">Save Scoring</button>
+<div id="scmsg"></div>
+</div>
+</section>
+
+<section id="results" class="page hidden">
+<div class="card">
+<h2>Add / Update Result</h2>
+<div class="row">
+<select id="r_tournament"></select>
+<select id="r_user"></select>
+<input id="r_kills" type="number" placeholder="Kills">
+<input id="r_place" type="number" placeholder="Placement">
+<input id="r_extra" type="number" step="0.1" placeholder="Extra points">
+</div>
+<input id="r_note" placeholder="Note">
+<button class="primary" onclick="saveResult()">Save Result</button>
+<div id="rmsg"></div>
+</div>
+<div class="card"><h2>Results</h2><div class="tablewrap"><table><thead><tr><th>Player</th><th>Tournament</th><th>Kills</th><th>Place</th><th>Extra</th></tr></thead><tbody id="resultBody"></tbody></table></div></div>
+</section>
+
+<section id="announce" class="page hidden">
+<div class="card">
+<h2>New Announcement</h2>
+<input id="atitle" placeholder="Title">
+<textarea id="abody" placeholder="Announcement"></textarea>
+<label><input id="aactive" type="checkbox" checked style="width:auto"> Active</label>
+<button class="primary" onclick="saveAnnouncement()">Publish</button>
+<div id="amsg"></div>
+</div>
+<div class="card"><h2>Announcements</h2><div id="announceBody"></div></div>
+</section>
+</div>
+</div>
+
+<script>
+const $=id=>document.getElementById(id);
+async function api(url,opt={}){const r=await fetch(url,{credentials:'include',headers:{'Content-Type':'application/json',...(opt.headers||{})},...opt});let d={};try{d=await r.json()}catch{}if(!r.ok)throw new Error(d.error||'Request failed');return d}
+function msg(id,text,ok=false){$(id).innerHTML='<div class="msg '+(ok?'ok':'err')+'">'+esc(text)+'</div>'}
+function esc(s){return String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]))}
+async function login(){try{const d=await api('/api/login',{method:'POST',body:JSON.stringify({email:$('email').value,password:$('password').value})});if(!['OWNER','ADMIN'].includes(d.user.role))throw Error('Admin access required');location.reload()}catch(e){msg('loginMsg',e.message)}}
+async function logout(){await api('/api/logout',{method:'POST'});location.reload()}
+function tab(id){document.querySelectorAll('.page').forEach(x=>x.classList.add('hidden'));$(id).classList.remove('hidden');document.querySelectorAll('.tabs button').forEach(x=>x.classList.remove('active'));$('t-'+id)?.classList.add('active');loadTab(id)}
+async function loadTab(id){if(id==='dash')loadDash();if(id==='tournaments')loadTournaments();if(id==='regs')loadRegs();if(id==='players')loadPlayers();if(id==='settings')loadSettings();if(id==='score')loadScoring();if(id==='results'){loadResultLists();loadResults()}if(id==='announce')loadAnnouncements()}
+async function init(){try{const d=await api('/api/me');if(!['OWNER','ADMIN'].includes(d.user.role))throw Error('Admin access required');$('app').classList.remove('hidden');$('who').textContent=d.user.name+' • '+d.user.role;tab('dash')}catch(e){$('loginBox').classList.remove('hidden');$('who').textContent='Login required'}}
+async function loadDash(){const d=await api('/api/admin/dashboard');$('sPlayers').textContent=d.players;$('sTournaments').textContent=d.tournaments;$('sRegs').textContent=d.registrations;$('sConfirmed').textContent=d.confirmed;$('sPendingPay').textContent=d.pending_payments;$('sCollected').textContent='₹'+Number(d.total_collected||0).toFixed(2)}
+function clearTournament(){['tid','tn','te','tp','ts','td','tb','tdesc','trid','trpass','trtime'].forEach(x=>$(x).value='');$('ts').value=48}
+async function loadTournaments(){const a=await api('/api/admin/tournaments');$('tourBody').innerHTML=a.map(t=>`<tr><td>${t.id}</td><td>${esc(t.name)}</td><td>${esc(t.mode)}</td><td>₹${t.entry_fee}</td><td>${t.booked_slots}/${t.total_slots}</td><td><span class="pill">${esc(t.status)}</span></td><td>${esc(t.room_id||'')}</td><td><button onclick='editT(${JSON.stringify(t)})'>Edit</button> <button class="danger" onclick="delT(${t.id})">Delete</button></td></tr>`).join('')}
+function editT(t){$('tid').value=t.id;$('tn').value=t.name;$('tm').value=t.mode;$('te').value=t.entry_fee;$('tp').value=t.prize_pool;$('ts').value=t.total_slots;$('td').value=(t.event_at||'').slice(0,16);$('tstatus').value=t.status;$('tb').value=t.banner||'';$('tdesc').value=t.description||'';$('trid').value=t.room_id||'';$('trpass').value=t.room_password||'';$('trtime').value=(t.room_publish_at||'').slice(0,16);window.scrollTo(0,0)}
+async function saveTournament(){try{const b={name:$('tn').value,mode:$('tm').value,entry_fee:$('te').value,prize_pool:$('tp').value,total_slots:$('ts').value,event_at:$('td').value,status:$('tstatus').value,banner:$('tb').value,description:$('tdesc').value,room_id:$('trid').value,room_password:$('trpass').value,room_publish_at:$('trtime').value};const id=$('tid').value;await api(id?'/api/admin/tournaments/'+id:'/api/admin/tournaments',{method:id?'PUT':'POST',body:JSON.stringify(b)});msg('tmsg','Tournament saved',true);clearTournament();loadTournaments()}catch(e){msg('tmsg',e.message)}}
+async function delT(id){if(!confirm('Delete tournament and its registrations/results?'))return;try{await api('/api/admin/tournaments/'+id,{method:'DELETE'});loadTournaments()}catch(e){alert(e.message)}}
+async function loadRegs(){const a=await api('/api/admin/registrations');$('regBody').innerHTML=a.map(r=>`<tr><td>${r.id}</td><td>${esc(r.player_name)}<br><span class="small">${esc(r.player_email)}</span></td><td>${esc(r.tournament_name)}</td><td>${r.slot_no||''}</td><td>${esc(r.payment_status)}</td><td>${esc(r.payment_ref||'')}</td><td>${esc(r.status)}</td><td><button onclick="verifyPay(${r.id},'PAID')">PAID</button> <button onclick="verifyPay(${r.id},'FAILED')">FAILED</button> <button onclick="verifyPay(${r.id},'REFUNDED')">REFUND</button></td></tr>`).join('')}
+async function verifyPay(id,status){if(!confirm('Set payment to '+status+'?'))return;try{await api('/api/admin/registrations/'+id+'/payment',{method:'POST',body:JSON.stringify({payment_status:status})});loadRegs()}catch(e){alert(e.message)}}
+async function loadPlayers(){const a=await api('/api/admin/users');$('playerBody').innerHTML=a.map(u=>`<tr><td>${u.id}</td><td>${esc(u.name)}</td><td>${esc(u.email)}</td><td>${esc(u.ff_uid||'')}</td><td><span class="pill">${u.role}</span></td><td>${u.role==='OWNER'?'Protected':`<button onclick="role(${u.id},'${u.role==='ADMIN'?'PLAYER':'ADMIN'}')">${u.role==='ADMIN'?'Remove Admin':'Make Admin'}</button>`}</td></tr>`).join('')}
+async function role(id,r){try{await api('/api/admin/users/'+id+'/role',{method:'PUT',body:JSON.stringify({role:r})});loadPlayers()}catch(e){alert(e.message)}}
+async function loadSettings(){const d=await api('/api/admin/settings');['site_name','tagline','logo_url','app_icon_url','favicon_url','banner_url','background_url','theme_color','currency','payment_display_name','payment_upi','payment_qr_url'].forEach(k=>$(k).value=d[k]||'');$('payment_enabled').checked=!!d.payment_enabled;$('payment_mode').value=d.payment_mode||'MANUAL'}
+async function saveSettings(){try{const b={};['site_name','tagline','logo_url','app_icon_url','favicon_url','banner_url','background_url','theme_color','currency','payment_display_name','payment_upi','payment_qr_url','payment_mode'].forEach(k=>b[k]=$(k).value);b.payment_enabled=$('payment_enabled').checked;await api('/api/admin/settings',{method:'PUT',body:JSON.stringify(b)});msg('setmsg','Settings saved',true)}catch(e){msg('setmsg',e.message)}}
+async function loadScoring(){const d=await api('/api/admin/scoring');$('kill_points').value=d.kill_points;$('placement_points').value=JSON.stringify(d.placement_points,null,2)}
+async function saveScoring(){try{const pp=JSON.parse($('placement_points').value||'{}');await api('/api/admin/scoring',{method:'PUT',body:JSON.stringify({kill_points:$('kill_points').value,placement_points:pp})});msg('scmsg','Scoring saved',true)}catch(e){msg('scmsg',e.message)}}
+async function loadResultLists(){const t=await api('/api/admin/tournaments'),u=await api('/api/admin/users');$('r_tournament').innerHTML=t.map(x=>`<option value="${x.id}">${esc(x.name)}</option>`).join('');$('r_user').innerHTML=u.filter(x=>x.role!=='OWNER').map(x=>`<option value="${x.id}">${esc(x.name)} - ${esc(x.ff_uid||'')}</option>`).join('')}
+async function saveResult(){try{await api('/api/admin/results',{method:'POST',body:JSON.stringify({tournament_id:$('r_tournament').value,user_id:$('r_user').value,kills:$('r_kills').value,placement:$('r_place').value,extra_points:$('r_extra').value,note:$('r_note').value})});msg('rmsg','Result saved',true);loadResults()}catch(e){msg('rmsg',e.message)}}
+async function loadResults(){const a=await api('/api/admin/results');$('resultBody').innerHTML=a.map(r=>`<tr><td>${esc(r.player_name)}</td><td>${esc(r.tournament_name)}</td><td>${r.kills}</td><td>${r.placement}</td><td>${r.extra_points}</td></tr>`).join('')}
+async function saveAnnouncement(){try{await api('/api/admin/announcements',{method:'POST',body:JSON.stringify({title:$('atitle').value,body:$('abody').value,active:$('aactive').checked})});msg('amsg','Announcement published',true);$('atitle').value='';$('abody').value='';loadAnnouncements()}catch(e){msg('amsg',e.message)}}
+async function loadAnnouncements(){const a=await api('/api/admin/announcements');$('announceBody').innerHTML=a.map(x=>`<div class="card"><b>${esc(x.title)}</b><p>${esc(x.body)}</p><span class="pill">${x.active?'ACTIVE':'OFF'}</span> <button class="danger" onclick="delA(${x.id})">Delete</button></div>`).join('')}
+async function delA(id){if(!confirm('Delete announcement?'))return;try{await api('/api/admin/announcements/'+id,{method:'DELETE'});loadAnnouncements()}catch(e){alert(e.message)}}
+init();
+</script>
+</body>
+</html>
