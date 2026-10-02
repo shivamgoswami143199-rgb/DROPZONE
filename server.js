@@ -278,25 +278,70 @@ function roomAllowed(reg, tournament) {
 
 /* =========================
    OWNER
-========================= */
+=========================   
 function seedOwner() {
-  const email = (process.env.OWNER_EMAIL || "owner@example.com").toLowerCase();
-  const password = process.env.OWNER_PASSWORD || "ChangeMe123!";
-  const existing = db.prepare("SELECT id FROM users WHERE email = ?").get(email);
+  const email = String(
+    process.env.OWNER_EMAIL || "owner@example.com"
+  ).trim().toLowerCase();
 
-  if (!existing) {
-    const hash = bcrypt.hashSync(password, 12);
+  const password = String(
+    process.env.OWNER_PASSWORD || "ChangeMe123!"
+  );
+
+  if (!email || !password) {
+    throw new Error("OWNER_EMAIL and OWNER_PASSWORD are required.");
+  }
+
+  const hash = bcrypt.hashSync(password, 12);
+
+  let owner = db.prepare(`
+    SELECT id, email, role
+    FROM users
+    WHERE role = 'OWNER'
+    ORDER BY id ASC
+    LIMIT 1
+  `).get();
+
+  if (!owner) {
+    owner = db.prepare(`
+      SELECT id, email, role
+      FROM users
+      WHERE lower(email) = ?
+      LIMIT 1
+    `).get(email);
+  }
+
+  if (owner) {
     db.prepare(`
-      INSERT INTO users(name,email,password_hash,role)
-      VALUES (?,?,?,'OWNER')
-    `).run("DROPZONE Owner", email, hash);
+      UPDATE users
+      SET
+        name = ?,
+        email = ?,
+        password_hash = ?,
+        role = 'OWNER'
+      WHERE id = ?
+    `).run(
+      "DROPZONE Owner",
+      email,
+      hash,
+      owner.id
+    );
 
-    console.log("OWNER account created:");
-    console.log("Email:", email);
-    console.log("Password:", password);
-    console.log("Change OWNER_EMAIL and OWNER_PASSWORD in your hosting environment before production.");
+    console.log("OWNER account synchronized:", email);
+  } else {
+    db.prepare(`
+      INSERT INTO users(name, email, password_hash, role)
+      VALUES (?, ?, ?, 'OWNER')
+    `).run(
+      "DROPZONE Owner",
+      email,
+      hash
+    );
+
+    console.log("OWNER account created:", email);
   }
 }
+
 seedOwner();
 /* =========================
    PUBLIC CONFIG
