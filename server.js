@@ -298,7 +298,6 @@ function seedOwner() {
   }
 }
 seedOwner();
-
 /* =========================
    PUBLIC CONFIG
 ========================= */
