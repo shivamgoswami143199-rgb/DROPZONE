@@ -278,7 +278,7 @@ function roomAllowed(reg, tournament) {
 
 /* =========================
    OWNER
-=========================   
+========================= */  
 function seedOwner() {
   const email = String(
     process.env.OWNER_EMAIL || "owner@example.com"
