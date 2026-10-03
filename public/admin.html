@@ -3955,7 +3955,30 @@ document.querySelectorAll("[data-page]").forEach(function(btn){
     }
       if(page === "analytics"){
   loadAnalytics();
+          if(page === "payments"){
+      loadPaymentData();
     }
+
+    if(page === "pending-payments"){
+      loadPaymentRegistrations();
+    }
+
+    if(page === "paid-payments"){
+      loadPaymentRegistrations();
+    }
+
+    if(page === "failed-payments"){
+      loadPaymentRegistrations();
+    }
+
+    if(page === "refunds"){
+      loadPaymentRegistrations();
+    }
+
+    if(page === "payment-settings"){
+      loadMoneyPaymentSettings();
+    }
+  
     document.querySelectorAll(".nav").forEach(function(n){
       n.classList.remove("active");
     });
