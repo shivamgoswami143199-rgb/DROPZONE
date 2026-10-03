@@ -472,7 +472,7 @@ if (!passwordMatches) {
   audit(user.id, "LOGIN", "Successful login");
   res.json({ ok: true, user: publicUser(user) });
 });
-
+// Login authentication fix
 app.post("/api/logout", (req, res) => {
   res.clearCookie("dz_token");
   res.json({ ok: true });
