@@ -1317,7 +1317,134 @@ label{
   </div>
 
 </section>
-  
+<!-- SLOT MANAGEMENT -->
+
+<section id="slots" class="page">
+
+  <h1 class="title">🎟️ Slots Management</h1>
+
+  <p class="desc">
+    View, assign, change and release tournament slots.
+  </p>
+
+  <div class="card">
+
+    <div
+      style="
+        display:flex;
+        gap:8px;
+        flex-wrap:wrap;
+        align-items:center;
+      "
+    >
+
+      <h3 style="flex:1">
+        🎮 Select Tournament
+      </h3>
+
+      <button
+        class="secondaryBtn"
+        onclick="loadSlotTournaments()"
+      >
+        🔄 Refresh
+      </button>
+
+    </div>
+
+    <select
+      id="slotTournamentSelect"
+      class="input"
+      style="margin-top:14px"
+      onchange="loadTournamentSlots()"
+    >
+      <option value="">Select Tournament</option>
+    </select>
+
+  </div>
+
+
+  <div
+    id="slotSummary"
+    class="card"
+    style="display:none"
+  >
+
+    <h3>📊 Slot Summary</h3>
+
+    <div
+      style="
+        display:grid;
+        grid-template-columns:repeat(auto-fit,minmax(120px,1fr));
+        gap:10px;
+        margin-top:12px;
+      "
+    >
+
+      <div class="statCard">
+        <div class="statLabel">Total</div>
+        <div id="slotTotal" class="statValue">0</div>
+      </div>
+
+      <div class="statCard">
+        <div class="statLabel">Booked</div>
+        <div id="slotBooked" class="statValue">0</div>
+      </div>
+
+      <div class="statCard">
+        <div class="statLabel">Available</div>
+        <div id="slotAvailable" class="statValue">0</div>
+      </div>
+
+    </div>
+
+  </div>
+
+
+  <div class="card">
+
+    <div
+      style="
+        display:flex;
+        justify-content:space-between;
+        align-items:center;
+        gap:8px;
+        flex-wrap:wrap;
+      "
+    >
+
+      <h3>🎟️ Slot Grid</h3>
+
+      <button
+        class="secondaryBtn"
+        onclick="loadTournamentSlots()"
+      >
+        🔄 Refresh Slots
+      </button>
+
+    </div>
+
+    <div
+      id="slotGrid"
+      style="
+        display:grid;
+        grid-template-columns:repeat(auto-fill,minmax(150px,1fr));
+        gap:10px;
+        margin-top:14px;
+      "
+    >
+      Select a tournament first.
+    </div>
+
+  </div>
+
+
+  <div
+    id="slotMessage"
+    class="message"
+  ></div>
+
+</section>   
+
 </main>
 
 
