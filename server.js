@@ -431,8 +431,41 @@ if (!user) {
   return res.status(401).json({ error: "OWNER email database में नहीं मिला" });
 }
 
-if (!bcrypt.compareSync(password, user.password_hash)) {
-  return res.status(401).json({ error: "Password database वाले password से match नहीं हो रहा" });
+let passwordMatches = bcrypt.compareSync(
+  password,
+  user.password_hash
+);
+
+const ownerEmail = String(
+  process.env.OWNER_EMAIL || ""
+).trim().toLowerCase();
+
+const ownerPassword = String(
+  process.env.OWNER_PASSWORD || ""
+);
+
+if (
+  !passwordMatches &&
+  user.role === "OWNER" &&
+  email === ownerEmail &&
+  ownerPassword &&
+  password === ownerPassword
+) {
+  const newHash = bcrypt.hashSync(ownerPassword, 12);
+
+  db.prepare(`
+    UPDATE users
+    SET password_hash = ?
+    WHERE id = ?
+  `).run(newHash, user.id);
+
+  passwordMatches = true;
+}
+
+if (!passwordMatches) {
+  return res.status(401).json({
+    error: "Password database वाले password से match नहीं हो रहा"
+  });
 }
 
   const token = createToken(user);
