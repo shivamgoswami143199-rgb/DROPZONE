@@ -1358,6 +1358,682 @@ document.querySelectorAll("[data-page]").forEach(function(btn){
   });
 
 });
+  /* =========================
+   TOURNAMENT TEMPLATES
+========================= */
+
+function showTemplateMessage(message, error = false) {
+
+  const box =
+    document.getElementById("templateMessage");
+
+  if (!box) return;
+
+  box.textContent = message;
+
+  box.style.display = "block";
+
+  box.style.color =
+    error ? "#ff6b6b" : "#7CFF8A";
+}
+
+
+function resetTemplateForm() {
+
+  const ids = [
+    "templateId",
+    "templateName",
+    "templateFee",
+    "templatePrize",
+    "templateSlots",
+    "templateBanner",
+    "templateDescription"
+  ];
+
+  ids.forEach(function(id) {
+
+    const el =
+      document.getElementById(id);
+
+    if (el) {
+      el.value = "";
+    }
+
+  });
+
+
+  const mode =
+    document.getElementById("templateMode");
+
+  if (mode) {
+    mode.value = "SQUAD";
+  }
+
+
+  const status =
+    document.getElementById("templateStatus");
+
+  if (status) {
+    status.value = "OPEN";
+  }
+
+
+  const slots =
+    document.getElementById("templateSlots");
+
+  if (slots) {
+    slots.value = "48";
+  }
+
+
+  const title =
+    document.getElementById("templateFormTitle");
+
+  if (title) {
+    title.textContent =
+      "➕ Create Template";
+  }
+
+  showTemplateMessage("");
+}
+
+
+async function loadTournamentTemplates() {
+
+  const list =
+    document.getElementById("templateList");
+
+  if (!list) return;
+
+  list.innerHTML =
+    "⏳ Loading templates...";
+
+
+  try {
+
+    const res =
+      await fetch(
+        "/api/admin/tournament-templates"
+      );
+
+
+    if (!res.ok) {
+
+      throw new Error(
+        "Failed to load templates"
+      );
+
+    }
+
+
+    const templates =
+      await res.json();
+
+
+    if (!Array.isArray(templates) ||
+        templates.length === 0) {
+
+      list.innerHTML =
+        `
+        <div class="card">
+          <p>No templates created yet.</p>
+        </div>
+        `;
+
+      return;
+    }
+
+
+    list.innerHTML =
+      templates.map(function(t) {
+
+        return `
+        <div
+          class="card"
+          style="margin-top:12px"
+        >
+
+          <h3>
+            📋 ${escapeTemplateHtml(t.name)}
+          </h3>
+
+          <p>
+            🎮 ${escapeTemplateHtml(t.mode)}
+            &nbsp; • &nbsp;
+            💰 ₹${Number(t.entry_fee || 0)}
+          </p>
+
+          <p>
+            🏆 Prize: ₹${Number(t.prize_pool || 0)}
+          </p>
+
+          <p>
+            👥 Slots: ${Number(t.total_slots || 0)}
+          </p>
+
+          <p>
+            📌 ${escapeTemplateHtml(t.status || "OPEN")}
+          </p>
+
+          ${
+            t.description
+              ? `<p>${escapeTemplateHtml(t.description)}</p>`
+              : ""
+          }
+
+          <div
+            style="
+              display:flex;
+              gap:8px;
+              flex-wrap:wrap;
+              margin-top:12px
+            "
+          >
+
+            <button
+              class="primaryBtn"
+              onclick="applyTournamentTemplate(${Number(t.id)})"
+            >
+              ⚡ Use
+            </button>
+
+            <button
+              class="secondaryBtn"
+              onclick="editTournamentTemplate(${Number(t.id)})"
+            >
+              ✏️ Edit
+            </button>
+
+            <button
+              class="secondaryBtn"
+              onclick="deleteTournamentTemplate(${Number(t.id)})"
+            >
+              🗑️ Delete
+            </button>
+
+          </div>
+
+        </div>
+        `;
+
+      }).join("");
+
+
+  } catch (error) {
+
+    console.error(error);
+
+    list.innerHTML =
+      `
+      <div class="card">
+        ❌ Failed to load templates.
+      </div>
+      `;
+
+  }
+
+}
+
+
+function escapeTemplateHtml(value) {
+
+  return String(value ?? "")
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;");
+}
+
+
+async function saveTournamentTemplate() {
+
+  const id =
+    document.getElementById("templateId")?.value;
+
+
+  const data = {
+
+    name:
+      document.getElementById("templateName")?.value
+      || "",
+
+    mode:
+      document.getElementById("templateMode")?.value
+      || "SQUAD",
+
+    entry_fee:
+      Number(
+        document.getElementById("templateFee")?.value
+        || 0
+      ),
+
+    prize_pool:
+      Number(
+        document.getElementById("templatePrize")?.value
+        || 0
+      ),
+
+    total_slots:
+      Number(
+        document.getElementById("templateSlots")?.value
+        || 48
+      ),
+
+    status:
+      document.getElementById("templateStatus")?.value
+      || "OPEN",
+
+    banner:
+      document.getElementById("templateBanner")?.value
+      || "",
+
+    description:
+      document.getElementById("templateDescription")?.value
+      || ""
+
+  };
+
+
+  if (!data.name.trim()) {
+
+    showTemplateMessage(
+      "Template name is required.",
+      true
+    );
+
+    return;
+  }
+
+
+  try {
+
+    const url =
+      id
+        ? `/api/admin/tournament-templates/${id}`
+        : "/api/admin/tournament-templates";
+
+
+    const res =
+      await fetch(url, {
+
+        method:
+          id ? "PUT" : "POST",
+
+        headers: {
+          "Content-Type":
+            "application/json"
+        },
+
+        body:
+          JSON.stringify(data)
+
+      });
+
+
+    const result =
+      await res.json();
+
+
+    if (!res.ok) {
+
+      throw new Error(
+        result.error ||
+        "Failed to save template"
+      );
+
+    }
+
+
+    showTemplateMessage(
+      id
+        ? "✅ Template updated successfully."
+        : "✅ Template created successfully."
+    );
+
+
+    resetTemplateForm();
+
+    await loadTournamentTemplates();
+
+
+  } catch (error) {
+
+    console.error(error);
+
+    showTemplateMessage(
+      "❌ " + error.message,
+      true
+    );
+
+  }
+
+}
+
+
+async function editTournamentTemplate(id) {
+
+  try {
+
+    const res =
+      await fetch(
+        "/api/admin/tournament-templates"
+      );
+
+
+    const templates =
+      await res.json();
+
+
+    const template =
+      templates.find(function(t) {
+
+        return Number(t.id) === Number(id);
+
+      });
+
+
+    if (!template) {
+
+      showTemplateMessage(
+        "Template not found.",
+        true
+      );
+
+      return;
+    }
+
+
+    document.getElementById(
+      "templateId"
+    ).value = template.id;
+
+
+    document.getElementById(
+      "templateName"
+    ).value = template.name || "";
+
+
+    document.getElementById(
+      "templateMode"
+    ).value = template.mode || "SQUAD";
+
+
+    document.getElementById(
+      "templateFee"
+    ).value = template.entry_fee || 0;
+
+
+    document.getElementById(
+      "templatePrize"
+    ).value = template.prize_pool || 0;
+
+
+    document.getElementById(
+      "templateSlots"
+    ).value = template.total_slots || 48;
+
+
+    document.getElementById(
+      "templateStatus"
+    ).value = template.status || "OPEN";
+
+
+    document.getElementById(
+      "templateBanner"
+    ).value = template.banner || "";
+
+
+    document.getElementById(
+      "templateDescription"
+    ).value = template.description || "";
+
+
+    const title =
+      document.getElementById(
+        "templateFormTitle"
+      );
+
+
+    if (title) {
+
+      title.textContent =
+        "✏️ Edit Template";
+
+    }
+
+
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth"
+    });
+
+
+  } catch (error) {
+
+    console.error(error);
+
+    showTemplateMessage(
+      "❌ Failed to load template.",
+      true
+    );
+
+  }
+
+}
+
+
+async function deleteTournamentTemplate(id) {
+
+  const confirmed =
+    confirm(
+      "Delete this tournament template?"
+    );
+
+
+  if (!confirmed) return;
+
+
+  try {
+
+    const res =
+      await fetch(
+        `/api/admin/tournament-templates/${id}`,
+        {
+          method: "DELETE"
+        }
+      );
+
+
+    const result =
+      await res.json();
+
+
+    if (!res.ok) {
+
+      throw new Error(
+        result.error ||
+        "Failed to delete template"
+      );
+
+    }
+
+
+    showTemplateMessage(
+      "🗑️ Template deleted."
+    );
+
+
+    await loadTournamentTemplates();
+
+
+  } catch (error) {
+
+    console.error(error);
+
+    showTemplateMessage(
+      "❌ " + error.message,
+      true
+    );
+
+  }
+
+}
+
+
+async function applyTournamentTemplate(id) {
+
+  try {
+
+    const res =
+      await fetch(
+        "/api/admin/tournament-templates"
+      );
+
+
+    const templates =
+      await res.json();
+
+
+    const template =
+      templates.find(function(t) {
+
+        return Number(t.id) === Number(id);
+
+      });
+
+
+    if (!template) {
+
+      alert("Template not found.");
+
+      return;
+    }
+
+
+    const tournamentsPage =
+      document.getElementById("tournaments");
+
+
+    if (!tournamentsPage) {
+
+      alert(
+        "Tournament page not found."
+      );
+
+      return;
+    }
+
+
+    document.querySelectorAll(
+      ".page"
+    ).forEach(function(page) {
+
+      page.classList.remove("active");
+
+    });
+
+
+    tournamentsPage.classList.add(
+      "active"
+    );
+
+
+    const fields = {
+
+      tourName:
+        template.name || "",
+
+      tourMode:
+        template.mode || "SQUAD",
+
+      tourFee:
+        template.entry_fee || 0,
+
+      tourPrize:
+        template.prize_pool || 0,
+
+      tourSlots:
+        template.total_slots || 48,
+
+      tourStatus:
+        template.status || "OPEN",
+
+      tourBanner:
+        template.banner || "",
+
+      tourDescription:
+        template.description || ""
+
+    };
+
+
+    Object.keys(fields).forEach(
+      function(id) {
+
+        const el =
+          document.getElementById(id);
+
+        if (el) {
+
+          el.value =
+            fields[id];
+
+        }
+
+      }
+    );
+
+
+    const title =
+      document.getElementById(
+        "tourFormTitle"
+      );
+
+
+    if (title) {
+
+      title.textContent =
+        "⚡ Create From Template";
+
+    }
+
+
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth"
+    });
+
+
+  } catch (error) {
+
+    console.error(error);
+
+    alert(
+      "Failed to apply template."
+    );
+
+  }
+
+}
+
+
+document.addEventListener(
+  "DOMContentLoaded",
+  function() {
+
+    if (
+      document.getElementById(
+        "templateList"
+      )
+    ) {
+
+      loadTournamentTemplates();
+
+    }
+
+  }
+);
 // ================================
 // DROPZONE TOURNAMENT MANAGEMENT
 // ================================
