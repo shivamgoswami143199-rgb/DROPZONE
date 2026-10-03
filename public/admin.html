@@ -4508,6 +4508,121 @@ async function loadPlayers() {
   }
 
   }
+  // ================================
+// LOAD ANALYTICS
+// ================================
+
+async function loadAnalytics() {
+
+  const container =
+    document.getElementById("analyticsContent");
+
+  if (!container) {
+    return;
+  }
+
+  container.innerHTML = "⏳ Loading analytics...";
+
+  try {
+
+    const response = await fetch(
+      "/api/admin/users",
+      {
+        method: "GET",
+        credentials: "include",
+        headers: {
+          "Content-Type": "application/json"
+        }
+      }
+    );
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(
+        data.error || "Failed to load analytics"
+      );
+    }
+
+    if (!Array.isArray(data)) {
+      throw new Error(
+        "Invalid analytics data"
+      );
+    }
+
+    const totalPlayers = data.length;
+
+    const admins = data.filter(function(player) {
+      return player.role === "ADMIN";
+    }).length;
+
+    const owners = data.filter(function(player) {
+      return player.role === "OWNER";
+    }).length;
+
+    const players = data.filter(function(player) {
+      return !["ADMIN", "OWNER"].includes(player.role);
+    }).length;
+
+    container.innerHTML = `
+      <div
+        style="
+          display:grid;
+          grid-template-columns:
+            repeat(auto-fit,minmax(160px,1fr));
+          gap:12px;
+        "
+      >
+
+        <div class="card">
+          <h3>👥 Total Users</h3>
+          <div style="font-size:28px;font-weight:700;">
+            ${totalPlayers}
+          </div>
+        </div>
+
+        <div class="card">
+          <h3>🎮 Players</h3>
+          <div style="font-size:28px;font-weight:700;">
+            ${players}
+          </div>
+        </div>
+
+        <div class="card">
+          <h3>🛡️ Admins</h3>
+          <div style="font-size:28px;font-weight:700;">
+            ${admins}
+          </div>
+        </div>
+
+        <div class="card">
+          <h3>👑 Owners</h3>
+          <div style="font-size:28px;font-weight:700;">
+            ${owners}
+          </div>
+        </div>
+
+      </div>
+    `;
+
+  } catch (error) {
+
+    console.error(
+      "loadAnalytics error:",
+      error
+    );
+
+    container.innerHTML = `
+      <div class="card">
+        ❌ Analytics load नहीं हो पाए।
+        <br><br>
+        ${escapeHTML(error.message)}
+      </div>
+    `;
+
+  }
+
+}
 // ================================
 // AUTO LOAD
 // ================================
