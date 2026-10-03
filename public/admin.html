@@ -3362,6 +3362,526 @@ async function loadSocialLinks() {
   }
 
 }
+  // ================================
+// PAYMENTS & MONEY
+// ================================
+
+async function loadPaymentData() {
+
+  try {
+
+    const dashboard =
+      await api("/api/admin/dashboard");
+
+    const total =
+      Number(dashboard.total_collected || 0);
+
+    const currency =
+      String(
+        document.getElementById("moneyCurrency")?.value ||
+        "INR"
+      ).toUpperCase();
+
+    const symbols = {
+      INR: "₹",
+      USD: "$",
+      EUR: "€",
+      GBP: "£",
+      AED: "د.إ",
+      BDT: "৳",
+      NPR: "रू"
+    };
+
+    const symbol =
+      symbols[currency] ||
+      currency + " ";
+
+    const totalBox =
+      document.getElementById(
+        "moneyTotalCollected"
+      );
+
+    const pendingBox =
+      document.getElementById(
+        "moneyPending"
+      );
+
+    const paidBox =
+      document.getElementById(
+        "moneyPaid"
+      );
+
+    const failedBox =
+      document.getElementById(
+        "moneyFailed"
+      );
+
+    if (totalBox) {
+      totalBox.textContent =
+        symbol +
+        total.toFixed(2).replace(".00","");
+    }
+
+    if (pendingBox) {
+      pendingBox.textContent =
+        Number(
+          dashboard.pending_payments || 0
+        );
+    }
+
+    if (paidBox) {
+      paidBox.textContent =
+        Number(
+          dashboard.paid || 0
+        );
+    }
+
+    if (failedBox) {
+      failedBox.textContent = "0";
+    }
+
+    await loadPaymentRegistrations();
+
+  } catch (error) {
+
+    console.error(
+      "loadPaymentData error:",
+      error
+    );
+
+  }
+
+}
+
+
+async function loadPaymentRegistrations() {
+
+  try {
+
+    const rows =
+      await api(
+        "/api/admin/registrations"
+      );
+
+    const pending =
+      rows.filter(
+        r =>
+          String(
+            r.payment_status || ""
+          ).toUpperCase() === "PENDING"
+      );
+
+    const paid =
+      rows.filter(
+        r =>
+          String(
+            r.payment_status || ""
+          ).toUpperCase() === "PAID"
+      );
+
+    const failed =
+      rows.filter(
+        r =>
+          String(
+            r.payment_status || ""
+          ).toUpperCase() === "FAILED"
+      );
+
+    renderPaymentList(
+      "pendingPaymentsList",
+      pending,
+      true
+    );
+
+    renderPaymentList(
+      "paidPaymentsList",
+      paid,
+      false
+    );
+
+    renderPaymentList(
+      "failedPaymentsList",
+      failed,
+      false
+    );
+
+    renderPaymentList(
+      "refundPaymentsList",
+      rows.filter(
+        r =>
+          String(
+            r.payment_status || ""
+          ).toUpperCase() === "REFUNDED"
+      ),
+      false
+    );
+
+    renderPaymentList(
+      "paymentDashboardList",
+      rows,
+      true
+    );
+
+  } catch (error) {
+
+    console.error(
+      "loadPaymentRegistrations error:",
+      error
+    );
+
+  }
+
+}
+
+
+function renderPaymentList(
+  elementId,
+  rows,
+  actions
+) {
+
+  const box =
+    document.getElementById(elementId);
+
+  if (!box) return;
+
+  if (!rows.length) {
+
+    box.innerHTML = `
+      <div style="
+        padding:18px;
+        text-align:center;
+        opacity:.7;
+      ">
+        📭 No payment records found.
+      </div>
+    `;
+
+    return;
+  }
+
+  box.innerHTML =
+    rows.map(r => {
+
+      const status =
+        String(
+          r.payment_status || "PENDING"
+        ).toUpperCase();
+
+      return `
+
+        <div
+          class="card"
+          style="
+            margin-top:10px;
+            border:1px solid rgba(255,255,255,.08);
+          "
+        >
+
+          <div style="
+            display:flex;
+            justify-content:space-between;
+            gap:10px;
+            flex-wrap:wrap;
+          ">
+
+            <div>
+
+              <strong>
+                👤 ${escapeSlotHtml(
+                  r.player_name || "-"
+                )}
+              </strong>
+
+              <div style="margin-top:6px;">
+                🎮 ${escapeSlotHtml(
+                  r.tournament_name || "-"
+                )}
+              </div>
+
+              <div style="margin-top:6px;">
+                💰 Amount:
+                ${Number(
+                  r.payment_amount || 0
+                ).toFixed(2)}
+              </div>
+
+              <div style="margin-top:6px;">
+                🧾 UTR:
+                ${escapeSlotHtml(
+                  r.payment_ref || "-"
+                )}
+              </div>
+
+              <div style="margin-top:6px;">
+                📌 Status:
+                <strong>${status}</strong>
+              </div>
+
+            </div>
+
+            ${
+              actions &&
+              status === "PENDING"
+              ? `
+                <div style="
+                  display:flex;
+                  gap:8px;
+                  flex-wrap:wrap;
+                  align-items:center;
+                ">
+
+                  <button
+                    class="primaryBtn"
+                    onclick="
+                      verifyPaymentStatus(
+                        ${Number(r.id)},
+                        'PAID'
+                      )
+                    "
+                  >
+                    ✅ Approve
+                  </button>
+
+                  <button
+                    class="secondaryBtn"
+                    onclick="
+                      verifyPaymentStatus(
+                        ${Number(r.id)},
+                        'FAILED'
+                      )
+                    "
+                  >
+                    ❌ Reject
+                  </button>
+
+                </div>
+              `
+              : ""
+            }
+
+          </div>
+
+        </div>
+
+      `;
+
+    }).join("");
+
+}
+
+
+async function verifyPaymentStatus(
+  id,
+  status
+) {
+
+  const action =
+    status === "PAID"
+      ? "approve"
+      : "reject";
+
+  if (
+    !confirm(
+      `Are you sure you want to ${action} this payment?`
+    )
+  ) {
+    return;
+  }
+
+  try {
+
+    await api(
+      `/api/admin/registrations/${id}/payment`,
+      {
+        method: "POST",
+        body: JSON.stringify({
+          payment_status: status
+        })
+      }
+    );
+
+    alert(
+      status === "PAID"
+        ? "Payment approved successfully."
+        : "Payment rejected successfully."
+    );
+
+    await loadPaymentData();
+
+  } catch (error) {
+
+    alert(
+      error.message ||
+      "Payment update failed."
+    );
+
+  }
+
+}
+
+
+async function loadMoneyPaymentSettings() {
+
+  try {
+
+    const data =
+      await api(
+        "/api/admin/settings"
+      );
+
+    const enabled =
+      document.getElementById(
+        "moneyPaymentEnabled"
+      );
+
+    const mode =
+      document.getElementById(
+        "moneyPaymentMode"
+      );
+
+    const name =
+      document.getElementById(
+        "moneyPaymentName"
+      );
+
+    const upi =
+      document.getElementById(
+        "moneyPaymentUpi"
+      );
+
+    const qr =
+      document.getElementById(
+        "moneyPaymentQr"
+      );
+
+    const currency =
+      document.getElementById(
+        "moneyCurrency"
+      );
+
+    if (enabled) {
+      enabled.checked =
+        Boolean(data.payment_enabled);
+    }
+
+    if (mode) {
+      mode.value =
+        data.payment_mode || "MANUAL";
+    }
+
+    if (name) {
+      name.value =
+        data.payment_display_name || "";
+    }
+
+    if (upi) {
+      upi.value =
+        data.payment_upi || "";
+    }
+
+    if (qr) {
+      qr.value =
+        data.payment_qr_url || "";
+    }
+
+    if (currency) {
+      currency.value =
+        data.currency || "INR";
+    }
+
+  } catch (error) {
+
+    console.error(
+      "loadMoneyPaymentSettings error:",
+      error
+    );
+
+  }
+
+}
+
+
+async function saveMoneyPaymentSettings() {
+
+  const message =
+    document.getElementById(
+      "moneyPaymentMessage"
+    );
+
+  try {
+
+    await api(
+      "/api/admin/settings",
+      {
+        method: "PUT",
+        body: JSON.stringify({
+
+          payment_enabled:
+            document.getElementById(
+              "moneyPaymentEnabled"
+            ).checked,
+
+          payment_mode:
+            document.getElementById(
+              "moneyPaymentMode"
+            ).value,
+
+          payment_display_name:
+            document.getElementById(
+              "moneyPaymentName"
+            ).value,
+
+          payment_upi:
+            document.getElementById(
+              "moneyPaymentUpi"
+            ).value,
+
+          payment_qr_url:
+            document.getElementById(
+              "moneyPaymentQr"
+            ).value,
+
+          currency:
+            document.getElementById(
+              "moneyCurrency"
+            ).value
+
+        })
+      }
+    );
+
+    if (message) {
+
+      message.textContent =
+        "✅ Payment settings saved successfully.";
+
+      message.style.color =
+        "#20d889";
+
+    }
+
+    await loadPaymentData();
+
+  } catch (error) {
+
+    if (message) {
+
+      message.textContent =
+        "❌ " +
+        (
+          error.message ||
+          "Failed to save payment settings."
+        );
+
+      message.style.color =
+        "#ff526d";
+
+    }
+
+  }
+
+}
 function openMenu(){
   document
     .getElementById("sidebar")
