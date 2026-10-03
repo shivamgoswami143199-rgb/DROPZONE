@@ -1079,6 +1079,206 @@ app.delete(
   }
 );
 /* =========================
+   ADMIN SLOT MANAGEMENT
+========================= */
+
+app.get("/api/admin/slots", admin, (req, res) => {
+  const tournamentId = int(
+    req.query.tournament_id || req.query.tournamentId
+  );
+
+  if (!tournamentId) {
+    return res.status(400).json({
+      error: "Tournament ID is required"
+    });
+  }
+
+  const tournament = db.prepare(`
+    SELECT id,name,total_slots,status,event_at
+    FROM tournaments
+    WHERE id=?
+  `).get(tournamentId);
+
+  if (!tournament) {
+    return res.status(404).json({
+      error: "Tournament not found"
+    });
+  }
+
+  const registrations = db.prepare(`
+    SELECT
+      r.id,
+      r.slot_no,
+      r.ff_username,
+      r.ff_uid,
+      r.status,
+      r.payment_status,
+      r.payment_ref,
+      r.payment_amount,
+      r.created_at,
+      u.name AS player_name,
+      u.email AS player_email
+    FROM registrations r
+    JOIN users u ON u.id=r.user_id
+    WHERE r.tournament_id=?
+      AND r.status NOT IN ('CANCELLED','REJECTED')
+    ORDER BY r.slot_no ASC, r.id ASC
+  `).all(tournamentId);
+
+  const occupied = new Map();
+
+  registrations.forEach(row => {
+    if (row.slot_no) {
+      occupied.set(Number(row.slot_no), row);
+    }
+  });
+
+  const slots = [];
+
+  for (
+    let slot = 1;
+    slot <= Number(tournament.total_slots);
+    slot++
+  ) {
+    const registration = occupied.get(slot);
+
+    slots.push({
+      slot_no: slot,
+      occupied: !!registration,
+      registration: registration || null
+    });
+  }
+
+  res.json({
+    tournament,
+    total_slots: Number(tournament.total_slots),
+    booked_slots: registrations.length,
+    available_slots:
+      Number(tournament.total_slots) - registrations.length,
+    slots
+  });
+});
+
+
+app.put("/api/admin/registrations/:id/slot", admin, (req, res) => {
+
+  const registrationId = int(req.params.id);
+
+  const registration = db.prepare(`
+    SELECT *
+    FROM registrations
+    WHERE id=?
+  `).get(registrationId);
+
+  if (!registration) {
+    return res.status(404).json({
+      error: "Registration not found"
+    });
+  }
+
+  const requestedSlot = int(
+    req.body?.slot_no
+  );
+
+  if (!requestedSlot || requestedSlot < 1) {
+    return res.status(400).json({
+      error: "Invalid slot number"
+    });
+  }
+
+  const tournament = db.prepare(`
+    SELECT *
+    FROM tournaments
+    WHERE id=?
+  `).get(registration.tournament_id);
+
+  if (!tournament) {
+    return res.status(404).json({
+      error: "Tournament not found"
+    });
+  }
+
+  if (requestedSlot > Number(tournament.total_slots)) {
+    return res.status(400).json({
+      error: "Slot exceeds tournament capacity"
+    });
+  }
+
+  const occupied = db.prepare(`
+    SELECT id,slot_no
+    FROM registrations
+    WHERE tournament_id=?
+      AND slot_no=?
+      AND id<>?
+      AND status NOT IN ('CANCELLED','REJECTED')
+    LIMIT 1
+  `).get(
+    registration.tournament_id,
+    requestedSlot,
+    registrationId
+  );
+
+  if (occupied) {
+    return res.status(409).json({
+      error: "This slot is already occupied"
+    });
+  }
+
+  db.prepare(`
+    UPDATE registrations
+    SET slot_no=?
+    WHERE id=?
+  `).run(
+    requestedSlot,
+    registrationId
+  );
+
+  audit(
+    req.user.id,
+    "CHANGE_SLOT",
+    `Registration ${registrationId}: slot ${requestedSlot}`
+  );
+
+  res.json({
+    ok: true,
+    slot_no: requestedSlot
+  });
+});
+
+
+app.delete("/api/admin/registrations/:id/slot", admin, (req, res) => {
+
+  const registrationId = int(req.params.id);
+
+  const registration = db.prepare(`
+    SELECT id,slot_no
+    FROM registrations
+    WHERE id=?
+  `).get(registrationId);
+
+  if (!registration) {
+    return res.status(404).json({
+      error: "Registration not found"
+    });
+  }
+
+  db.prepare(`
+    UPDATE registrations
+    SET slot_no=NULL
+    WHERE id=?
+  `).run(registrationId);
+
+  audit(
+    req.user.id,
+    "RELEASE_SLOT",
+    `Registration ${registrationId}`
+  );
+
+  res.json({
+    ok: true
+  });
+});
+/* =========================
    ADMIN REGISTRATIONS / PAYMENTS
 ========================= */
 app.get("/api/admin/registrations", admin, (req, res) => {
