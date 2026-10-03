@@ -771,7 +771,174 @@ app.put("/api/admin/settings", admin, (req, res) => {
   audit(req.user.id, "UPDATE_SETTINGS", "Website/payment/scoring settings changed");
   res.json({ ok: true });
 });
+/* =========================
+   SOCIAL / COMMUNITY LINKS
+========================= */
 
+app.get("/api/admin/social-links", admin, (req, res) => {
+
+  const raw =
+    getSetting("social_links", "[]");
+
+  let links = [];
+
+  try {
+    links = JSON.parse(raw);
+  } catch (e) {
+    links = [];
+  }
+
+  if (!Array.isArray(links)) {
+    links = [];
+  }
+
+  res.json({
+    links
+  });
+
+});
+
+
+app.put("/api/admin/social-links", admin, (req, res) => {
+
+  const body =
+    req.body || {};
+
+  const links =
+    body.links;
+
+  if (!Array.isArray(links)) {
+    return res.status(400).json({
+      error: "links must be an array"
+    });
+  }
+
+  if (links.length > 50) {
+    return res.status(400).json({
+      error: "Maximum 50 social links allowed"
+    });
+  }
+
+  const cleaned =
+    links.map((item, index) => {
+
+      return {
+
+        id:
+          String(
+            item.id ||
+            `social_${Date.now()}_${index}`
+          ),
+
+        name:
+          String(
+            item.name || ""
+          ).trim().slice(0, 50),
+
+        icon:
+          String(
+            item.icon || "🔗"
+          ).trim().slice(0, 20),
+
+        url:
+          String(
+            item.url || ""
+          ).trim().slice(0, 1000),
+
+        enabled:
+          item.enabled !== false,
+
+        order:
+          Number.isFinite(
+            Number(item.order)
+          )
+            ? Number(item.order)
+            : index
+
+      };
+
+    });
+
+
+  for (const link of cleaned) {
+
+    if (!link.name) {
+      return res.status(400).json({
+        error: "Every social link needs a name"
+      });
+    }
+
+    if (!link.url) {
+      return res.status(400).json({
+        error:
+          `URL missing for ${link.name}`
+      });
+    }
+
+  }
+
+
+  setSetting(
+    "social_links",
+    JSON.stringify(cleaned)
+  );
+
+
+  audit(
+    req.user.id,
+    "UPDATE_SOCIAL_LINKS",
+    "Social/community links updated"
+  );
+
+
+  res.json({
+    ok: true,
+    links: cleaned
+  });
+
+});
+
+
+/* PUBLIC SOCIAL LINKS */
+
+app.get("/api/social-links", (req, res) => {
+
+  const raw =
+    getSetting("social_links", "[]");
+
+  let links = [];
+
+  try {
+    links = JSON.parse(raw);
+  } catch (e) {
+    links = [];
+  }
+
+  if (!Array.isArray(links)) {
+    links = [];
+  }
+
+  links =
+    links
+      .filter(
+        link =>
+          link &&
+          link.enabled === true &&
+          link.name &&
+          link.url
+      )
+      .sort(
+        (a, b) =>
+          Number(a.order || 0) -
+          Number(b.order || 0)
+      );
+
+
+  res.json({
+    links
+  });
+
+});
 /* =========================
    ADMIN TOURNAMENTS
 ========================= */
