@@ -1444,11 +1444,563 @@ label{
   ></div>
 
 </section>   
+<!-- TOURNAMENT SCHEDULE -->
+<section id="schedule" class="page">
+  <h1 class="title">🗓️ Tournament Schedule</h1>
+  <p class="desc">
+    Manage tournament dates, timings, status and room publish schedule.
+  </p>
 
+  <!-- FILTERS -->
+  <div class="card">
+    <h3>🔎 Schedule Filters</h3>
+
+    <div style="
+      display:grid;
+      grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
+      gap:10px;
+      margin-top:14px;
+    ">
+      <div>
+        <label>Date</label>
+        <input
+          id="scheduleDateFilter"
+          class="input"
+          type="date"
+          onchange="loadTournamentSchedule()"
+        >
+      </div>
+
+      <div>
+        <label>Status</label>
+        <select
+          id="scheduleStatusFilter"
+          class="input"
+          onchange="loadTournamentSchedule()"
+        >
+          <option value="">All Status</option>
+          <option value="OPEN">OPEN</option>
+          <option value="UPCOMING">UPCOMING</option>
+          <option value="CLOSED">CLOSED</option>
+        </select>
+      </div>
+
+      <div style="display:flex;align-items:end">
+        <button
+          class="secondaryBtn"
+          onclick="clearScheduleFilters()"
+          style="width:100%"
+        >
+          🧹 Clear Filters
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- SCHEDULE LIST -->
+  <div class="card">
+    <div style="
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap:8px;
+      flex-wrap:wrap;
+    ">
+      <h3>📅 Tournament Schedule</h3>
+
+      <button
+        class="secondaryBtn"
+        onclick="loadTournamentSchedule()"
+      >
+        🔄 Refresh
+      </button>
+    </div>
+
+    <div
+      id="scheduleList"
+      style="margin-top:14px"
+    >
+      ⏳ Loading schedule...
+    </div>
+  </div>
+
+  <!-- EDIT SCHEDULE -->
+  <div
+    id="scheduleEditor"
+    class="card"
+    style="display:none"
+  >
+    <h3>✏️ Edit Tournament Schedule</h3>
+
+    <input
+      type="hidden"
+      id="scheduleTournamentId"
+    >
+
+    <div style="margin-top:14px">
+      <label>Tournament Name</label>
+      <input
+        id="scheduleTournamentName"
+        class="input"
+        readonly
+      >
+    </div>
+
+    <div style="
+      display:grid;
+      grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
+      gap:10px;
+      margin-top:10px;
+    ">
+      <div>
+        <label>Event Date & Time</label>
+        <input
+          id="scheduleEventAt"
+          class="input"
+          type="datetime-local"
+        >
+      </div>
+
+      <div>
+        <label>Room Publish Date & Time</label>
+        <input
+          id="scheduleRoomPublishAt"
+          class="input"
+          type="datetime-local"
+        >
+      </div>
+    </div>
+
+    <div style="margin-top:10px">
+      <label>Status</label>
+      <select
+        id="scheduleEditStatus"
+        class="input"
+      >
+        <option value="OPEN">OPEN</option>
+        <option value="UPCOMING">UPCOMING</option>
+        <option value="CLOSED">CLOSED</option>
+      </select>
+    </div>
+
+    <div style="
+      display:flex;
+      gap:8px;
+      flex-wrap:wrap;
+      margin-top:14px;
+    ">
+      <button
+        class="primaryBtn"
+        onclick="saveTournamentSchedule()"
+      >
+        💾 Save Schedule
+      </button>
+
+      <button
+        class="secondaryBtn"
+        onclick="closeScheduleEditor()"
+      >
+        Cancel
+      </button>
+    </div>
+
+    <div
+      id="scheduleEditorMessage"
+      class="message"
+    ></div>
+  </div>
+
+  <div
+    id="scheduleMessage"
+    class="message"
+  ></div>
+</section>
+  
 </main>
 
 
 <script>
+  /* =========================
+   TOURNAMENT SCHEDULE
+========================= */
+
+let scheduleTournaments = [];
+
+function showScheduleMessage(message, type = "") {
+  const el = document.getElementById("scheduleMessage");
+  if (!el) return;
+  el.textContent = message;
+  el.className = "message" + (type ? " " + type : "");
+}
+
+function showScheduleEditorMessage(message, type = "") {
+  const el = document.getElementById("scheduleEditorMessage");
+  if (!el) return;
+  el.textContent = message;
+  el.className = "message" + (type ? " " + type : "");
+}
+
+function escapeScheduleHtml(value) {
+  return String(value ?? "")
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;");
+}
+
+function formatScheduleDate(value) {
+  if (!value) return "Not scheduled";
+
+  const date = new Date(value);
+
+  if (Number.isNaN(date.getTime())) {
+    return escapeScheduleHtml(value);
+  }
+
+  return date.toLocaleString("en-IN", {
+    dateStyle: "medium",
+    timeStyle: "short"
+  });
+}
+
+function toDateTimeLocal(value) {
+  if (!value) return "";
+
+  const date = new Date(value);
+
+  if (Number.isNaN(date.getTime())) {
+    return String(value).slice(0, 16);
+  }
+
+  const pad = n => String(n).padStart(2, "0");
+
+  return (
+    date.getFullYear() +
+    "-" +
+    pad(date.getMonth() + 1) +
+    "-" +
+    pad(date.getDate()) +
+    "T" +
+    pad(date.getHours()) +
+    ":" +
+    pad(date.getMinutes())
+  );
+}
+
+async function loadTournamentSchedule() {
+  const list = document.getElementById("scheduleList");
+  if (!list) return;
+
+  list.innerHTML = "⏳ Loading schedule...";
+  showScheduleMessage("");
+
+  try {
+    const response = await fetch("/api/admin/tournaments", {
+      credentials: "include"
+    });
+
+    const data = await response.json().catch(() => ({}));
+
+    if (!response.ok) {
+      throw new Error(data.error || "Failed to load tournaments");
+    }
+
+    scheduleTournaments = Array.isArray(data)
+      ? data
+      : (Array.isArray(data.tournaments) ? data.tournaments : []);
+
+    renderTournamentSchedule();
+
+  } catch (error) {
+    list.innerHTML = "❌ " + escapeScheduleHtml(error.message);
+    showScheduleMessage("❌ " + error.message, "error");
+  }
+}
+
+function renderTournamentSchedule() {
+  const list = document.getElementById("scheduleList");
+  const dateFilter = document.getElementById("scheduleDateFilter");
+  const statusFilter = document.getElementById("scheduleStatusFilter");
+
+  if (!list) return;
+
+  const selectedDate = dateFilter ? dateFilter.value : "";
+  const selectedStatus = statusFilter ? statusFilter.value : "";
+
+  let tournaments = [...scheduleTournaments];
+
+  if (selectedDate) {
+    tournaments = tournaments.filter(tournament => {
+      if (!tournament.event_at) return false;
+
+      const date = new Date(tournament.event_at);
+
+      if (Number.isNaN(date.getTime())) return false;
+
+      const localDate =
+        date.getFullYear() +
+        "-" +
+        String(date.getMonth() + 1).padStart(2, "0") +
+        "-" +
+        String(date.getDate()).padStart(2, "0");
+
+      return localDate === selectedDate;
+    });
+  }
+
+  if (selectedStatus) {
+    tournaments = tournaments.filter(
+      tournament =>
+        String(tournament.status || "").toUpperCase() === selectedStatus
+    );
+  }
+
+  tournaments.sort((a, b) => {
+    const aTime = a.event_at
+      ? new Date(a.event_at).getTime()
+      : Number.MAX_SAFE_INTEGER;
+
+    const bTime = b.event_at
+      ? new Date(b.event_at).getTime()
+      : Number.MAX_SAFE_INTEGER;
+
+    return aTime - bTime;
+  });
+
+  if (!tournaments.length) {
+    list.innerHTML = `
+      <div style="padding:18px;text-align:center;opacity:.75">
+        📭 No tournaments found for this schedule.
+      </div>
+    `;
+    return;
+  }
+
+  list.innerHTML = tournaments.map(tournament => {
+    const status = String(
+      tournament.status || "UPCOMING"
+    ).toUpperCase();
+
+    return `
+      <div
+        class="card"
+        style="
+          margin-top:10px;
+          border:1px solid rgba(255,255,255,.08);
+        "
+      >
+        <div style="
+          display:flex;
+          justify-content:space-between;
+          align-items:flex-start;
+          gap:10px;
+          flex-wrap:wrap;
+        ">
+
+          <div style="flex:1;min-width:200px">
+
+            <h3 style="margin:0">
+              🎮 ${escapeScheduleHtml(
+                tournament.name || "Unnamed Tournament"
+              )}
+            </h3>
+
+            <div style="margin-top:8px;opacity:.85">
+              🗓️ Event:
+              <strong>
+                ${formatScheduleDate(tournament.event_at)}
+              </strong>
+            </div>
+
+            <div style="margin-top:6px;opacity:.85">
+              🚪 Room Publish:
+              <strong>
+                ${formatScheduleDate(tournament.room_publish_at)}
+              </strong>
+            </div>
+
+            <div style="margin-top:6px;opacity:.85">
+              🎯 Mode:
+              ${escapeScheduleHtml(tournament.mode || "-")}
+            </div>
+
+          </div>
+
+          <div style="text-align:right">
+
+            <div style="
+              display:inline-block;
+              padding:6px 10px;
+              border-radius:999px;
+              background:rgba(0,255,180,.10);
+              border:1px solid rgba(0,255,180,.25);
+              font-size:12px;
+              font-weight:700;
+            ">
+              ${escapeScheduleHtml(status)}
+            </div>
+
+            <div style="margin-top:10px">
+              <button
+                class="primaryBtn"
+                onclick="openScheduleEditor(${Number(tournament.id)})"
+              >
+                ✏️ Edit Schedule
+              </button>
+            </div>
+
+          </div>
+
+        </div>
+      </div>
+    `;
+  }).join("");
+}
+
+function openScheduleEditor(tournamentId) {
+  const tournament = scheduleTournaments.find(
+    item => Number(item.id) === Number(tournamentId)
+  );
+
+  if (!tournament) {
+    showScheduleMessage("❌ Tournament not found", "error");
+    return;
+  }
+
+  document.getElementById("scheduleEditor").style.display = "block";
+
+  document.getElementById("scheduleTournamentId").value =
+    tournament.id || "";
+
+  document.getElementById("scheduleTournamentName").value =
+    tournament.name || "";
+
+  document.getElementById("scheduleEventAt").value =
+    toDateTimeLocal(tournament.event_at);
+
+  document.getElementById("scheduleRoomPublishAt").value =
+    toDateTimeLocal(tournament.room_publish_at);
+
+  document.getElementById("scheduleEditStatus").value =
+    String(tournament.status || "UPCOMING").toUpperCase();
+
+  showScheduleEditorMessage("");
+
+  document.getElementById("scheduleEditor").scrollIntoView({
+    behavior: "smooth",
+    block: "start"
+  });
+}
+
+function closeScheduleEditor() {
+  const editor = document.getElementById("scheduleEditor");
+
+  if (editor) {
+    editor.style.display = "none";
+  }
+
+  showScheduleEditorMessage("");
+}
+
+async function saveTournamentSchedule() {
+  const id =
+    document.getElementById("scheduleTournamentId")?.value;
+
+  if (!id) {
+    showScheduleEditorMessage(
+      "❌ Tournament ID missing",
+      "error"
+    );
+    return;
+  }
+
+  const eventAt =
+    document.getElementById("scheduleEventAt")?.value || "";
+
+  const roomPublishAt =
+    document.getElementById("scheduleRoomPublishAt")?.value || "";
+
+  const status =
+    document.getElementById("scheduleEditStatus")?.value ||
+    "UPCOMING";
+
+  if (!eventAt) {
+    showScheduleEditorMessage(
+      "❌ Event date & time is required",
+      "error"
+    );
+    return;
+  }
+
+  try {
+    showScheduleEditorMessage("⏳ Saving schedule...");
+
+    const response = await fetch(
+      "/api/admin/tournaments/" +
+      encodeURIComponent(id),
+      {
+        method: "PUT",
+        credentials: "include",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          event_at: eventAt,
+          room_publish_at: roomPublishAt,
+          status: status
+        })
+      }
+    );
+
+    const data = await response.json().catch(() => ({}));
+
+    if (!response.ok) {
+      throw new Error(
+        data.error || "Failed to save tournament schedule"
+      );
+    }
+
+    showScheduleEditorMessage(
+      "✅ Schedule saved successfully!",
+      "success"
+    );
+
+    await loadTournamentSchedule();
+
+    setTimeout(() => {
+      closeScheduleEditor();
+    }, 800);
+
+  } catch (error) {
+    showScheduleEditorMessage(
+      "❌ " + error.message,
+      "error"
+    );
+  }
+}
+
+function clearScheduleFilters() {
+  const dateFilter =
+    document.getElementById("scheduleDateFilter");
+
+  const statusFilter =
+    document.getElementById("scheduleStatusFilter");
+
+  if (dateFilter) {
+    dateFilter.value = "";
+  }
+
+  if (statusFilter) {
+    statusFilter.value = "";
+  }
+
+  renderTournamentSchedule();
+}
+
+document.addEventListener("DOMContentLoaded", function() {
+  loadTournamentSchedule();
+});
 /* =========================
    SLOT MANAGEMENT
 ========================= */
