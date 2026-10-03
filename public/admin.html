@@ -2597,7 +2597,9 @@ document.querySelectorAll("[data-page]").forEach(function(btn){
     });
 
     target.classList.add("active");
-
+    if(page === "players"){
+      loadPlayers();
+    }
     document.querySelectorAll(".nav").forEach(function(n){
       n.classList.remove("active");
     });
