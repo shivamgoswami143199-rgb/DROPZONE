@@ -4242,7 +4242,107 @@ function escapeHTML(value) {
     .replace(/'/g, "&#039;");
 }
 
+// ================================
+// LOAD ALL PLAYERS
+// ================================
 
+async function loadPlayers() {
+
+  const container = document.getElementById("playerList");
+
+  if (!container) {
+    return;
+  }
+
+  container.innerHTML = "⏳ Loading players...";
+
+  try {
+
+    const response = await fetch("/api/admin/users", {
+      method: "GET",
+      credentials: "include",
+      headers: {
+        "Content-Type": "application/json"
+      }
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(
+        data.error || "Failed to load players"
+      );
+    }
+
+    if (!Array.isArray(data)) {
+      throw new Error("Invalid players data received");
+    }
+
+    if (data.length === 0) {
+
+      container.innerHTML = `
+        <div class="card">
+          👥 No players found.
+        </div>
+      `;
+
+      return;
+    }
+
+    container.innerHTML = data.map(function(player) {
+
+      return `
+        <div
+          class="card"
+          style="
+            margin-bottom:10px;
+            padding:14px;
+          "
+        >
+
+          <div style="font-size:16px;font-weight:700;">
+            👤 ${escapeHTML(player.name || "Unknown")}
+          </div>
+
+          <div style="margin-top:6px;">
+            📧 ${escapeHTML(player.email || "No email")}
+          </div>
+
+          <div style="margin-top:4px;">
+            🎮 UID:
+            ${escapeHTML(player.ff_uid || "Not set")}
+          </div>
+
+          <div style="margin-top:4px;">
+            🎮 Username:
+            ${escapeHTML(player.ff_username || "Not set")}
+          </div>
+
+          <div style="margin-top:6px;">
+            🔐 Role:
+            <b>${escapeHTML(player.role || "PLAYER")}</b>
+          </div>
+
+        </div>
+      `;
+
+    }).join("");
+
+  } catch (error) {
+
+    console.error("loadPlayers error:", error);
+
+    container.innerHTML = `
+      <div class="card">
+        ❌ Players load नहीं हो पाए।
+        <br><br>
+        ${escapeHTML(error.message)}
+      </div>
+    `;
+
+  }
+
+    }
 // ================================
 // AUTO LOAD
 // ================================
