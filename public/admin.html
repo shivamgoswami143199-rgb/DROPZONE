@@ -4652,6 +4652,109 @@ async function loadAnalytics() {
   }
 
 }
+  // ================================
+// LOAD LIVE ACTIVITY
+// ================================
+
+async function loadActivity() {
+
+  const container =
+    document.getElementById("activityContent");
+
+  if (!container) {
+    return;
+  }
+
+  container.innerHTML = "⏳ Loading activity...";
+
+  try {
+
+    const response = await fetch(
+      "/api/admin/users",
+      {
+        method: "GET",
+        credentials: "include",
+        headers: {
+          "Content-Type": "application/json"
+        }
+      }
+    );
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(
+        data.error || "Failed to load activity"
+      );
+    }
+
+    if (!Array.isArray(data)) {
+      throw new Error("Invalid activity data");
+    }
+
+    if (data.length === 0) {
+
+      container.innerHTML =
+        "⚡ No recent activity found.";
+
+      return;
+    }
+
+    const recent = data.slice(0, 10);
+
+    container.innerHTML = recent.map(function(user) {
+
+      return `
+        <div
+          class="card"
+          style="
+            margin-bottom:10px;
+            padding:14px;
+          "
+        >
+
+          <div style="font-weight:700;">
+            👤 ${escapeHTML(user.name || "Unknown")}
+          </div>
+
+          <div style="margin-top:6px;">
+            📧 ${escapeHTML(user.email || "No email")}
+          </div>
+
+          <div style="margin-top:5px;">
+            🔐 Role:
+            <b>${escapeHTML(user.role || "PLAYER")}</b>
+          </div>
+
+          <div style="margin-top:5px;">
+            🕒 ${escapeHTML(
+              user.created_at || "Recent activity"
+            )}
+          </div>
+
+        </div>
+      `;
+
+    }).join("");
+
+  } catch (error) {
+
+    console.error(
+      "loadActivity error:",
+      error
+    );
+
+    container.innerHTML = `
+      <div class="card">
+        ❌ Live Activity load नहीं हो पाई।
+        <br><br>
+        ${escapeHTML(error.message)}
+      </div>
+    `;
+
+  }
+
+}
 // ================================
 // AUTO LOAD
 // ================================
