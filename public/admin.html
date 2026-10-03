@@ -836,21 +836,174 @@ body{
 
   <!-- ALL OTHER PAGES WILL BE ADDED IN NEXT STEPS -->
 
-  <section id="placeholder" class="page">
+  <!-- TOURNAMENT MANAGEMENT -->
 
-    <div class="card">
+<section id="tournaments" class="page">
 
-      <div class="placeholder">
+  <h1 class="title">🏆 Tournament Management</h1>
+  <p class="desc">Create, edit and control your tournaments.</p>
 
-        <b>DROPZONE Control Center</b>
+  <div class="card">
 
-        यह section अगले step में fully connected होगा।
+    <h3 id="tourFormTitle">➕ Create Tournament</h3>
 
-      </div>
+    <input type="hidden" id="tourId">
+
+    <label>Tournament Name</label>
+    <input
+      id="tourName"
+      class="input"
+      placeholder="Example: DROPZONE Clash #1"
+    >
+
+    <label>Mode</label>
+    <select id="tourMode" class="input">
+      <option value="SOLO">Solo</option>
+      <option value="DUO">Duo</option>
+      <option value="SQUAD">Squad</option>
+    </select>
+
+    <label>Entry Fee</label>
+    <input
+      id="tourFee"
+      class="input"
+      type="number"
+      min="0"
+      placeholder="0"
+    >
+
+    <label>Prize Pool</label>
+    <input
+      id="tourPrize"
+      class="input"
+      type="number"
+      min="0"
+      placeholder="1000"
+    >
+
+    <label>Total Slots</label>
+    <input
+      id="tourSlots"
+      class="input"
+      type="number"
+      min="1"
+      value="48"
+    >
+
+    <label>Event Date & Time</label>
+    <input
+      id="tourDate"
+      class="input"
+      type="datetime-local"
+    >
+
+    <label>Status</label>
+    <select id="tourStatus" class="input">
+      <option value="OPEN">OPEN</option>
+      <option value="UPCOMING">UPCOMING</option>
+      <option value="CLOSED">CLOSED</option>
+      <option value="COMPLETED">COMPLETED</option>
+    </select>
+
+    <label>Banner URL</label>
+    <input
+      id="tourBanner"
+      class="input"
+      placeholder="https://..."
+    >
+
+    <label>Description</label>
+    <textarea
+      id="tourDescription"
+      class="input"
+      placeholder="Tournament details..."
+    ></textarea>
+
+    <h3 style="margin-top:18px">🔑 Room Control</h3>
+
+    <label>Room ID</label>
+    <input
+      id="roomId"
+      class="input"
+      placeholder="Room ID"
+    >
+
+    <label>Room Password</label>
+    <input
+      id="roomPassword"
+      class="input"
+      placeholder="Room Password"
+    >
+
+    <label>Room Publish Time</label>
+    <input
+      id="roomPublish"
+      class="input"
+      type="datetime-local"
+    >
+
+    <div style="display:flex;gap:8px;margin-top:14px">
+
+      <button
+        class="primaryBtn"
+        onclick="saveTournament()"
+      >
+        💾 Save Tournament
+      </button>
+
+      <button
+        class="secondaryBtn"
+        onclick="resetTournamentForm()"
+      >
+        Clear
+      </button>
 
     </div>
 
-  </section>
+    <div id="tourMessage" class="message"></div>
+
+  </div>
+
+
+  <div class="card">
+
+    <div style="display:flex;justify-content:space-between;align-items:center;gap:8px">
+
+      <h3>📋 All Tournaments</h3>
+
+      <button
+        class="secondaryBtn"
+        onclick="loadTournaments()"
+      >
+        🔄 Refresh
+      </button>
+
+    </div>
+
+    <div
+      id="tournamentList"
+      style="margin-top:14px"
+    >
+      Loading tournaments...
+    </div>
+
+  </div>
+
+
+  <div class="card">
+
+    <h3>👥 Tournament Registrations</h3>
+
+    <div
+      id="registrationList"
+      style="margin-top:14px"
+    >
+      Select a tournament to view registrations.
+    </div>
+
+  </div>
+
+</section>
 
 </main>
 
