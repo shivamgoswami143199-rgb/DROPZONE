@@ -2957,6 +2957,44 @@ document.addEventListener(
 
   }
 );
+  // ================================
+// SOCIAL LINK FORM
+// ================================
+
+function addSocialLink() {
+
+  const form =
+    document.getElementById("socialLinkForm");
+
+  if (!form) return;
+
+  document.getElementById("socialEditId").value = "";
+  document.getElementById("socialName").value = "";
+  document.getElementById("socialIcon").value = "🔗";
+  document.getElementById("socialUrl").value = "";
+  document.getElementById("socialEnabled").checked = true;
+  document.getElementById("socialOrder").value = "0";
+
+  form.style.display = "block";
+
+  form.scrollIntoView({
+    behavior: "smooth",
+    block: "center"
+  });
+
+}
+
+
+function closeSocialForm() {
+
+  const form =
+    document.getElementById("socialLinkForm");
+
+  if (!form) return;
+
+  form.style.display = "none";
+
+}
 function openMenu(){
   document
     .getElementById("sidebar")
