@@ -1086,7 +1086,588 @@ document.querySelectorAll("[data-page]").forEach(function(btn){
   });
 
 });
+// ================================
+// DROPZONE TOURNAMENT MANAGEMENT
+// ================================
 
+async function loadTournaments() {
+  const list = document.getElementById("tournamentList");
+
+  if (!list) return;
+
+  list.innerHTML = "⏳ Loading tournaments...";
+
+  try {
+    const res = await fetch("/api/admin/tournaments", {
+      credentials: "include"
+    });
+
+    const data = await res.json();
+
+    if (!res.ok) {
+      throw new Error(data.error || "Failed to load tournaments");
+    }
+
+    if (!Array.isArray(data) || data.length === 0) {
+      list.innerHTML = `
+        <div class="placeholder">
+          No tournaments found.
+        </div>
+      `;
+      return;
+    }
+
+    list.innerHTML = data.map(t => `
+      <div class="card" style="margin-top:12px">
+
+        <h3>🏆 ${escapeHTML(t.name || "Unnamed Tournament")}</h3>
+
+        <div style="margin-top:8px">
+          <b>Mode:</b> ${escapeHTML(t.mode || "-")}
+        </div>
+
+        <div>
+          <b>Entry Fee:</b> ₹${Number(t.entry_fee || 0)}
+        </div>
+
+        <div>
+          <b>Prize Pool:</b> ₹${Number(t.prize_pool || 0)}
+        </div>
+
+        <div>
+          <b>Slots:</b> ${Number(t.total_slots || 0)}
+        </div>
+
+        <div>
+          <b>Status:</b> ${escapeHTML(t.status || "-")}
+        </div>
+
+        <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:12px">
+
+          <button
+            class="primaryBtn"
+            onclick="editTournament(${t.id})"
+          >
+            ✏️ Edit
+          </button>
+
+          <button
+            class="secondaryBtn"
+            onclick="deleteTournament(${t.id})"
+          >
+            🗑️ Delete
+          </button>
+
+          <button
+            class="secondaryBtn"
+            onclick="loadTournamentRegistrations(${t.id})"
+          >
+            👥 Registrations
+          </button>
+
+        </div>
+
+      </div>
+    `).join("");
+
+  } catch (err) {
+    list.innerHTML = `
+      <div class="message">
+        ❌ ${escapeHTML(err.message)}
+      </div>
+    `;
+  }
+}
+
+
+// ================================
+// SAVE TOURNAMENT
+// ================================
+
+async function saveTournament() {
+
+  const id = document.getElementById("tourId").value;
+
+  const payload = {
+    name: document.getElementById("tourName").value.trim(),
+    mode: document.getElementById("tourMode").value,
+    entry_fee: Number(
+      document.getElementById("tourFee").value || 0
+    ),
+    prize_pool: Number(
+      document.getElementById("tourPrize").value || 0
+    ),
+    total_slots: Number(
+      document.getElementById("tourSlots").value || 48
+    ),
+    event_at: toISODate(
+      document.getElementById("tourDate").value
+    ),
+    status: document.getElementById("tourStatus").value,
+    banner: document.getElementById("tourBanner").value.trim(),
+    description:
+      document.getElementById("tourDescription").value.trim(),
+    room_id:
+      document.getElementById("roomId").value.trim(),
+    room_password:
+      document.getElementById("roomPassword").value.trim(),
+    room_publish_at: toISODate(
+      document.getElementById("roomPublish").value
+    )
+  };
+
+  if (!payload.name) {
+    showTourMessage("❌ Tournament name required");
+    return;
+  }
+
+  try {
+
+    const url = id
+      ? `/api/admin/tournaments/${id}`
+      : "/api/admin/tournaments";
+
+    const method = id ? "PUT" : "POST";
+
+    const res = await fetch(url, {
+      method,
+      headers: {
+        "Content-Type": "application/json"
+      },
+      credentials: "include",
+      body: JSON.stringify(payload)
+    });
+
+    const data = await res.json();
+
+    if (!res.ok) {
+      throw new Error(
+        data.error || "Failed to save tournament"
+      );
+    }
+
+    showTourMessage(
+      "✅ Tournament saved successfully"
+    );
+
+    resetTournamentForm();
+
+    await loadTournaments();
+
+  } catch (err) {
+    showTourMessage("❌ " + err.message);
+  }
+}
+
+
+// ================================
+// EDIT TOURNAMENT
+// ================================
+
+async function editTournament(id) {
+
+  try {
+
+    const res = await fetch(
+      "/api/admin/tournaments",
+      {
+        credentials: "include"
+      }
+    );
+
+    const data = await res.json();
+
+    if (!res.ok) {
+      throw new Error(
+        data.error || "Failed to load tournament"
+      );
+    }
+
+    const t = data.find(
+      x => Number(x.id) === Number(id)
+    );
+
+    if (!t) {
+      showTourMessage(
+        "❌ Tournament not found"
+      );
+      return;
+    }
+
+    document.getElementById("tourId").value = t.id;
+    document.getElementById("tourName").value =
+      t.name || "";
+
+    document.getElementById("tourMode").value =
+      t.mode || "SQUAD";
+
+    document.getElementById("tourFee").value =
+      t.entry_fee || 0;
+
+    document.getElementById("tourPrize").value =
+      t.prize_pool || 0;
+
+    document.getElementById("tourSlots").value =
+      t.total_slots || 48;
+
+    document.getElementById("tourStatus").value =
+      t.status || "OPEN";
+
+    document.getElementById("tourBanner").value =
+      t.banner || "";
+
+    document.getElementById("tourDescription").value =
+      t.description || "";
+
+    document.getElementById("roomId").value =
+      t.room_id || "";
+
+    document.getElementById("roomPassword").value =
+      t.room_password || "";
+
+    setDateInput(
+      "tourDate",
+      t.event_at
+    );
+
+    setDateInput(
+      "roomPublish",
+      t.room_publish_at
+    );
+
+    document.getElementById(
+      "tourFormTitle"
+    ).textContent = "✏️ Edit Tournament";
+
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth"
+    });
+
+  } catch (err) {
+    showTourMessage(
+      "❌ " + err.message
+    );
+  }
+}
+
+
+// ================================
+// DELETE TOURNAMENT
+// ================================
+
+async function deleteTournament(id) {
+
+  if (!confirm(
+    "Delete this tournament?"
+  )) {
+    return;
+  }
+
+  try {
+
+    const res = await fetch(
+      `/api/admin/tournaments/${id}`,
+      {
+        method: "DELETE",
+        credentials: "include"
+      }
+    );
+
+    const data = await res.json();
+
+    if (!res.ok) {
+      throw new Error(
+        data.error || "Failed to delete tournament"
+      );
+    }
+
+    showTourMessage(
+      "✅ Tournament deleted"
+    );
+
+    await loadTournaments();
+
+  } catch (err) {
+    showTourMessage(
+      "❌ " + err.message
+    );
+  }
+}
+
+
+// ================================
+// REGISTRATIONS
+// ================================
+
+async function loadTournamentRegistrations(
+  tournamentId
+) {
+
+  const box =
+    document.getElementById(
+      "registrationList"
+    );
+
+  if (!box) return;
+
+  box.innerHTML =
+    "⏳ Loading registrations...";
+
+  try {
+
+    const res = await fetch(
+      "/api/admin/registrations",
+      {
+        credentials: "include"
+      }
+    );
+
+    const data = await res.json();
+
+    if (!res.ok) {
+      throw new Error(
+        data.error ||
+        "Failed to load registrations"
+      );
+    }
+
+    const rows = data.filter(
+      r =>
+        Number(r.tournament_id) ===
+        Number(tournamentId)
+    );
+
+    if (rows.length === 0) {
+
+      box.innerHTML = `
+        <div class="placeholder">
+          No registrations found.
+        </div>
+      `;
+
+      return;
+    }
+
+    box.innerHTML = rows.map(r => `
+      <div
+        class="card"
+        style="margin-top:10px"
+      >
+
+        <h3>
+          👤 ${escapeHTML(
+            r.player_name || "Player"
+          )}
+        </h3>
+
+        <div>
+          <b>Email:</b>
+          ${escapeHTML(
+            r.player_email || "-"
+          )}
+        </div>
+
+        <div>
+          <b>FF Username:</b>
+          ${escapeHTML(
+            r.ff_username || "-"
+          )}
+        </div>
+
+        <div>
+          <b>FF UID:</b>
+          ${escapeHTML(
+            r.ff_uid || "-"
+          )}
+        </div>
+
+        <div>
+          <b>Slot:</b>
+          ${r.slot_no || "Not assigned"}
+        </div>
+
+        <div>
+          <b>Status:</b>
+          ${escapeHTML(
+            r.status || "-"
+          )}
+        </div>
+
+        <div>
+          <b>Payment:</b>
+          ${escapeHTML(
+            r.payment_status || "-"
+          )}
+        </div>
+
+      </div>
+    `).join("");
+
+  } catch (err) {
+
+    box.innerHTML = `
+      <div class="message">
+        ❌ ${escapeHTML(err.message)}
+      </div>
+    `;
+  }
+}
+
+
+// ================================
+// RESET FORM
+// ================================
+
+function resetTournamentForm() {
+
+  document.getElementById("tourId").value = "";
+
+  document.getElementById("tourName").value = "";
+
+  document.getElementById("tourMode").value =
+    "SOLO";
+
+  document.getElementById("tourFee").value = "";
+
+  document.getElementById("tourPrize").value = "";
+
+  document.getElementById("tourSlots").value =
+    "48";
+
+  document.getElementById("tourDate").value = "";
+
+  document.getElementById("tourStatus").value =
+    "OPEN";
+
+  document.getElementById("tourBanner").value = "";
+
+  document.getElementById(
+    "tourDescription"
+  ).value = "";
+
+  document.getElementById("roomId").value = "";
+
+  document.getElementById(
+    "roomPassword"
+  ).value = "";
+
+  document.getElementById(
+    "roomPublish"
+  ).value = "";
+
+  document.getElementById(
+    "tourFormTitle"
+  ).textContent =
+    "➕ Create Tournament";
+}
+
+
+// ================================
+// MESSAGE
+// ================================
+
+function showTourMessage(message) {
+
+  const box =
+    document.getElementById(
+      "tourMessage"
+    );
+
+  if (!box) return;
+
+  box.textContent = message;
+
+  setTimeout(() => {
+    box.textContent = "";
+  }, 4000);
+}
+
+
+// ================================
+// DATE HELPERS
+// ================================
+
+function toISODate(value) {
+
+  if (!value) return null;
+
+  const d = new Date(value);
+
+  if (Number.isNaN(d.getTime())) {
+    return null;
+  }
+
+  return d.toISOString();
+}
+
+
+function setDateInput(id, value) {
+
+  const input =
+    document.getElementById(id);
+
+  if (!input || !value) {
+
+    if (input) {
+      input.value = "";
+    }
+
+    return;
+  }
+
+  const d = new Date(value);
+
+  if (Number.isNaN(d.getTime())) {
+
+    input.value = "";
+
+    return;
+  }
+
+  const local = new Date(
+    d.getTime() -
+    d.getTimezoneOffset() * 60000
+  );
+
+  input.value =
+    local.toISOString().slice(0, 16);
+}
+
+
+// ================================
+// HTML SAFETY
+// ================================
+
+function escapeHTML(value) {
+
+  return String(value ?? "")
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;");
+}
+
+
+// ================================
+// AUTO LOAD
+// ================================
+
+document.addEventListener(
+  "DOMContentLoaded",
+  () => {
+
+    if (
+      document.getElementById(
+        "tournamentList"
+      )
+    ) {
+      loadTournaments();
+    }
+
+  }
+);
 </script>
 
 </body>
