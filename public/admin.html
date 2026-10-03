@@ -1122,7 +1122,157 @@ label{
   </div>
 
 </section>
+<!-- TOURNAMENT TEMPLATES -->
 
+<section id="templates" class="page">
+
+  <h1 class="title">📋 Tournament Templates</h1>
+
+  <p class="desc">
+    Save common tournament settings and reuse them quickly.
+  </p>
+
+  <div class="card">
+
+    <h3 id="templateFormTitle">
+      ➕ Create Template
+    </h3>
+
+    <input
+      type="hidden"
+      id="templateId"
+    >
+
+    <label>Template Name</label>
+
+    <input
+      id="templateName"
+      class="input"
+      placeholder="Example: Daily Squad ₹20"
+    >
+
+    <label>Mode</label>
+
+    <select
+      id="templateMode"
+      class="input"
+    >
+      <option value="SOLO">Solo</option>
+      <option value="DUO">Duo</option>
+      <option value="SQUAD">Squad</option>
+    </select>
+
+    <label>Entry Fee</label>
+
+    <input
+      id="templateFee"
+      class="input"
+      type="number"
+      min="0"
+      value="0"
+    >
+
+    <label>Prize Pool</label>
+
+    <input
+      id="templatePrize"
+      class="input"
+      type="number"
+      min="0"
+      value="0"
+    >
+
+    <label>Total Slots</label>
+
+    <input
+      id="templateSlots"
+      class="input"
+      type="number"
+      min="1"
+      value="48"
+    >
+
+    <label>Status</label>
+
+    <select
+      id="templateStatus"
+      class="input"
+    >
+      <option value="OPEN">OPEN</option>
+      <option value="UPCOMING">UPCOMING</option>
+      <option value="CLOSED">CLOSED</option>
+    </select>
+
+    <label>Banner URL</label>
+
+    <input
+      id="templateBanner"
+      class="input"
+      placeholder="https://..."
+    >
+
+    <label>Description</label>
+
+    <textarea
+      id="templateDescription"
+      class="input"
+      placeholder="Default tournament description..."
+    ></textarea>
+
+    <div
+      style="display:flex;gap:8px;flex-wrap:wrap;margin-top:14px"
+    >
+
+      <button
+        class="primaryBtn"
+        onclick="saveTournamentTemplate()"
+      >
+        💾 Save Template
+      </button>
+
+      <button
+        class="secondaryBtn"
+        onclick="resetTemplateForm()"
+      >
+        Clear
+      </button>
+
+    </div>
+
+    <div
+      id="templateMessage"
+      class="message"
+    ></div>
+
+  </div>
+
+  <div class="card">
+
+    <div
+      style="display:flex;justify-content:space-between;align-items:center;gap:8px"
+    >
+
+      <h3>📚 Saved Templates</h3>
+
+      <button
+        class="secondaryBtn"
+        onclick="loadTournamentTemplates()"
+      >
+        🔄 Refresh
+      </button>
+
+    </div>
+
+    <div
+      id="templateList"
+      style="margin-top:14px"
+    >
+      Loading templates...
+    </div>
+
+  </div>
+
+</section>
 </main>
 
 
