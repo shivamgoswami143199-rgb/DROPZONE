@@ -427,9 +427,13 @@ app.post("/api/login", (req, res) => {
     FROM users WHERE lower(email) = ?
   `).get(email);
 
-  if (!user || !bcrypt.compareSync(password, user.password_hash)) {
-    return res.status(401).json({ error: "Invalid email or password" });
-  }
+if (!user) {
+  return res.status(401).json({ error: "OWNER email database में नहीं मिला" });
+}
+
+if (!bcrypt.compareSync(password, user.password_hash)) {
+  return res.status(401).json({ error: "Password database वाले password से match नहीं हो रहा" });
+}
 
   const token = createToken(user);
   setAuthCookie(res, token);
