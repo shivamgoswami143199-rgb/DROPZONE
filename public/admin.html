@@ -3443,13 +3443,30 @@ async function loadPaymentData() {
     await loadPaymentRegistrations();
 
   } catch (error) {
+  } catch (error) {
 
     console.error(
       "loadPaymentData error:",
       error
     );
 
-  }
+    const box =
+      document.getElementById(
+        "paymentDashboardList"
+      );
+
+    if (box) {
+
+      box.innerHTML =
+        "❌ Payment data error: " +
+        (
+          error.message ||
+          "Unknown error"
+        );
+
+    }
+
+}
 
 }
 
