@@ -2,9 +2,10 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="theme-color" content="#090b16">
-<title>DROPZONE ADMIN</title>
+<meta name="viewport"
+content="width=device-width,initial-scale=1,maximum-scale=1">
+
+<title>DROPZONE Admin</title>
 
 <style>
 *{
@@ -14,22 +15,15 @@
 }
 
 :root{
-  --bg:#070912;
-  --panel:#0d1020;
-  --panel2:#111528;
-  --panel3:#151a30;
-  --border:#252b45;
+  --bg:#070914;
+  --panel:#0d1120;
+  --card:#12182b;
+  --line:#252c45;
   --text:#f5f7ff;
-  --muted:#8e96b5;
-  --purple:#8b5cf6;
-  --blue:#3b82f6;
-  --cyan:#22d3ee;
-  --green:#22c55e;
-  --yellow:#f59e0b;
-  --red:#ef4444;
-  --pink:#ec4899;
-  --orange:#f97316;
-  --shadow:0 18px 45px rgba(0,0,0,.35);
+  --muted:#8992ad;
+  --purple:#7c3cff;
+  --green:#20d889;
+  --red:#ff526d;
 }
 
 html,body{
@@ -37,3988 +31,910 @@ html,body{
   min-height:100%;
   background:var(--bg);
   color:var(--text);
-  font-family:Inter,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  font-family:Arial,system-ui,sans-serif;
 }
 
 body{
   overflow-x:hidden;
 }
 
-button,
-input,
-select,
-textarea{
-  font:inherit;
-}
+/* HEADER */
 
-button{
-  cursor:pointer;
-}
-
-a{
-  color:inherit;
-  text-decoration:none;
-}
-
-.hidden{
-  display:none!important;
-}
-
-/* =========================
-   LOGIN
-========================= */
-
-.login-screen{
-  min-height:100vh;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  padding:24px;
-  position:relative;
-  overflow:hidden;
-  background:
-    radial-gradient(circle at 15% 20%,rgba(139,92,246,.18),transparent 30%),
-    radial-gradient(circle at 85% 75%,rgba(34,211,238,.12),transparent 28%),
-    linear-gradient(135deg,#050711,#0a0d19 55%,#080a13);
-}
-
-.login-glow{
-  position:absolute;
-  width:420px;
-  height:420px;
-  border-radius:50%;
-  background:rgba(139,92,246,.08);
-  filter:blur(90px);
-  top:-160px;
-  left:-120px;
-}
-
-.login-glow.two{
-  background:rgba(34,211,238,.07);
-  top:auto;
-  left:auto;
-  right:-160px;
-  bottom:-160px;
-}
-
-.login-card{
-  width:100%;
-  max-width:430px;
-  background:rgba(13,16,32,.94);
-  border:1px solid var(--border);
-  border-radius:24px;
-  padding:32px;
-  box-shadow:var(--shadow);
-  position:relative;
-  z-index:2;
-  backdrop-filter:blur(20px);
-}
-
-.login-brand{
-  text-align:center;
-  margin-bottom:28px;
-}
-
-.login-logo{
-  width:72px;
-  height:72px;
-  margin:0 auto 16px;
-  border-radius:20px;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  font-size:25px;
-  font-weight:900;
-  color:#fff;
-  background:linear-gradient(135deg,var(--purple),var(--blue));
-  box-shadow:0 0 35px rgba(139,92,246,.35);
-}
-
-.login-brand h1{
-  font-size:27px;
-  letter-spacing:.5px;
-}
-
-.login-brand p{
-  color:var(--muted);
-  margin-top:7px;
-  font-size:13px;
-}
-
-.form-group{
-  margin-bottom:16px;
-}
-
-.form-group label{
-  display:block;
-  font-size:12px;
-  color:#b7bdd5;
-  margin-bottom:7px;
-  font-weight:700;
-}
-
-.form-control{
-  width:100%;
-  height:46px;
-  border:1px solid var(--border);
-  background:#090c18;
-  color:#fff;
-  border-radius:12px;
-  padding:0 14px;
-  outline:none;
-  transition:.2s;
-}
-
-textarea.form-control{
-  height:110px;
-  padding:12px 14px;
-  resize:vertical;
-}
-
-.form-control:focus{
-  border-color:var(--purple);
-  box-shadow:0 0 0 3px rgba(139,92,246,.12);
-}
-
-.login-btn{
-  width:100%;
-  height:48px;
-  border:0;
-  border-radius:13px;
-  color:#fff;
-  font-weight:800;
-  background:linear-gradient(135deg,var(--purple),var(--blue));
-  box-shadow:0 10px 25px rgba(99,102,241,.22);
-  margin-top:6px;
-}
-
-.login-btn:hover{
-  filter:brightness(1.1);
-}
-
-.login-message{
-  margin-top:14px;
-  font-size:13px;
-  text-align:center;
-  color:#ff8f8f;
-  min-height:18px;
-}
-
-/* =========================
-   APP LAYOUT
-========================= */
-
-.app{
-  min-height:100vh;
-  display:flex;
-  background:
-    radial-gradient(circle at 75% 0%,rgba(139,92,246,.07),transparent 28%),
-    var(--bg);
-}
-
-.sidebar{
-  width:255px;
-  flex-shrink:0;
-  min-height:100vh;
-  background:rgba(9,12,24,.97);
-  border-right:1px solid var(--border);
-  position:fixed;
-  left:0;
+.topbar{
+  position:sticky;
   top:0;
-  bottom:0;
   z-index:100;
-  display:flex;
-  flex-direction:column;
-  overflow-y:auto;
-}
-
-.sidebar::-webkit-scrollbar{
-  width:4px;
-}
-
-.sidebar::-webkit-scrollbar-thumb{
-  background:#282e4b;
-  border-radius:20px;
-}
-
-.brand{
-  height:76px;
-  padding:0 20px;
-  display:flex;
-  align-items:center;
-  gap:12px;
-  border-bottom:1px solid var(--border);
-}
-
-.brand-mark{
-  width:40px;
-  height:40px;
-  border-radius:12px;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  font-size:14px;
-  font-weight:900;
-  background:linear-gradient(135deg,var(--purple),var(--blue));
-  box-shadow:0 0 20px rgba(139,92,246,.25);
-}
-
-.brand-text{
-  line-height:1.1;
-}
-
-.brand-text strong{
-  display:block;
-  font-size:15px;
-  letter-spacing:.8px;
-}
-
-.brand-text span{
-  display:block;
-  font-size:10px;
-  color:var(--cyan);
-  margin-top:4px;
-  font-weight:800;
-  letter-spacing:1px;
-}
-
-.sidebar-section{
-  padding:18px 12px 7px;
-  color:#5f6787;
-  font-size:10px;
-  font-weight:900;
-  text-transform:uppercase;
-  letter-spacing:1.2px;
-}
-
-.nav-item{
-  margin:3px 10px;
-  min-height:42px;
-  padding:0 12px;
-  border-radius:11px;
-  display:flex;
-  align-items:center;
-  gap:11px;
-  color:#9da5c1;
-  font-size:13px;
-  font-weight:650;
-  transition:.18s;
-  border:1px solid transparent;
-}
-
-.nav-item:hover{
-  background:#11152a;
-  color:#fff;
-}
-
-.nav-item.active{
-  color:#fff;
-  background:linear-gradient(
-    90deg,
-    rgba(139,92,246,.22),
-    rgba(59,130,246,.08)
-  );
-  border-color:rgba(139,92,246,.25);
-}
-
-.nav-icon{
-  width:21px;
-  text-align:center;
-  font-size:16px;
-}
-
-.nav-badge{
-  margin-left:auto;
-  min-width:20px;
-  height:20px;
-  padding:0 6px;
-  border-radius:20px;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  background:rgba(239,68,68,.16);
-  color:#ff8e8e;
-  font-size:10px;
-  font-weight:800;
-}
-
-.sidebar-bottom{
-  margin-top:auto;
-  padding:12px;
-  border-top:1px solid var(--border);
-}
-
-.user-mini{
+  height:64px;
   display:flex;
   align-items:center;
   gap:10px;
-  padding:9px;
-  border-radius:12px;
-  background:#0e1222;
-  margin-bottom:9px;
+  padding:8px 12px;
+  background:#080b16;
+  border-bottom:1px solid var(--line);
 }
 
-.user-avatar{
-  width:36px;
-  height:36px;
+.menu{
+  width:46px;
+  height:46px;
+  border:1px solid var(--line);
+  border-radius:12px;
+  background:var(--card);
+  color:white;
+  font-size:22px;
+}
+
+.logo{
+  width:40px;
+  height:40px;
   border-radius:11px;
-  background:linear-gradient(135deg,var(--pink),var(--purple));
   display:flex;
   align-items:center;
   justify-content:center;
-  font-size:13px;
+  background:linear-gradient(135deg,#7c3cff,#4320a7);
   font-weight:900;
 }
 
-.user-info{
-  min-width:0;
+.brand{
   flex:1;
 }
 
-.user-info strong{
+.brand b{
   display:block;
-  font-size:12px;
-  white-space:nowrap;
-  overflow:hidden;
-  text-overflow:ellipsis;
+  font-size:16px;
 }
 
-.user-info span{
-  display:block;
-  color:var(--green);
+.brand small{
+  color:var(--muted);
+  font-size:9px;
+}
+
+/* SIDEBAR */
+
+.sidebar{
+  position:fixed;
+  z-index:500;
+  top:0;
+  left:0;
+  bottom:0;
+  width:285px;
+  padding:14px;
+  background:#090c18;
+  border-right:1px solid var(--line);
+  transform:translateX(-105%);
+  transition:.2s;
+  overflow-y:auto;
+}
+
+.sidebar.open{
+  transform:translateX(0);
+}
+
+.sideHead{
+  height:55px;
+  display:flex;
+  align-items:center;
+  gap:10px;
+  margin-bottom:12px;
+}
+
+.close{
+  margin-left:auto;
+  width:42px;
+  height:42px;
+  border:1px solid var(--line);
+  border-radius:11px;
+  background:#14192b;
+  color:white;
+  font-size:22px;
+}
+
+.group{
+  margin-top:18px;
+}
+
+.groupTitle{
+  color:#68718d;
   font-size:10px;
-  margin-top:3px;
+  font-weight:bold;
+  letter-spacing:1px;
+  margin:0 8px 7px;
+  text-transform:uppercase;
 }
 
-.logout-btn{
+.nav{
   width:100%;
-  height:38px;
-  border:1px solid #292f4a;
-  border-radius:10px;
-  background:#0d1020;
-  color:#aeb5cd;
-  font-size:12px;
-  font-weight:700;
+  min-height:46px;
+  display:flex;
+  align-items:center;
+  gap:10px;
+  border:0;
+  border-radius:11px;
+  background:transparent;
+  color:#b7bfd5;
+  padding:10px 11px;
+  margin-bottom:4px;
+  text-align:left;
+  font-size:13px;
+  font-weight:bold;
 }
 
-.logout-btn:hover{
-  color:#fff;
-  border-color:var(--red);
-  background:rgba(239,68,68,.08);
+.nav:active,
+.nav.active{
+  background:rgba(124,60,255,.20);
+  color:white;
 }
 
-/* =========================
-   MAIN
-========================= */
+.icon{
+  width:25px;
+  text-align:center;
+  font-size:17px;
+}
+
+/* OVERLAY */
+
+.overlay{
+  position:fixed;
+  z-index:400;
+  inset:0;
+  background:rgba(0,0,0,.7);
+  display:none;
+}
+
+.overlay.show{
+  display:block;
+}
+
+/* MAIN */
 
 .main{
-  width:calc(100% - 255px);
-  margin-left:255px;
-  min-height:100vh;
-}
-
-.topbar{
-  height:76px;
-  padding:0 25px;
-  display:flex;
-  align-items:center;
-  gap:15px;
-  border-bottom:1px solid var(--border);
-  background:rgba(7,9,18,.85);
-  backdrop-filter:blur(16px);
-  position:sticky;
-  top:0;
-  z-index:50;
-}
-
-.mobile-menu{
-  display:none;
-  width:40px;
-  height:40px;
-  border:1px solid var(--border);
-  background:#0e1222;
-  color:#fff;
-  border-radius:10px;
-  font-size:18px;
-}
-
-.search-box{
-  flex:1;
-  max-width:440px;
-  position:relative;
-}
-
-.search-box input{
   width:100%;
-  height:42px;
-  padding:0 14px 0 40px;
-  border-radius:11px;
-  border:1px solid var(--border);
-  background:#0c1020;
-  color:#fff;
-  outline:none;
+  padding:15px;
 }
-
-.search-box input:focus{
-  border-color:var(--purple);
-}
-
-.search-icon{
-  position:absolute;
-  left:14px;
-  top:12px;
-  color:#6e7694;
-  font-size:14px;
-}
-
-.top-actions{
-  margin-left:auto;
-  display:flex;
-  align-items:center;
-  gap:9px;
-}
-
-.icon-btn{
-  width:40px;
-  height:40px;
-  border:1px solid var(--border);
-  background:#0d1121;
-  color:#9ea6c2;
-  border-radius:10px;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  position:relative;
-}
-
-.icon-btn:hover{
-  color:#fff;
-  border-color:#3a4264;
-}
-
-.online-dot{
-  width:8px;
-  height:8px;
-  background:var(--green);
-  border-radius:50%;
-  position:absolute;
-  top:7px;
-  right:7px;
-  box-shadow:0 0 9px rgba(34,197,94,.8);
-}
-
-.content{
-  padding:25px;
-  max-width:1600px;
-  margin:auto;
-}
-
-/* =========================
-   PAGE HEADER
-========================= */
 
 .page{
   display:none;
-  animation:pageIn .2s ease;
 }
 
 .page.active{
   display:block;
 }
 
-@keyframes pageIn{
-  from{
-    opacity:0;
-    transform:translateY(4px);
-  }
-  to{
-    opacity:1;
-    transform:none;
-  }
-}
-
-.page-head{
-  display:flex;
-  align-items:flex-start;
-  justify-content:space-between;
-  gap:20px;
-  margin-bottom:23px;
-}
-
-.page-head h1{
-  font-size:25px;
-  line-height:1.2;
-}
-
-.page-head p{
-  color:var(--muted);
-  font-size:12px;
-  margin-top:7px;
-}
-
-.page-actions{
-  display:flex;
-  gap:8px;
-  flex-wrap:wrap;
-}
-
-/* =========================
-   BUTTONS
-========================= */
-
-.btn{
-  min-height:40px;
-  padding:0 14px;
-  border-radius:10px;
-  border:1px solid var(--border);
-  background:#101427;
-  color:#dce1f3;
-  font-size:12px;
-  font-weight:800;
-  display:inline-flex;
-  align-items:center;
-  justify-content:center;
-  gap:7px;
-}
-
-.btn:hover{
-  border-color:#424b70;
-  color:#fff;
-}
-
-.btn-primary{
-  border-color:transparent;
-  background:linear-gradient(135deg,var(--purple),var(--blue));
-  color:#fff;
-}
-
-.btn-success{
-  background:rgba(34,197,94,.12);
-  border-color:rgba(34,197,94,.25);
-  color:#62e58c;
-}
-
-.btn-danger{
-  background:rgba(239,68,68,.1);
-  border-color:rgba(239,68,68,.25);
-  color:#ff8585;
-}
-
-.btn-warning{
-  background:rgba(245,158,11,.1);
-  border-color:rgba(245,158,11,.25);
-  color:#ffc15d;
-}
-
-.btn-cyan{
-  background:rgba(34,211,238,.1);
-  border-color:rgba(34,211,238,.25);
-  color:#62e6f7;
-}
-
-/* =========================
-   CARDS
-========================= */
-
-.card{
-  background:linear-gradient(
-    145deg,
-    rgba(16,20,39,.97),
-    rgba(11,14,28,.97)
-  );
-  border:1px solid var(--border);
-  border-radius:16px;
-  box-shadow:0 12px 35px rgba(0,0,0,.16);
-}
-
-.card-head{
-  min-height:58px;
-  padding:15px 17px;
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  gap:12px;
-  border-bottom:1px solid var(--border);
-}
-
-.card-head h3{
-  font-size:14px;
-}
-
-.card-head span{
-  color:var(--muted);
-  font-size:11px;
-}
-
-.card-body{
-  padding:17px;
-}
-
-.stats-grid{
-  display:grid;
-  grid-template-columns:repeat(4,1fr);
-  gap:14px;
-  margin-bottom:16px;
-}
-
-.stat-card{
-  padding:17px;
-  min-height:118px;
-  position:relative;
-  overflow:hidden;
-}
-
-.stat-card::after{
-  content:"";
-  position:absolute;
-  width:80px;
-  height:80px;
-  border-radius:50%;
-  right:-25px;
-  bottom:-30px;
-  background:rgba(139,92,246,.08);
-  filter:blur(4px);
-}
-
-.stat-top{
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-}
-
-.stat-icon{
-  width:38px;
-  height:38px;
-  border-radius:11px;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  font-size:16px;
-  background:rgba(139,92,246,.12);
-  color:#b99cff;
-}
-
-.stat-card.blue .stat-icon{
-  background:rgba(59,130,246,.12);
-  color:#77a9ff;
-}
-
-.stat-card.green .stat-icon{
-  background:rgba(34,197,94,.12);
-  color:#68e68e;
-}
-
-.stat-card.orange .stat-icon{
-  background:rgba(249,115,22,.12);
-  color:#ffad73;
-}
-
-.stat-value{
-  font-size:27px;
+.title{
+  font-size:24px;
   font-weight:900;
-  margin-top:14px;
-  letter-spacing:.2px;
-}
-
-.stat-label{
-  color:var(--muted);
-  font-size:11px;
-  margin-top:3px;
-}
-
-.grid-2{
-  display:grid;
-  grid-template-columns:1.45fr 1fr;
-  gap:16px;
-}
-
-.grid-2-equal{
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:16px;
-}
-
-.grid-3{
-  display:grid;
-  grid-template-columns:repeat(3,1fr);
-  gap:16px;
-}
-
-/* =========================
-   TABLE
-========================= */
-
-.table-wrap{
-  width:100%;
-  overflow-x:auto;
-}
-
-table{
-  width:100%;
-  border-collapse:collapse;
-  min-width:650px;
-}
-
-th{
-  text-align:left;
-  color:#69728f;
-  font-size:10px;
-  font-weight:900;
-  text-transform:uppercase;
-  letter-spacing:.7px;
-  padding:11px 14px;
-  border-bottom:1px solid var(--border);
-  white-space:nowrap;
-}
-
-td{
-  padding:13px 14px;
-  font-size:12px;
-  color:#cdd2e4;
-  border-bottom:1px solid rgba(37,43,69,.65);
-  vertical-align:middle;
-}
-
-tbody tr:hover{
-  background:rgba(139,92,246,.025);
-}
-
-tbody tr:last-child td{
-  border-bottom:0;
-}
-
-.user-cell{
-  display:flex;
-  align-items:center;
-  gap:9px;
-}
-
-.avatar{
-  width:31px;
-  height:31px;
-  border-radius:9px;
-  background:linear-gradient(135deg,#4f46e5,#9333ea);
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  font-size:11px;
-  font-weight:900;
-  color:#fff;
-}
-
-.user-cell strong{
-  display:block;
-  color:#fff;
-  font-size:12px;
-}
-
-.user-cell small{
-  display:block;
-  color:#69728f;
-  font-size:9px;
-  margin-top:2px;
-}
-
-.badge{
-  display:inline-flex;
-  align-items:center;
-  justify-content:center;
-  min-height:23px;
-  padding:0 8px;
-  border-radius:20px;
-  font-size:9px;
-  font-weight:900;
-  letter-spacing:.3px;
-}
-
-.badge-green{
-  color:#68e68e;
-  background:rgba(34,197,94,.1);
-  border:1px solid rgba(34,197,94,.18);
-}
-
-.badge-yellow{
-  color:#ffc55f;
-  background:rgba(245,158,11,.1);
-  border:1px solid rgba(245,158,11,.18);
-}
-
-.badge-red{
-  color:#ff8585;
-  background:rgba(239,68,68,.1);
-  border:1px solid rgba(239,68,68,.18);
-}
-
-.badge-blue{
-  color:#77a9ff;
-  background:rgba(59,130,246,.1);
-  border:1px solid rgba(59,130,246,.18);
-}
-
-.badge-purple{
-  color:#c0a5ff;
-  background:rgba(139,92,246,.1);
-  border:1px solid rgba(139,92,246,.18);
-}
-
-.badge-gray{
-  color:#9ba3bd;
-  background:rgba(148,163,184,.08);
-  border:1px solid rgba(148,163,184,.14);
-}
-
-/* =========================
-   DASHBOARD QUICK ACTIONS
-========================= */
-
-.quick-grid{
-  display:grid;
-  grid-template-columns:repeat(4,1fr);
-  gap:10px;
-}
-
-.quick-btn{
-  min-height:72px;
-  padding:12px;
-  border-radius:12px;
-  border:1px solid var(--border);
-  background:#0d1121;
-  color:#b8bfd6;
-  text-align:left;
-}
-
-.quick-btn:hover{
-  border-color:#424b70;
-  color:#fff;
-  transform:translateY(-1px);
-}
-
-.quick-btn .q-icon{
-  display:block;
-  font-size:17px;
-  margin-bottom:7px;
-}
-
-.quick-btn strong{
-  display:block;
-  font-size:11px;
-}
-
-.quick-btn span{
-  display:block;
-  color:#68718e;
-  font-size:9px;
-  margin-top:3px;
-}
-
-/* =========================
-   LIVE STAGE
-========================= */
-
-.live-box{
-  padding:17px;
-  border-radius:14px;
-  background:
-    radial-gradient(circle at 80% 10%,rgba(34,211,238,.08),transparent 35%),
-    #0a0e1c;
-  border:1px solid var(--border);
-}
-
-.live-title{
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  gap:10px;
-}
-
-.live-title strong{
-  font-size:13px;
-}
-
-.live-title span{
-  font-size:9px;
-  color:#6e7897;
-}
-
-.live-dot{
-  display:inline-flex;
-  align-items:center;
-  gap:5px;
-  color:#6ee791;
-  font-size:9px;
-  font-weight:900;
-}
-
-.live-dot i{
-  width:6px;
-  height:6px;
-  border-radius:50%;
-  background:var(--green);
-  box-shadow:0 0 8px rgba(34,197,94,.8);
-}
-
-.live-stage{
-  margin-top:17px;
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  gap:10px;
-}
-
-.stage-number{
-  width:52px;
-  height:52px;
-  border-radius:14px;
-  background:linear-gradient(135deg,var(--purple),var(--blue));
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  font-size:18px;
-  font-weight:900;
-}
-
-.stage-info{
-  flex:1;
-}
-
-.stage-info strong{
-  display:block;
-  font-size:12px;
-}
-
-.stage-info span{
-  display:block;
-  color:var(--muted);
-  font-size:10px;
-  margin-top:4px;
-}
-
-.progress{
-  height:6px;
-  border-radius:20px;
-  background:#1a2035;
-  overflow:hidden;
-  margin-top:14px;
-}
-
-.progress div{
-  height:100%;
-  width:68%;
-  border-radius:20px;
-  background:linear-gradient(90deg,var(--purple),var(--cyan));
-}
-
-/* =========================
-   FORM GRID
-========================= */
-
-.form-grid{
-  display:grid;
-  grid-template-columns:repeat(2,1fr);
-  gap:14px;
-}
-
-.form-grid.three{
-  grid-template-columns:repeat(3,1fr);
-}
-
-.full{
-  grid-column:1/-1;
-}
-
-.form-label{
-  display:block;
-  font-size:11px;
-  color:#9ea6c1;
-  font-weight:800;
   margin-bottom:6px;
 }
 
-.select-control{
-  width:100%;
-  height:43px;
-  border:1px solid var(--border);
-  border-radius:10px;
-  background:#0a0e1c;
-  color:#fff;
-   padding:0 12px;
-  outline:none;
-  font-size:13px;
-  transition:.2s;
-}
-
-.select-control:focus{
-  border-color:var(--a);
-  box-shadow:0 0 0 3px #6d5df533;
-}
-
-.input-control{
-  width:100%;
-  min-height:43px;
-  border:1px solid var(--border);
-  border-radius:10px;
-  background:#0a0e1c;
-  color:#fff;
-  padding:0 12px;
-  outline:none;
-  font-size:13px;
-  transition:.2s;
-}
-
-.input-control:focus{
-  border-color:var(--a);
-  box-shadow:0 0 0 3px #6d5df533;
-}
-
-.textarea-control{
-  width:100%;
-  min-height:110px;
-  border:1px solid var(--border);
-  border-radius:10px;
-  background:#0a0e1c;
-  color:#fff;
-  padding:12px;
-  outline:none;
-  font-size:13px;
-  resize:vertical;
-  font-family:inherit;
-}
-
-.textarea-control:focus{
-  border-color:var(--a);
-  box-shadow:0 0 0 3px #6d5df533;
-}
-
-.form-help{
-  color:#69738e;
-  font-size:10px;
-  margin-top:5px;
-}
-
-.form-error{
-  color:#ff9b9b;
-  font-size:11px;
-  margin-top:5px;
-}
-
-.form-success{
-  color:#91efaa;
-  font-size:11px;
-  margin-top:5px;
-}
-
-.check-row{
-  display:flex;
-  align-items:center;
-  gap:9px;
-  min-height:43px;
-  padding:10px 12px;
-  border:1px solid var(--border);
-  border-radius:10px;
-  background:#0a0e1c;
-}
-
-.check-row input{
-  width:17px;
-  height:17px;
-  accent-color:var(--a);
-}
-
-.check-row label{
-  margin:0;
-  color:#c8cee0;
-  font-size:12px;
-}
-
-.switch{
-  position:relative;
-  display:inline-block;
-  width:44px;
-  height:24px;
-}
-
-.switch input{
-  opacity:0;
-  width:0;
-  height:0;
-}
-
-.slider{
-  position:absolute;
-  cursor:pointer;
-  inset:0;
-  background:#202740;
-  border:1px solid var(--border);
-  border-radius:30px;
-  transition:.2s;
-}
-
-.slider:before{
-  content:"";
-  position:absolute;
-  width:18px;
-  height:18px;
-  left:2px;
-  top:2px;
-  background:#fff;
-  border-radius:50%;
-  transition:.2s;
-}
-
-.switch input:checked + .slider{
-  background:var(--a);
-}
-
-.switch input:checked + .slider:before{
-  transform:translateX(20px);
-}
-
-.control-row{
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  gap:12px;
-  padding:12px;
-  border:1px solid var(--border);
-  border-radius:11px;
-  background:#090c18;
-  margin-bottom:8px;
-}
-
-.control-row:last-child{
-  margin-bottom:0;
-}
-
-.control-title{
-  font-size:12px;
-  font-weight:700;
-  color:#fff;
-}
-
-.control-sub{
+.desc{
   color:var(--muted);
-  font-size:10px;
-  margin-top:3px;
+  font-size:13px;
+  line-height:1.5;
+  margin-bottom:16px;
 }
 
-.btn-row{
-  display:flex;
-  flex-wrap:wrap;
-  gap:8px;
-}
+/* CARDS */
 
-.btn{
-  border:1px solid var(--border);
-  background:#11162b;
-  color:#fff;
-  padding:10px 13px;
-  border-radius:10px;
-  cursor:pointer;
-  font-size:12px;
-  font-weight:700;
-  transition:.2s;
-}
-
-.btn:hover{
-  transform:translateY(-1px);
-  border-color:#59627e;
-}
-
-.btn.primary{
-  background:linear-gradient(135deg,var(--a),#5d55f5);
-  border:0;
-}
-
-.btn.success{
-  background:#123522;
-  border-color:#245b38;
-  color:#9af0b2;
-}
-
-.btn.danger{
-  background:#471821;
-  border-color:#6b2530;
-  color:#ffb1b1;
-}
-
-.btn.orange{
-  background:#3c290d;
-  border-color:#654719;
-  color:#ffd58b;
-}
-
-.btn.small{
-  padding:7px 9px;
-  font-size:10px;
-}
-
-.icon-btn{
-  width:36px;
-  height:36px;
-  display:inline-flex;
-  align-items:center;
-  justify-content:center;
-  border:1px solid var(--border);
-  background:#11162b;
-  color:#fff;
-  border-radius:9px;
-  cursor:pointer;
-}
-
-.icon-btn:hover{
-  border-color:#66708d;
-}
-
-.badge{
-  display:inline-flex;
-  align-items:center;
-  justify-content:center;
-  min-width:20px;
-  padding:4px 7px;
-  border-radius:99px;
-  background:#1c2441;
-  color:#cbd2e8;
-  font-size:10px;
-  font-weight:700;
-}
-
-.badge.green{
-  background:#123522;
-  color:#9af0b2;
-}
-
-.badge.red{
-  background:#471821;
-  color:#ffb1b1;
-}
-
-.badge.orange{
-  background:#3c290d;
-  color:#ffd58b;
-}
-
-.badge.blue{
-  background:#102e49;
-  color:#9bd8ff;
-}
-
-.modal{
-  position:fixed;
-  inset:0;
-  display:none;
-  align-items:center;
-  justify-content:center;
-  padding:20px;
-  background:#0009;
-  backdrop-filter:blur(8px);
-  z-index:100;
-}
-
-.modal.open{
-  display:flex;
-}
-
-.modal-box{
-  width:min(620px,100%);
-  max-height:90vh;
-  overflow:auto;
-  background:#0d1120;
-  border:1px solid var(--border);
-  border-radius:18px;
-  padding:20px;
-  box-shadow:0 25px 80px #0009;
-}
-
-.modal-head{
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
+.grid{
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
   gap:10px;
-  margin-bottom:18px;
 }
 
-.modal-head h2{
-  margin:0;
-  font-size:19px;
+.card{
+  background:var(--card);
+  border:1px solid var(--line);
+  border-radius:15px;
+  padding:15px;
+  margin-bottom:12px;
 }
 
-.modal-close{
-  width:34px;
-  height:34px;
-  border:1px solid var(--border);
-  background:#11162b;
-  color:#fff;
-  border-radius:9px;
-  cursor:pointer;
-}
-
-.modal-footer{
-  display:flex;
-  justify-content:flex-end;
-  flex-wrap:wrap;
-  gap:8px;
-  margin-top:18px;
-}
-
-.toast{
-  position:fixed;
-  right:18px;
-  bottom:18px;
-  z-index:200;
-  min-width:250px;
-  max-width:360px;
-  padding:13px 15px;
-  border:1px solid var(--border);
-  border-radius:12px;
-  background:#11162bf2;
-  color:#fff;
-  box-shadow:0 15px 50px #0008;
-  transform:translateY(20px);
-  opacity:0;
-  pointer-events:none;
-  transition:.25s;
-}
-
-.toast.show{
-  transform:translateY(0);
-  opacity:1;
-}
-
-.toast.success{
-  border-color:#2c7144;
-}
-
-.toast.error{
-  border-color:#71303a;
-}
-
-.toast-title{
-  font-weight:800;
-  font-size:12px;
-  margin-bottom:3px;
-}
-
-.toast-text{
-  color:#aeb6ca;
-  font-size:11px;
-}
-
-.empty-state{
-  padding:55px 20px;
-  text-align:center;
-  color:var(--muted);
-}
-
-.empty-state .empty-icon{
-  font-size:35px;
+.statIcon{
+  font-size:20px;
   margin-bottom:10px;
 }
 
-.empty-state h3{
-  color:#fff;
-  margin:0 0 6px;
-}
-
-.empty-state p{
-  margin:0;
-  font-size:12px;
-}
-
-.loading{
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  gap:8px;
-  padding:30px;
+.statName{
   color:var(--muted);
-  font-size:12px;
-}
-
-.spinner{
-  width:17px;
-  height:17px;
-  border:2px solid #303850;
-  border-top-color:var(--a);
-  border-radius:50%;
-  animation:spin .7s linear infinite;
-}
-
-@keyframes spin{
-  to{
-    transform:rotate(360deg);
-  }
-}
-
-.divider{
-  height:1px;
-  background:var(--border);
-  margin:18px 0;
-}
-
-.info-box{
-  border:1px solid #263150;
-  background:#0b1020;
-  border-radius:12px;
-  padding:13px;
-  color:#aeb8d0;
-  font-size:11px;
-  line-height:1.6;
-}
-
-.info-box strong{
-  color:#fff;
-}
-
-.warning-box{
-  border:1px solid #5a461d;
-  background:#241b0b;
-  color:#ffd98b;
-  border-radius:12px;
-  padding:13px;
-  font-size:11px;
-  line-height:1.5;
-}
-
-.danger-box{
-  border:1px solid #5d2730;
-  background:#241015;
-  color:#ffb2b2;
-  border-radius:12px;
-  padding:13px;
-  font-size:11px;
-  line-height:1.5;
-}
-
-.code-box{
-  background:#070a12;
-  border:1px solid var(--border);
-  border-radius:11px;
-  padding:13px;
-  overflow:auto;
-  color:#b9c4dd;
-  font-family:monospace;
-  font-size:11px;
-  line-height:1.6;
-}
-
-.url-input{
-  display:flex;
-  gap:8px;
-}
-
-.url-input input{
-  flex:1;
-}
-
-.preview{
-  border:1px solid var(--border);
-  border-radius:14px;
-  background:#080b16;
-  overflow:hidden;
-}
-
-.preview-head{
-  padding:12px;
-  border-bottom:1px solid var(--border);
-  color:#aeb6ca;
   font-size:10px;
   text-transform:uppercase;
-  letter-spacing:1px;
 }
 
-.preview-body{
-  padding:16px;
-  min-height:180px;
+.statValue{
+  font-size:21px;
+  font-weight:900;
+  margin-top:4px;
 }
 
-.color-preview{
-  width:100%;
-  height:45px;
-  border-radius:10px;
-  border:1px solid var(--border);
-  background:linear-gradient(135deg,var(--a),#5d55f5);
+/* QUICK BUTTONS */
+
+.quick{
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:9px;
 }
 
-.table-actions{
-  display:flex;
-  gap:6px;
-  flex-wrap:wrap;
+.quick button{
+  min-height:70px;
+  border:1px solid var(--line);
+  border-radius:12px;
+  background:#0a0e1c;
+  color:white;
+  text-align:left;
+  padding:11px;
 }
 
-.pagination{
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  gap:6px;
-  margin-top:14px;
-}
-
-.pagination button{
-  min-width:34px;
-  height:34px;
-  border:1px solid var(--border);
-  border-radius:8px;
-  background:#11162b;
-  color:#fff;
-  cursor:pointer;
-}
-
-.pagination button.active{
-  background:var(--a);
-  border-color:var(--a);
-}
-
-.timeline{
-  position:relative;
-  padding-left:22px;
-}
-
-.timeline:before{
-  content:"";
-  position:absolute;
-  left:6px;
-  top:5px;
-  bottom:5px;
-  width:1px;
-  background:#303850;
-}
-
-.timeline-item{
-  position:relative;
-  margin-bottom:18px;
-}
-
-.timeline-item:before{
-  content:"";
-  position:absolute;
-  left:-20px;
-  top:4px;
-  width:9px;
-  height:9px;
-  border-radius:50%;
-  background:var(--a);
-  box-shadow:0 0 0 4px #6d5df522;
-}
-
-.timeline-item b{
-  font-size:12px;
-}
-
-.timeline-item small{
+.quick span{
   display:block;
+}
+
+.qicon{
+  font-size:19px;
+  margin-bottom:5px;
+}
+
+.qtitle{
+  font-size:12px;
+  font-weight:bold;
+}
+
+.qsub{
   color:var(--muted);
+  font-size:9px;
   margin-top:3px;
 }
 
-.avatar{
-  width:36px;
-  height:36px;
-  border-radius:50%;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  background:linear-gradient(135deg,var(--a),#5d55f5);
-  color:#fff;
-  font-weight:800;
-  font-size:12px;
-}
+/* PLACEHOLDER */
 
-.user-line{
-  display:flex;
-  align-items:center;
-  gap:10px;
-}
-
-.user-line-info b{
-  display:block;
-  font-size:12px;
-}
-
-.user-line-info small{
-  display:block;
+.placeholder{
+  padding:30px 15px;
+  text-align:center;
   color:var(--muted);
-  font-size:10px;
-  margin-top:2px;
+  border:1px dashed var(--line);
+  border-radius:14px;
 }
 
-.stat-change{
-  font-size:10px;
-  margin-top:5px;
-}
-
-.stat-change.up{
-  color:#91efaa;
-}
-
-.stat-change.down{
-  color:#ff9b9b;
-}
-
-.search-result{
-  padding:10px;
-  border:1px solid var(--border);
-  border-radius:10px;
-  background:#090c18;
+.placeholder b{
+  display:block;
+  color:white;
   margin-bottom:7px;
 }
 
-.search-result b{
-  font-size:12px;
+/* DESKTOP */
+
+@media(min-width:768px){
+
+  .topbar{
+    display:none;
+  }
+
+  .sidebar{
+    transform:translateX(0);
+    width:260px;
+  }
+
+  .close,
+  .overlay{
+    display:none!important;
+  }
+
+  .main{
+    margin-left:260px;
+    width:calc(100% - 260px);
+    padding:25px;
+  }
+
+  .grid{
+    grid-template-columns:repeat(4,1fr);
+  }
+
+  .quick{
+    grid-template-columns:repeat(4,1fr);
+  }
 }
-
-.search-result small{
-  display:block;
-  color:var(--muted);
-  margin-top:3px;
-}
-
-@media(max-width:850px){
-  .form-grid{
-    grid-template-columns:1fr;
-  }
-
-  .form-grid.three{
-    grid-template-columns:1fr;
-  }
-
-  .full{
-    grid-column:auto;
-  }
-
-  .stats{
-    grid-template-columns:repeat(2,1fr);
-  }
-
-  .url-input{
-    flex-direction:column;
-  }
-}
-
-@media(max-width:560px){
-  .stats{
-    grid-template-columns:1fr 1fr;
-    gap:8px;
-  }
-
-  .card,
-  .stat{
-    padding:13px;
-  }
-
-  .modal{
-    padding:10px;
-  }
-
-  .modal-box{
-    padding:15px;
-    border-radius:14px;
-  }
-
-  .btn-row{
-    flex-direction:column;
-  }
-
-  .btn-row .btn{
-    width:100%;
-  }
-
-  .table-actions{
-    flex-direction:column;
-  }
-  }</style>
+</style>
 </head>
 
 <body>
 
-<div class="app-shell">
+<!-- MOBILE HEADER -->
 
-  <aside class="sidebar" id="sidebar">
+<header class="topbar">
+
+  <button
+    class="menu"
+    onclick="openMenu()">
+    ☰
+  </button>
+
+  <div class="logo">DZ</div>
+
+  <div class="brand">
+    <b>DROPZONE</b>
+    <small>ADMIN CONTROL CENTER</small>
+  </div>
+
+</header>
+
+
+<!-- SIDEBAR -->
+
+<aside id="sidebar" class="sidebar">
+
+  <div class="sideHead">
+
+    <div class="logo">DZ</div>
 
     <div class="brand">
-      <div class="brand-logo">DZ</div>
-      <div class="brand-text">
-        <h2>DROPZONE</h2>
-        <span>TOURNAMENT PANEL</span>
-      </div>
+      <b>DROPZONE</b>
+      <small>ADMIN PANEL</small>
     </div>
 
-    <nav class="sidebar-nav">
-
-      <button class="nav-item active" data-page="dashboard">
-        <span class="nav-icon">⌂</span>
-        <span>Dashboard</span>
-      </button>
-
-      <button class="nav-item" data-page="tournaments">
-        <span class="nav-icon">🏆</span>
-        <span>Tournaments</span>
-      </button>
-
-      <button class="nav-item" data-page="players">
-        <span class="nav-icon">👥</span>
-        <span>Players</span>
-      </button>
-
-      <button class="nav-item" data-page="matches">
-        <span class="nav-icon">🎮</span>
-        <span>Matches</span>
-      </button>
-
-      <button class="nav-item" data-page="payments">
-        <span class="nav-icon">₹</span>
-        <span>Payments</span>
-      </button>
-
-      <button class="nav-item" data-page="settings">
-        <span class="nav-icon">⚙</span>
-        <span>Settings</span>
-      </button>
-
-      <button class="nav-item" data-page="support">
-        <span class="nav-icon">?</span>
-        <span>Support</span>
-      </button>
-
-    </nav>
-
-    <div class="sidebar-footer">
-      <div class="admin-card">
-        <div class="admin-avatar">A</div>
-        <div>
-          <strong>Administrator</strong>
-          <small>Online</small>
-        </div>
-      </div>
-    </div>
-
-  </aside>
-
-  <main class="main-content">
-
-    <header class="topbar">
-
-      <div class="topbar-left">
-        <button class="mobile-menu" id="mobileMenu">☰</button>
-
-        <div>
-          <h1 id="pageTitle">Dashboard</h1>
-          <p id="pageSubtitle">Tournament management overview</p>
-        </div>
-      </div>
-
-      <div class="topbar-actions">
-
-        <button class="icon-button" id="themeToggle" title="Toggle theme">
-          ◐
-        </button>
-
-        <button class="icon-button" id="notificationButton" title="Notifications">
-          🔔
-          <span class="notification-dot"></span>
-        </button>
-
-        <div class="profile-mini">
-          <div class="profile-avatar">A</div>
-          <span>Admin</span>
-        </div>
-
-      </div>
-
-    </header>
-
-    <section class="content-area">
-
-      <!-- DASHBOARD -->
-
-      <section class="page-section active" id="page-dashboard">
-
-        <div class="welcome-card">
-          <div>
-            <span class="eyebrow">WELCOME BACK</span>
-            <h2>Manage your tournaments</h2>
-            <p>Create tournaments, manage players, matches and payments from one place.</p>
-          </div>
-
-          <button class="btn btn-primary" id="dashboardCreateTournament">
-            + Create Tournament
-          </button>
-        </div>
-
-        <div class="stats-grid">
-
-          <div class="stat-card">
-            <div class="stat-icon purple">🏆</div>
-            <div>
-              <span>Total Tournaments</span>
-              <strong id="statTournaments">0</strong>
-            </div>
-          </div>
-
-          <div class="stat-card">
-            <div class="stat-icon blue">👥</div>
-            <div>
-              <span>Total Players</span>
-              <strong id="statPlayers">0</strong>
-            </div>
-          </div>
-
-          <div class="stat-card">
-            <div class="stat-icon green">🎮</div>
-            <div>
-              <span>Active Matches</span>
-              <strong id="statMatches">0</strong>
-            </div>
-          </div>
-
-          <div class="stat-card">
-            <div class="stat-icon orange">₹</div>
-            <div>
-              <span>Total Revenue</span>
-              <strong id="statRevenue">₹0</strong>
-            </div>
-          </div>
-
-        </div>
-
-        <div class="dashboard-grid">
-
-          <div class="panel">
-
-            <div class="panel-header">
-              <div>
-                <h3>Recent Tournaments</h3>
-                <p>Latest tournaments created on your panel.</p>
-              </div>
-
-              <button class="text-button" data-page-target="tournaments">
-                View All
-              </button>
-            </div>
-
-            <div class="table-wrapper">
-              <table>
-                <thead>
-                  <tr>
-                    <th>Tournament</th>
-                    <th>Game</th>
-                    <th>Fee</th>
-                    <th>Slots</th>
-                    <th>Status</th>
-                  </tr>
-                </thead>
-
-                <tbody id="recentTournaments"></tbody>
-              </table>
-            </div>
-
-          </div>
-
-          <div class="panel">
-
-            <div class="panel-header">
-              <div>
-                <h3>Quick Actions</h3>
-                <p>Frequently used actions.</p>
-              </div>
-            </div>
-
-            <div class="quick-actions">
-
-              <button class="quick-action" id="quickTournament">
-                <span>🏆</span>
-                <div>
-                  <strong>New Tournament</strong>
-                  <small>Create a new tournament</small>
-                </div>
-              </button>
-
-              <button class="quick-action" id="quickPlayer">
-                <span>👤</span>
-                <div>
-                  <strong>Add Player</strong>
-                  <small>Register a player</small>
-                </div>
-              </button>
-
-              <button class="quick-action" id="quickMatch">
-                <span>🎮</span>
-                <div>
-                  <strong>Create Match</strong>
-                  <small>Schedule a match</small>
-                </div>
-              </button>
-
-              <button class="quick-action" id="quickSettings">
-                <span>⚙</span>
-                <div>
-                  <strong>Settings</strong>
-                  <small>Manage panel settings</small>
-                </div>
-              </button>
-
-            </div>
-
-          </div>
-
-        </div>
-
-      </section>
-
-
-      <!-- TOURNAMENTS -->
-
-      <section class="page-section" id="page-tournaments">
-
-        <div class="section-heading">
-
-          <div>
-            <span class="eyebrow">MANAGEMENT</span>
-            <h2>Tournaments</h2>
-            <p>Create and manage your Free Fire tournaments.</p>
-          </div>
-
-          <button class="btn btn-primary" id="createTournamentButton">
-            + Create Tournament
-          </button>
-
-        </div>
-
-        <div class="toolbar">
-
-          <div class="search-box">
-            <span>⌕</span>
-            <input
-              type="text"
-              id="tournamentSearch"
-              placeholder="Search tournaments..."
-            >
-          </div>
-
-          <select class="select-control" id="tournamentFilter">
-            <option value="ALL">All Status</option>
-            <option value="OPEN">Open</option>
-            <option value="LIVE">Live</option>
-            <option value="FULL">Full</option>
-          </select>
-
-        </div>
-
-        <div class="panel">
-
-          <div class="table-wrapper">
-
-            <table>
-
-              <thead>
-                <tr>
-                  <th>ID</th>
-                  <th>Tournament</th>
-                  <th>Game</th>
-                  <th>Entry Fee</th>
-                  <th>Players</th>
-                  <th>Status</th>
-                  <th>Actions</th>
-                </tr>
-              </thead>
-
-              <tbody id="tournamentTable"></tbody>
-
-            </table>
-
-          </div>
-
-        </div>
-
-      </section>
-
-
-      <!-- PLAYERS -->
-
-      <section class="page-section" id="page-players">
-
-        <div class="section-heading">
-
-          <div>
-            <span class="eyebrow">PLAYERS</span>
-            <h2>Players</h2>
-            <p>Manage registered tournament players.</p>
-          </div>
-
-          <button class="btn btn-primary" id="addPlayerButton">
-            + Add Player
-          </button>
-
-        </div>
-
-        <div class="toolbar">
-
-          <div class="search-box">
-            <span>⌕</span>
-            <input
-              type="text"
-              id="playerSearch"
-              placeholder="Search player, UID or phone..."
-            >
-          </div>
-
-        </div>
-
-        <div class="panel">
-
-          <div class="table-wrapper">
-
-            <table>
-
-              <thead>
-                <tr>
-                  <th>ID</th>
-                  <th>Player</th>
-                  <th>UID</th>
-                  <th>Phone</th>
-                  <th>Tournaments</th>
-                  <th>Status</th>
-                  <th>Actions</th>
-                </tr>
-              </thead>
-
-              <tbody id="playersTable"></tbody>
-
-            </table>
-
-          </div>
-
-        </div>
-
-      </section>
-
-
-      <!-- MATCHES -->
-
-      <section class="page-section" id="page-matches">
-
-        <div class="section-heading">
-
-          <div>
-            <span class="eyebrow">MATCH CENTER</span>
-            <h2>Matches</h2>
-            <p>Schedule and manage tournament matches.</p>
-          </div>
-
-          <button class="btn btn-primary" id="createMatchButton">
-            + Create Match
-          </button>
-
-        </div>
-
-        <div class="toolbar">
-
-          <div class="search-box">
-            <span>⌕</span>
-            <input
-              type="text"
-              id="matchSearch"
-              placeholder="Search matches..."
-            >
-          </div>
-
-          <select class="select-control" id="matchFilter">
-            <option value="ALL">All Matches</option>
-            <option value="LIVE">Live</option>
-            <option value="SCHEDULED">Scheduled</option>
-            <option value="COMPLETED">Completed</option>
-          </select>
-
-        </div>
-
-        <div class="panel">
-
-          <div class="table-wrapper">
-
-            <table>
-
-              <thead>
-                <tr>
-                  <th>ID</th>
-                  <th>Match</th>
-                  <th>Tournament</th>
-                  <th>Time</th>
-                  <th>Room ID</th>
-                  <th>Status</th>
-                  <th>Actions</th>
-                </tr>
-              </thead>
-
-              <tbody id="matchesTable"></tbody>
-
-            </table>
-
-          </div>
-
-        </div>
-
-      </section>
-
-
-      <!-- PAYMENTS -->
-
-      <section class="page-section" id="page-payments">
-
-        <div class="section-heading">
-
-          <div>
-            <span class="eyebrow">FINANCE</span>
-            <h2>Payments</h2>
-            <p>Track tournament entry payments.</p>
-          </div>
-
-          <div class="revenue-box">
-            <span>Total Revenue</span>
-            <strong id="paymentRevenue">₹0</strong>
-          </div>
-
-        </div>
-
-        <div class="panel">
-
-          <div class="table-wrapper">
-
-            <table>
-
-              <thead>
-                <tr>
-                  <th>Payment ID</th>
-                  <th>Player</th>
-                  <th>Amount</th>
-                  <th>Date</th>
-                  <th>Status</th>
-                </tr>
-              </thead>
-
-              <tbody id="paymentsTable"></tbody>
-
-            </table>
-
-          </div>
-
-        </div>
-
-      </section>
-
-
-      <!-- SETTINGS -->
-
-      <section class="page-section" id="page-settings">
-
-        <div class="section-heading">
-
-          <div>
-            <span class="eyebrow">CONFIGURATION</span>
-            <h2>Settings</h2>
-            <p>Customize your tournament panel.</p>
-          </div>
-
-        </div>
-
-        <div class="settings-grid">
-
-          <div class="panel">
-
-            <div class="panel-header">
-              <div>
-                <h3>General Settings</h3>
-                <p>Basic tournament configuration.</p>
-              </div>
-            </div>
-
-            <form id="settingsForm">
-
-              <div class="form-group">
-                <label>Panel Name</label>
-                <input
-                  class="input-control"
-                  id="settingPanelName"
-                  type="text"
-                  placeholder="DROPZONE"
-                >
-              </div>
-
-              <div class="form-group">
-                <label>Admin Name</label>
-                <input
-                  class="input-control"
-                  id="settingAdminName"
-                  type="text"
-                  placeholder="Administrator"
-                >
-              </div>
-
-              <div class="form-group">
-                <label>Default Game</label>
-                <select class="select-control" id="settingGame">
-                  <option>Free Fire</option>
-                  <option>Free Fire MAX</option>
-                </select>
-              </div>
-
-              <div class="form-group">
-                <label>Currency</label>
-                <select class="select-control" id="settingCurrency">
-                  <option value="INR">₹ Indian Rupee</option>
-                  <option value="USD">$ US Dollar</option>
-                </select>
-              </div>
-
-              <div class="form-actions">
-                <button type="submit" class="btn btn-primary">
-                  Save Settings
-                </button>
-              </div>
-
-            </form>
-
-          </div>
-
-
-          <div class="panel">
-
-            <div class="panel-header">
-              <div>
-                <h3>Appearance</h3>
-                <p>Control the look and feel of the dashboard.</p>
-              </div>
-            </div>
-
-            <div class="appearance-option">
-
-              <div>
-                <strong>Dark Mode</strong>
-                <small>Use dark interface throughout the panel.</small>
-              </div>
-
-              <label class="switch">
-                <input type="checkbox" id="darkModeSwitch">
-                <span class="slider"></span>
-              </label>
-
-            </div>
-
-            <div class="appearance-option">
-
-              <div>
-                <strong>Notifications</strong>
-                <small>Show admin notifications.</small>
-              </div>
-
-              <label class="switch">
-                <input type="checkbox" id="notificationSwitch" checked>
-                <span class="slider"></span>
-              </label>
-
-            </div>
-
-          </div>
-
-        </div>
-
-      </section>
-
-
-      <!-- SUPPORT -->
-
-      <section class="page-section" id="page-support">
-
-        <div class="section-heading">
-
-          <div>
-            <span class="eyebrow">HELP CENTER</span>
-            <h2>Support</h2>
-            <p>Need help managing your tournament platform?</p>
-          </div>
-
-        </div>
-
-        <div class="support-grid">
-
-          <div class="support-card">
-            <div class="support-icon">📖</div>
-            <h3>Documentation</h3>
-            <p>Learn how to manage tournaments, players and matches.</p>
-            <button class="btn btn-secondary" data-support="documentation">
-              Open Guide
-            </button>
-          </div>
-
-          <div class="support-card">
-            <div class="support-icon">💬</div>
-            <h3>Contact Support</h3>
-            <p>Get help if you find an issue with the admin panel.</p>
-            <button class="btn btn-secondary" data-support="contact">
-              Contact
-            </button>
-          </div>
-
-          <div class="support-card">
-            <div class="support-icon">⚡</div>
-            <h3>System Status</h3>
-            <p>Check whether the tournament panel is working normally.</p>
-            <span class="status-badge success">SYSTEM ONLINE</span>
-          </div>
-
-        </div>
-
-      </section>
-
-    </section>
-
-  </main>
-
-</div>
-
-
-<!-- CREATE TOURNAMENT MODAL -->
-
-<div class="modal-overlay" id="tournamentModal">
-
-  <div class="modal">
-
-    <div class="modal-header">
-      <div>
-        <h3>Create Tournament</h3>
-        <p>Enter tournament information.</p>
-      </div>
-
-      <button class="modal-close" data-close-modal="tournamentModal">
-        ×
-      </button>
-    </div>
-
-    <form id="tournamentForm">
-
-      <div class="form-group">
-        <label>Tournament Name</label>
-        <input
-          class="input-control"
-          id="tournamentName"
-          type="text"
-          placeholder="Enter tournament name"
-          required
-        >
-      </div>
-
-      <div class="form-row">
-
-        <div class="form-group">
-          <label>Game</label>
-          <select class="select-control" id="tournamentGame">
-            <option>Free Fire</option>
-            <option>Free Fire MAX</option>
-          </select>
-        </div>
-
-        <div class="form-group">
-          <label>Entry Fee</label>
-          <input
-            class="input-control"
-            id="tournamentFee"
-            type="number"
-            min="0"
-            placeholder="20"
-            required
-          >
-        </div>
-
-      </div>
-
-      <div class="form-group">
-        <label>Total Slots</label>
-        <input
-          class="input-control"
-          id="tournamentSlots"
-          type="number"
-          min="1"
-          placeholder="48"
-          required
-        >
-      </div>
-
-      <div class="form-group">
-        <label>Status</label>
-        <select class="select-control" id="tournamentStatus">
-          <option value="OPEN">OPEN</option>
-          <option value="LIVE">LIVE</option>
-          <option value="FULL">FULL</option>
-        </select>
-      </div>
-
-      <div class="modal-actions">
-        <button
-          type="button"
-          class="btn btn-secondary"
-          data-close-modal="tournamentModal"
-        >
-          Cancel
-        </button>
-
-        <button type="submit" class="btn btn-primary">
-          Create Tournament
-        </button>
-      </div>
-
-    </form>
+    <button
+      class="close"
+      onclick="closeMenu()">
+      ×
+    </button>
 
   </div>
 
+
+  <!-- OVERVIEW -->
+
+  <div class="group">
+
+    <div class="groupTitle">
+      Overview
+    </div>
+
+    <button class="nav active" data-page="dashboard">
+      <span class="icon">🏠</span>
+      Dashboard
+    </button>
+
+    <button class="nav" data-page="analytics">
+      <span class="icon">📊</span>
+      Analytics
+    </button>
+
+    <button class="nav" data-page="activity">
+      <span class="icon">⚡</span>
+      Live Activity
+    </button>
+
+    <button class="nav" data-page="notifications">
+      <span class="icon">🔔</span>
+      Notifications
+    </button>
+
+  </div>
+
+
+  <!-- TOURNAMENT -->
+
+  <div class="group">
+
+    <div class="groupTitle">
+      Tournament Management
+    </div>
+
+    <button class="nav" data-page="tournaments">
+      <span class="icon">🏆</span>
+      All Tournaments
+    </button>
+
+    <button class="nav" data-page="create-tournament">
+      <span class="icon">➕</span>
+      Create Tournament
+    </button>
+
+    <button class="nav" data-page="templates">
+      <span class="icon">📋</span>
+      Tournament Templates
+    </button>
+
+    <button class="nav" data-page="registrations">
+      <span class="icon">📝</span>
+      Registrations
+    </button>
+
+    <button class="nav" data-page="slots">
+      <span class="icon">🎟️</span>
+      Slots Management
+    </button>
+
+    <button class="nav" data-page="schedule">
+      <span class="icon">📅</span>
+      Tournament Schedule
+    </button>
+
+  </div>
+
+
+  <!-- PLAYERS -->
+
+  <div class="group">
+
+    <div class="groupTitle">
+      Player Management
+    </div>
+
+    <button class="nav" data-page="players">
+      <span class="icon">👥</span>
+      All Players
+    </button>
+
+    <button class="nav" data-page="player-profile">
+      <span class="icon">👤</span>
+      Player Profiles
+    </button>
+
+    <button class="nav" data-page="player-history">
+      <span class="icon">📜</span>
+      Player History
+    </button>
+
+    <button class="nav" data-page="player-stats">
+      <span class="icon">📈</span>
+      Player Statistics
+    </button>
+
+    <button class="nav" data-page="banned">
+      <span class="icon">🚫</span>
+      Ban / Unban
+    </button>
+
+  </div>
+
+
+  <!-- MONEY -->
+
+  <div class="group">
+
+    <div class="groupTitle">
+      Payments & Money
+    </div>
+
+    <button class="nav" data-page="payments">
+      <span class="icon">💳</span>
+      Payment Dashboard
+    </button>
+
+    <button class="nav" data-page="pending-payments">
+      <span class="icon">⏳</span>
+      Pending Payments
+    </button>
+
+    <button class="nav" data-page="paid-payments">
+      <span class="icon">✅</span>
+      Paid Payments
+    </button>
+
+    <button class="nav" data-page="failed-payments">
+      <span class="icon">❌</span>
+      Failed Payments
+    </button>
+
+    <button class="nav" data-page="refunds">
+      <span class="icon">↩️</span>
+      Refunds
+    </button>
+
+    <button class="nav" data-page="payment-settings">
+      <span class="icon">💰</span>
+      Payment Settings
+    </button>
+
+  </div>
+
+
+  <!-- MATCHES -->
+
+  <div class="group">
+
+    <div class="groupTitle">
+      Matches & Rooms
+    </div>
+
+    <button class="nav" data-page="matches">
+      <span class="icon">🎮</span>
+      Match Management
+    </button>
+
+    <button class="nav" data-page="rooms">
+      <span class="icon">🔑</span>
+      Room ID / Password
+    </button>
+
+    <button class="nav" data-page="room-publish">
+      <span class="icon">📢</span>
+      Room Publish Control
+    </button>
+
+    <button class="nav" data-page="live-matches">
+      <span class="icon">🔴</span>
+      Live Matches
+    </button>
+
+  </div>
+
+
+  <!-- RESULTS -->
+
+  <div class="group">
+
+    <div class="groupTitle">
+      Results & Scoring
+    </div>
+
+    <button class="nav" data-page="results">
+      <span class="icon">🥇</span>
+      Results
+    </button>
+
+    <button class="nav" data-page="winners">
+      <span class="icon">🏅</span>
+      Winners
+    </button>
+
+    <button class="nav" data-page="leaderboard">
+      <span class="icon">📊</span>
+      Leaderboard
+    </button>
+
+    <button class="nav" data-page="scoring">
+      <span class="icon">🧮</span>
+      Scoring Settings
+    </button>
+
+  </div>
+
+
+  <!-- CONTENT -->
+
+  <div class="group">
+
+    <div class="groupTitle">
+      Communication
+    </div>
+
+    <button class="nav" data-page="announcements">
+      <span class="icon">📢</span>
+      Announcements
+    </button>
+
+    <button class="nav" data-page="messages">
+      <span class="icon">💬</span>
+      Player Messages
+    </button>
+
+    <button class="nav" data-page="support">
+      <span class="icon">🎫</span>
+      Support / Tickets
+    </button>
+
+  </div>
+
+
+  <!-- WEBSITE -->
+
+  <div class="group">
+
+    <div class="groupTitle">
+      Website Control
+    </div>
+
+    <button class="nav" data-page="website">
+      <span class="icon">🌐</span>
+      Website Control
+    </button>
+
+    <button class="nav" data-page="pages">
+      <span class="icon">📄</span>
+      Pages
+    </button>
+
+    <button class="nav" data-page="sections">
+      <span class="icon">🧩</span>
+      Sections
+    </button>
+
+    <button class="nav" data-page="navigation">
+      <span class="icon">🧭</span>
+      Navigation
+    </button>
+
+    <button class="nav" data-page="media">
+      <span class="icon">🖼️</span>
+      Media Library
+    </button>
+
+    <button class="nav" data-page="theme">
+      <span class="icon">🎨</span>
+      Theme & Design
+    </button>
+
+  </div>
+
+
+  <!-- REPORTS -->
+
+  <div class="group">
+
+    <div class="groupTitle">
+      Reports
+    </div>
+
+    <button class="nav" data-page="reports">
+      <span class="icon">📑</span>
+      Reports
+    </button>
+
+    <button class="nav" data-page="revenue">
+      <span class="icon">💵</span>
+      Revenue
+    </button>
+
+    <button class="nav" data-page="exports">
+      <span class="icon">⬇️</span>
+      Export Data
+    </button>
+
+  </div>
+
+
+  <!-- SYSTEM -->
+
+  <div class="group">
+
+    <div class="groupTitle">
+      System & Security
+    </div>
+
+    <button class="nav" data-page="admins">
+      <span class="icon">🛡️</span>
+      Admins & Roles
+    </button>
+
+    <button class="nav" data-page="security">
+      <span class="icon">🔐</span>
+      Security
+    </button>
+
+    <button class="nav" data-page="audit">
+      <span class="icon">📜</span>
+      Audit Logs
+    </button>
+
+    <button class="nav" data-page="settings">
+      <span class="icon">⚙️</span>
+      General Settings
+    </button>
+
+  </div>
+
+</aside>
+
+
+<div
+  id="overlay"
+  class="overlay"
+  onclick="closeMenu()">
 </div>
 
 
-<!-- ADD PLAYER MODAL -->
+<!-- MAIN -->
 
-<div class="modal-overlay" id="playerModal">
+<main class="main">
 
-  <div class="modal">
 
-    <div class="modal-header">
+  <!-- DASHBOARD -->
 
-      <div>
-        <h3>Add Player</h3>
-        <p>Register a new tournament player.</p>
+  <section
+    id="dashboard"
+    class="page active">
+
+    <h1 class="title">
+      DROPZONE Dashboard
+    </h1>
+
+    <p class="desc">
+      Complete tournament administration and control center.
+    </p>
+
+
+    <div class="grid">
+
+      <div class="card">
+        <div class="statIcon">🏆</div>
+        <div class="statName">Tournaments</div>
+        <div class="statValue" id="totalTournaments">0</div>
       </div>
 
-      <button class="modal-close" data-close-modal="playerModal">
-        ×
-      </button>
+      <div class="card">
+        <div class="statIcon">👥</div>
+        <div class="statName">Players</div>
+        <div class="statValue" id="totalPlayers">0</div>
+      </div>
+
+      <div class="card">
+        <div class="statIcon">🎮</div>
+        <div class="statName">Matches</div>
+        <div class="statValue" id="totalMatches">0</div>
+      </div>
+
+      <div class="card">
+        <div class="statIcon">💰</div>
+        <div class="statName">Revenue</div>
+        <div class="statValue" id="totalRevenue">₹0</div>
+      </div>
 
     </div>
 
-    <form id="playerForm">
 
-      <div class="form-group">
-        <label>Player Name</label>
-        <input
-          class="input-control"
-          id="playerName"
-          type="text"
-          placeholder="Enter player name"
-          required
-        >
-      </div>
+    <div class="card">
 
-      <div class="form-group">
-        <label>Game UID</label>
-        <input
-          class="input-control"
-          id="playerUID"
-          type="text"
-          placeholder="Enter Free Fire UID"
-          required
-        >
-      </div>
+      <h3 style="margin-bottom:12px">
+        ⚡ Quick Actions
+      </h3>
 
-      <div class="form-group">
-        <label>Phone Number</label>
-        <input
-          class="input-control"
-          id="playerPhone"
-          type="tel"
-          placeholder="Enter phone number"
-          required
-        >
-      </div>
+      <div class="quick">
 
-      <div class="modal-actions">
-
-        <button
-          type="button"
-          class="btn btn-secondary"
-          data-close-modal="playerModal"
-        >
-          Cancel
+        <button data-page="create-tournament">
+          <span class="qicon">🏆</span>
+          <span class="qtitle">Create Tournament</span>
+          <span class="qsub">New tournament</span>
         </button>
 
-        <button type="submit" class="btn btn-primary">
-          Add Player
+        <button data-page="players">
+          <span class="qicon">👤</span>
+          <span class="qtitle">Players</span>
+          <span class="qsub">Manage players</span>
+        </button>
+
+        <button data-page="payments">
+          <span class="qicon">💳</span>
+          <span class="qtitle">Payments</span>
+          <span class="qsub">Verify payments</span>
+        </button>
+
+        <button data-page="matches">
+          <span class="qicon">🎮</span>
+          <span class="qtitle">Match Control</span>
+          <span class="qsub">Manage rooms</span>
+        </button>
+
+        <button data-page="results">
+          <span class="qicon">🥇</span>
+          <span class="qtitle">Results</span>
+          <span class="qsub">Enter results</span>
+        </button>
+
+        <button data-page="announcements">
+          <span class="qicon">📢</span>
+          <span class="qtitle">Announcement</span>
+          <span class="qsub">Notify players</span>
+        </button>
+
+        <button data-page="website">
+          <span class="qicon">🌐</span>
+          <span class="qtitle">Website</span>
+          <span class="qsub">Control website</span>
+        </button>
+
+        <button data-page="settings">
+          <span class="qicon">⚙️</span>
+          <span class="qtitle">Settings</span>
+          <span class="qsub">System settings</span>
         </button>
 
       </div>
-
-    </form>
-
-  </div>
-
-</div>
-
-
-<!-- CREATE MATCH MODAL -->
-
-<div class="modal-overlay" id="matchModal">
-
-  <div class="modal">
-
-    <div class="modal-header">
-
-      <div>
-        <h3>Create Match</h3>
-        <p>Schedule a tournament match.</p>
-      </div>
-
-      <button class="modal-close" data-close-modal="matchModal">
-        ×
-      </button>
 
     </div>
 
-    <form id="matchForm">
+  </section>
 
-      <div class="form-group">
-        <label>Match Name</label>
-        <input
-          class="input-control"
-          id="matchName"
-          type="text"
-          placeholder="Match #01"
-          required
-        >
+
+  <!-- ALL OTHER PAGES WILL BE ADDED IN NEXT STEPS -->
+
+  <section id="placeholder" class="page">
+
+    <div class="card">
+
+      <div class="placeholder">
+
+        <b>DROPZONE Control Center</b>
+
+        यह section अगले step में fully connected होगा।
+
       </div>
 
-      <div class="form-group">
-        <label>Tournament</label>
-        <select
-          class="select-controlid="matchTournament"
-required
-></select>
-</div>
+    </div>
 
-<div class="form-row">
+  </section>
 
-  <div class="form-group">
-    <label>Match Time</label>
-    <input
-      class="input-control"
-      id="matchTime"
-      type="time"
-      required
-    >
-  </div>
-
-  <div class="form-group">
-    <label>Room ID</label>
-    <input
-      class="input-control"
-      id="matchRoom"
-      type="text"
-      placeholder="DZ1001"
-      required
-    >
-  </div>
-
-</div>
-
-<div class="form-group">
-  <label>Status</label>
-
-  <select
-    class="select-control"
-    id="matchStatus"
-  >
-    <option value="SCHEDULED">SCHEDULED</option>
-    <option value="LIVE">LIVE</option>
-    <option value="COMPLETED">COMPLETED</option>
-  </select>
-
-</div>
-
-<div class="modal-actions">
-
-  <button
-    type="button"
-    class="btn btn-secondary"
-    data-close-modal="matchModal"
-  >
-    Cancel
-  </button>
-
-  <button
-    type="submit"
-    class="btn btn-primary"
-  >
-    Create Match
-  </button>
-
-</div>
-
-</form>
-
-</div>
-
-</div>
-
-
-<!-- TOAST -->
-
-<div class="toast" id="toast">
-
-  <span class="toast-icon">✓</span>
-
-  <div>
-    <strong id="toastTitle">Success</strong>
-    <p id="toastMessage">Action completed.</p>
-  </div>
-
-</div>
+</main>
 
 
 <script>
 
-const state = {
-
-  tournaments: [
-    {
-      id: 1,
-      name: "Dropzone Cup #01",
-      game: "Free Fire",
-      fee: 20,
-      slots: 48,
-      joined: 48,
-      status: "LIVE"
-    },
-    {
-      id: 2,
-      name: "Night Battle",
-      game: "Free Fire",
-      fee: 20,
-      slots: 48,
-      joined: 32,
-      status: "OPEN"
-    },
-    {
-      id: 3,
-      name: "Pro Clash",
-      game: "Free Fire",
-      fee: 30,
-      slots: 48,
-      joined: 48,
-      status: "FULL"
-    },
-    {
-      id: 4,
-      name: "Weekend Warriors",
-      game: "Free Fire MAX",
-      fee: 25,
-      slots: 24,
-      joined: 18,
-      status: "OPEN"
-    }
-  ],
-
-  players: [
-    {
-      id: 1,
-      name: "ShadowX",
-      uid: "123456789",
-      phone: "9876543210",
-      tournaments: 4,
-      status: "ACTIVE"
-    },
-    {
-      id: 2,
-      name: "DARK々KING",
-      uid: "223456789",
-      phone: "9876543211",
-      tournaments: 2,
-      status: "ACTIVE"
-    },
-    {
-      id: 3,
-      name: "LegendOP",
-      uid: "323456789",
-      phone: "9876543212",
-      tournaments: 6,
-      status: "ACTIVE"
-    },
-    {
-      id: 4,
-      name: "RushBoy",
-      uid: "423456789",
-      phone: "9876543213",
-      tournaments: 1,
-      status: "ACTIVE"
-    }
-  ],
-
-  matches: [
-    {
-      id: 1,
-      name: "Match #01",
-      tournament: "Dropzone Cup #01",
-      time: "08:00 PM",
-      room: "DZ1001",
-      status: "LIVE"
-    },
-    {
-      id: 2,
-      name: "Match #02",
-      tournament: "Night Battle",
-      time: "09:00 PM",
-      room: "DZ1002",
-      status: "SCHEDULED"
-    },
-    {
-      id: 3,
-      name: "Match #03",
-      tournament: "Pro Clash",
-      time: "10:00 PM",
-      room: "DZ1003",
-      status: "COMPLETED"
-    }
-  ],
-
-  payments: [
-    {
-      id: "DZ10001",
-      player: "ShadowX",
-      amount: 20,
-      date: "01 Oct 2026",
-      status: "SUCCESS"
-    },
-    {
-      id: "DZ10002",
-      player: "DARK々KING",
-      amount: 20,
-      date: "01 Oct 2026",
-      status: "SUCCESS"
-    },
-    {
-      id: "DZ10003",
-      player: "LegendOP",
-      amount: 30,
-      date: "30 Sep 2026",
-      status: "SUCCESS"
-    },
-    {
-      id: "DZ10004",
-      player: "RushBoy",
-      amount: 25,
-      date: "30 Sep 2026",
-      status: "PENDING"
-    }
-  ]
-
-};
-
-
-const $ = id => document.getElementById(id);
-
-
-function escapeHTML(value) {
-
-  return String(value)
-    .replaceAll("&", "&amp;")
-    .replaceAll("<", "&lt;")
-    .replaceAll(">", "&gt;")
-    .replaceAll('"', "&quot;")
-    .replaceAll("'", "&#039;");
-
-}
-
-
-function showPage(page) {
-
-  document.querySelectorAll(".page-section")
-    .forEach(section => {
-      section.classList.remove("active");
-    });
-
-  const target = $(`page-${page}`);
-
-  if (!target) return;
-
-  target.classList.add("active");
-
-  document.querySelectorAll(".nav-item")
-    .forEach(item => {
-
-      item.classList.toggle(
-        "active",
-        item.dataset.page === page
-      );
-
-    });
-
-  const titles = {
-
-    dashboard: [
-      "Dashboard",
-      "Tournament management overview"
-    ],
-
-    tournaments: [
-      "Tournaments",
-      "Create and manage tournaments"
-    ],
-
-    players: [
-      "Players",
-      "Manage registered players"
-    ],
-
-    matches: [
-      "Matches",
-      "Manage tournament matches"
-    ],
-
-    payments: [
-      "Payments",
-      "Track tournament payments"
-    ],
-
-    settings: [
-      "Settings",
-      "Configure your tournament panel"
-    ],
-
-    support: [
-      "Support",
-      "Help and system information"
-    ]
-
-  };
-
-  const data =
-    titles[page] || titles.dashboard;
-
-  $("pageTitle").textContent = data[0];
-  $("pageSubtitle").textContent = data[1];
-
-}
-
-
-document.querySelectorAll(".nav-item")
-  .forEach(button => {
-
-    button.addEventListener("click", () => {
-      showPage(button.dataset.page);
-    });
-
-  });
-
-
-function openModal(id) {
-
-  const modal = $(id);
-
-  if (!modal) return;
-
-  modal.classList.add("active");
-  document.body.classList.add("modal-open");
-
-}
-
-
-function closeModal(id) {
-
-  const modal = $(id);
-
-  if (!modal) return;
-
-  modal.classList.remove("active");
-  document.body.classList.remove("modal-open");
-
-}
-
-
-document.querySelectorAll("[data-close-modal]")
-  .forEach(button => {
-
-    button.addEventListener("click", () => {
-      closeModal(button.dataset.closeModal);
-    });
-
-  });
-
-
-document.querySelectorAll(".modal-overlay")
-  .forEach(modal => {
-
-    modal.addEventListener("click", event => {
-
-      if (event.target === modal) {
-        closeModal(modal.id);
-      }
-
-    });
-
-  });
-
-
-document.addEventListener("keydown", event => {
-
-  if (event.key !== "Escape") return;
+function openMenu(){
+  document
+    .getElementById("sidebar")
+    .classList.add("open");
 
   document
-    .querySelectorAll(".modal-overlay.active")
-    .forEach(modal => {
-      closeModal(modal.id);
+    .getElementById("overlay")
+    .classList.add("show");
+}
+
+function closeMenu(){
+  document
+    .getElementById("sidebar")
+    .classList.remove("open");
+
+  document
+    .getElementById("overlay")
+    .classList.remove("show");
+}
+
+
+/* Navigation base */
+
+document.querySelectorAll("[data-page]").forEach(function(btn){
+
+  btn.addEventListener("click",function(){
+
+    const page = this.dataset.page;
+
+    const target = document.getElementById(page);
+
+    if(target){
+
+      document
+        .querySelectorAll(".page")
+        .forEach(function(p){
+          p.classList.remove("active");
+        });
+
+      target.classList.add("active");
+
+    }else{
+
+      const placeholder =
+        document.getElementById("placeholder");
+
+      document
+        .querySelectorAll(".page")
+        .forEach(function(p){
+          p.classList.remove("active");
+        });
+
+      placeholder.classList.add("active");
+
+    }
+
+    document
+      .querySelectorAll(".nav")
+      .forEach(function(n){
+        n.classList.remove("active");
+      });
+
+    if(this.classList.contains("nav")){
+      this.classList.add("active");
+    }
+
+    closeMenu();
+
+    window.scrollTo({
+      top:0,
+      behavior:"smooth"
     });
+
+  });
 
 });
-
-
-function statusBadge(status) {
-
-  const classes = {
-
-    OPEN: "success",
-    LIVE: "danger",
-    FULL: "warning",
-    ACTIVE: "success",
-    SUCCESS: "success",
-    PENDING: "warning",
-    SCHEDULED: "info",
-    COMPLETED: "muted"
-
-  };
-
-  return `
-    <span class="status-badge ${classes[status] || "muted"}">
-      ${escapeHTML(status)}
-    </span>
-  `;
-
-}
-
-
-function renderTournaments() {
-
-  const table = $("tournamentTable");
-
-  if (!table) return;
-
-  const search =
-    ($("tournamentSearch")?.value || "")
-      .trim()
-      .toLowerCase();
-
-  const filter =
-    $("tournamentFilter")?.value || "ALL";
-
-  const rows =
-    state.tournaments.filter(tournament => {
-
-      const matchesSearch =
-        tournament.name
-          .toLowerCase()
-          .includes(search) ||
-        tournament.game
-          .toLowerCase()
-          .includes(search);
-
-      const matchesFilter =
-        filter === "ALL" ||
-        tournament.status === filter;
-
-      return matchesSearch && matchesFilter;
-
-    });
-
-  if (!rows.length) {
-
-    table.innerHTML = `
-      <tr>
-        <td colspan="7">
-          <div class="empty-state">
-            No tournaments found.
-          </div>
-        </td>
-      </tr>
-    `;
-
-    return;
-
-  }
-
-  table.innerHTML = rows.map(tournament => `
-
-    <tr>
-
-      <td>#${tournament.id}</td>
-
-      <td>
-        <strong>
-          ${escapeHTML(tournament.name)}
-        </strong>
-      </td>
-
-      <td>
-        ${escapeHTML(tournament.game)}
-      </td>
-
-      <td>
-        ₹${tournament.fee}
-      </td>
-
-      <td>
-        ${tournament.joined}/${tournament.slots}
-      </td>
-
-      <td>
-        ${statusBadge(tournament.status)}
-      </td>
-
-      <td>
-
-        <div class="table-actions">
-
-          <button
-            class="action-btn"
-            onclick="editTournament(${tournament.id})"
-          >
-            Edit
-          </button>
-
-          <button
-            class="action-btn danger"
-            onclick="deleteTournament(${tournament.id})"
-          >
-            Delete
-          </button>
-
-        </div>
-
-      </td>
-
-    </tr>
-
-  `).join("");
-
-}
-
-
-function renderPlayers() {
-
-  const table = $("playersTable");
-
-  if (!table) return;
-
-  const search =
-    ($("playerSearch")?.value || "")
-      .trim()
-      .toLowerCase();
-
-  const rows =
-    state.players.filter(player => {
-
-      return (
-        player.name.toLowerCase().includes(search) ||
-        player.uid.toLowerCase().includes(search) ||
-        player.phone.toLowerCase().includes(search)
-      );
-
-    });
-
-  if (!rows.length) {
-
-    table.innerHTML = `
-      <tr>
-        <td colspan="7">
-          <div class="empty-state">
-            No players found.
-          </div>
-        </td>
-      </tr>
-    `;
-
-    return;
-
-  }
-
-  table.innerHTML = rows.map(player => `
-
-    <tr>
-
-      <td>#${player.id}</td>
-
-      <td>
-        <strong>${escapeHTML(player.name)}</strong>
-      </td>
-
-      <td>${escapeHTML(player.uid)}</td>
-
-      <td>${escapeHTML(player.phone)}</td>
-
-      <td>${player.tournaments}</td>
-
-      <td>${statusBadge(player.status)}</td>
-
-      <td>
-
-        <button
-          class="action-btn danger"
-          onclick="removePlayer(${player.id})"
-        >
-          Remove
-        </button>
-
-      </td>
-
-    </tr>
-
-  `).join("");
-
-}
-
-
-function renderMatches() {
-
-  const table = $("matchesTable");
-
-  if (!table) return;
-
-  const search =
-    ($("matchSearch")?.value || "")
-      .trim()
-      .toLowerCase();
-
-  const filter =
-    $("matchFilter")?.value || "ALL";
-
-  const rows =
-    state.matches.filter(match => {
-
-      const matchesSearch =
-        match.name.toLowerCase().includes(search) ||
-        match.tournament.toLowerCase().includes(search) ||
-        match.room.toLowerCase().includes(search);
-
-      const matchesFilter =
-        filter === "ALL" ||
-        match.status === filter;
-
-      return matchesSearch && matchesFilter;
-
-    });
-
-  if (!rows.length) {
-
-    table.innerHTML = `
-      <tr>
-        <td colspan="7">
-          <div class="empty-state">
-            No matches found.
-          </div>
-        </td>
-      </tr>
-    `;
-
-    return;
-
-  }
-
-  table.innerHTML = rows.map(match => `
-
-    <tr>
-
-      <td>#${match.id}</td>
-
-      <td>
-        <strong>${escapeHTML(match.name)}</strong>
-      </td>
-
-      <td>${escapeHTML(match.tournament)}</td>
-
-      <td>${escapeHTML(match.time)}</td>
-
-      <td>${escapeHTML(match.room)}</td>
-
-      <td>${statusBadge(match.status)}</td>
-
-      <td>
-
-        <button
-          class="action-btn"
-          onclick="viewMatch(${match.id})"
-        >
-          View
-        </button>
-
-      </td>
-
-    </tr>
-
-  `).join("");
-
-}
-
-
-function renderPayments() {
-
-  const table = $("paymentsTable");
-
-  if (!table) return;
-
-  table.innerHTML =
-    state.payments.map(payment => `
-
-      <tr>
-
-        <td>
-          <strong>
-            ${escapeHTML(payment.id)}
-          </strong>
-        </td>
-
-        <td>
-          ${escapeHTML(payment.player)}
-        </td>
-
-        <td>
-          ₹${payment.amount}
-        </td>
-
-        <td>
-          ${escapeHTML(payment.date)}
-        </td>
-
-        <td>
-          ${statusBadge(payment.status)}
-        </td>
-
-      </tr>
-
-    `).join("");
-
-}
-
-
-function renderRecent() {
-
-  const table = $("recentTournaments");
-
-  if (!table) return;
-
-  table.innerHTML =
-    state.tournaments.slice(0, 5)
-      .map(tournament => `
-
-        <tr>
-
-          <td>
-            <strong>
-              ${escapeHTML(tournament.name)}
-            </strong>
-          </td>
-
-          <td>
-            ${escapeHTML(tournament.game)}
-          </td>
-
-          <td>
-            ₹${tournament.fee}
-          </td>
-
-          <td>
-            ${tournament.joined}/${tournament.slots}
-          </td>
-
-          <td>
-            ${statusBadge(tournament.status)}
-          </td>
-
-        </tr>
-
-      `).join("");
-
-}
-
-
-function updateStats() {
-
-  $("statTournaments").textContent =
-    state.tournaments.length;
-
-  $("statPlayers").textContent =
-    state.players.length;
-
-  $("statMatches").textContent =
-    state.matches.filter(
-      match => match.status === "LIVE"
-    ).length;
-
-  const revenue =
-    state.payments
-      .filter(
-        payment => payment.status === "SUCCESS"
-      )
-      .reduce(
-        (total, payment) =>
-          total + Number(payment.amount),
-        0
-      );
-
-  $("statRevenue").textContent =
-    `₹${revenue}`;
-
-  if ($("paymentRevenue")) {
-    $("paymentRevenue").textContent =
-      `₹${revenue}`;
-  }
-
-}
-
-
-function toast(message, title = "Success") {
-
-  const element = $("toast");
-
-  if (!element) return;
-
-  $("toastTitle").textContent = title;
-  $("toastMessage").textContent = message;
-
-  element.classList.add("show");
-
-  clearTimeout(window.toastTimer);
-
-  window.toastTimer = setTimeout(() => {
-
-    element.classList.remove("show");
-
-  }, 3000);
-
-}
-
-
-function createTournament(event) {
-
-  event.preventDefault();
-
-  const name =
-    $("tournamentName").value.trim();
-
-  const game =
-    $("tournamentGame").value;
-
-  const fee =
-    Number($("tournamentFee").value);
-
-  const slots =
-    Number($("tournamentSlots").value);
-
-  const status =
-    $("tournamentStatus").value;
-
-  if (!name || fee < 0 || slots < 1) {
-
-    toast(
-      "Please enter valid tournament details.",
-      "Error"
-    );
-
-    return;
-
-  }
-
-  const nextId =
-    state.tournaments.length
-      ? Math.max(
-          ...state.tournaments.map(t => t.id)
-        ) + 1
-      : 1;
-
-  state.tournaments.unshift({
-
-    id: nextId,
-    name,
-    game,
-    fee,
-    slots,
-    joined: 0,
-    status
-
-  });
-
-  $("tournamentForm").reset();
-
-  closeModal("tournamentModal");
-
-  renderAll();
-
-  toast("Tournament created successfully.");
-
-}
-
-
-function editTournament(id) {
-
-  const tournament =
-    state.tournaments.find(
-      item => item.id === id
-    );
-
-  if (!tournament) return;
-
-  const name =
-    prompt(
-      "Enter tournament name:",
-      tournament.name
-    );
-
-  if (name === null) return;
-
-  const cleanName =
-    name.trim();
-
-  if (!cleanName) {
-
-    toast(
-      "Tournament name cannot be empty.",
-      "Error"
-    );
-
-    return;
-
-  }
-
-  tournament.name = cleanName;
-
-  renderAll();
-
-  toast("Tournament updated successfully.");
-
-}
-
-
-function deleteTournament(id) {
-
-  const tournament =
-    state.tournaments.find(
-      item => item.id === id
-    );
-
-  if (!tournament) return;
-
-  if (
-    !confirm(
-      `Delete "${tournament.name}"?`
-    )
-  ) return;
-
-  state.tournaments =
-    state.tournaments.filter(
-      item => item.id !== id
-    );
-
-  renderAll();
-
-  toast("Tournament deleted.");
-
-}
-
-
-function addPlayer(event) {
-
-  event.preventDefault();
-
-  const name =
-    $("playerName").value.trim();
-
-  const uid =
-    $("playerUID").value.trim();
-
-  const phone =
-    $("playerPhone").value.trim();
-
-  if (!name || !uid || !phone) {
-
-    toast(
-      "Please fill all player fields.",
-      "Error"
-    );
-
-    return;
-
-  }
-
-  const nextId =
-    state.players.length
-      ? Math.max(
-          ...state.players.map(p => p.id)
-        ) + 1
-      : 1;
-
-  state.players.unshift({
-
-    id: nextId,
-    name,
-    uid,
-    phone,
-    tournaments: 0,
-    status: "ACTIVE"
-
-  });
-
-  $("playerForm").reset();
-
-  closeModal("playerModal");
-
-  renderAll();
-
-  toast("Player added successfully.");
-
-}
-
-
-function removePlayer(id) {
-
-  const player =
-    state.players.find(
-      item => item.id === id
-    );
-
-  if (!player) return;
-
-  if (
-    !confirm(
-      `Remove player "${player.name}"?`
-    )
-  ) return;
-
-  state.players =
-    state.players.filter(
-      item => item.id !== id
-    );
-
-  renderAll();
-
-  toast("Player removed.");
-
-}
-
-
-function fillTournamentSelect() {
-
-  const select =
-    $("matchTournament");
-
-  if (!select) return;
-
-  select.innerHTML =
-    state.tournaments
-      .map(tournament => `
-        <option value="${escapeHTML(tournament.name)}">
-          ${escapeHTML(tournament.name)}
-        </option>
-      `)
-      .join("");
-
-}
-
-
-function createMatch(event) {
-
-  event.preventDefault();
-
-  const name =
-    $("matchName").value.trim();
-
-  const tournament =
-    $("matchTournament").value;
-
-  const time =
-    $("matchTime").value;
-
-  const room =
-    $("matchRoom").value.trim();
-
-  const status =
-    $("matchStatus").value;
-
-  if (!name || !tournament || !time || !room) {
-
-    toast(
-      "Please fill all match details.",
-      "Error"
-    );
-
-    return;
-
-  }
-
-  const nextId =
-    state.matches.length
-      ? Math.max(
-          ...state.matches.map(m => m.id)
-        ) + 1
-      : 1;
-
-  state.matches.unshift({
-
-    id: nextId,
-    name,
-    tournament,
-    time,
-    room,
-    status
-
-  });
-
-  $("matchForm").reset();
-
-  closeModal("matchModal");
-
-  renderAll();
-
-  toast("Match created successfully.");
-
-}
-
-
-function viewMatch(id) {
-
-  const match =
-    state.matches.find(
-      item => item.id === id
-    );
-
-  if (!match) return;
-
-  alert(
-    `Match: ${match.name}\n` +
-    `Tournament: ${match.tournament}\n` +
-    `Time: ${match.time}\n` +
-    `Room ID: ${match.room}\n` +
-    `Status: ${match.status}`
-  );
-
-}
-
-
-function saveSettings(event) {
-
-  event.preventDefault();
-
-  const settings = {
-
-    panelName:
-      $("settingPanelName").value.trim(),
-
-    adminName:
-      $("settingAdminName").value.trim(),
-
-    game:
-      $("settingGame").value,
-
-    currency:
-      $("settingCurrency").value
-
-  };
-
-  localStorage.setItem(
-    "dropzone_settings",
-    JSON.stringify(settings)
-  );
-
-  toast("Settings saved successfully.");
-
-}
-
-
-function loadSettings() {
-
-  const raw =
-    localStorage.getItem(
-      "dropzone_settings"
-    );
-
-  if (!raw) {
-
-    $("settingPanelName").value =
-      "DROPZONE";
-
-    $("settingAdminName").value =
-      "Administrator";
-
-    return;
-
-  }
-
-  try {
-
-    const settings =
-      JSON.parse(raw);
-
-    $("settingPanelName").value =
-      settings.panelName ||
-      "DROPZONE";
-
-    $("settingAdminName").value =
-      settings.adminName ||
-      "Administrator";
-
-    $("settingGame").value =
-      settings.game ||
-      "Free Fire";
-
-    $("settingCurrency").value =
-      settings.currency ||
-      "INR";
-
-  } catch {
-
-    localStorage.removeItem(
-      "dropzone_settings"
-    );
-
-  }
-
-}
-
-
-function loadTheme() {
-
-  const theme =
-    localStorage.getItem(
-      "dropzone_theme"
-    );
-
-  const dark =
-    theme !== "light";
-
-  document.body.classList.toggle(
-    "dark-theme",
-    dark
-  );
-
-  if ($("darkModeSwitch")) {
-
-    $("darkModeSwitch").checked =
-      dark;
-
-  }
-
-}
-
-
-function toggleTheme(enabled) {
-
-  document.body.classList.toggle(
-    "dark-theme",
-    enabled
-  );
-
-  localStorage.setItem(
-    "dropzone_theme",
-    enabled ? "dark" : "light"
-  );
-
-}
-
-
-function renderAll() {
-
-  renderTournaments();
-  renderPlayers();
-  renderMatches();
-  renderPayments();
-  renderRecent();
-  updateStats();
-  fillTournamentSelect();
-
-}
-
-
-$("tournamentForm")
-  ?.addEventListener(
-    "submit",
-    createTournament
-  );
-
-
-$("playerForm")
-  ?.addEventListener(
-    "submit",
-    addPlayer
-  );
-
-
-$("matchForm")
-  ?.addEventListener(
-    "submit",
-    createMatch
-  );
-
-
-$("settingsForm")
-  ?.addEventListener(
-    "submit",
-    saveSettings
-  );
-
-
-$("createTournamentButton")
-  ?.addEventListener(
-    "click",
-    () => openModal("tournamentModal")
-  );
-
-
-$("dashboardCreateTournament")
-  ?.addEventListener(
-    "click",
-    () => openModal("tournamentModal")
-  );
-
-
-$("quickTournament")
-  ?.addEventListener(
-    "click",
-    () => openModal("tournamentModal")
-  );
-
-
-$("addPlayerButton")
-  ?.addEventListener(
-    "click",
-    () => openModal("playerModal")
-  );
-
-
-$("quickPlayer")
-  ?.addEventListener(
-    "click",
-    () => openModal("playerModal")
-  );
-
-
-$("createMatchButton")
-  ?.addEventListener(
-    "click",
-    () => openModal("matchModal")
-  );
-
-
-$("quickMatch")
-  ?.addEventListener(
-    "click",
-    () => openModal("matchModal")
-  );
-
-
-$("quickSettings")
-  ?.addEventListener(
-    "click",
-    () => showPage("settings")
-  );
-
-
-$("tournamentSearch")
-  ?.addEventListener(
-    "input",
-    renderTournaments
-  );
-
-
-$("tournamentFilter")
-  ?.addEventListener(
-    "change",
-    renderTournaments
-  );
-
-
-$("payerSearch")
-  ?.addEventListener(
-    "input",
-    renderPlayers
-  );
-
-
-$("matchSearch")
-  ?.addEventListener(
-    "input",
-    renderMatches
-  );
-
-
-$("matchFilter")
-  ?.addEventListener(
-    "change",
-    renderMatches
-  );
-
-
-$("darkModeSwitch")
-  ?.addEventListener(
-    "change",
-    event => {
-      toggleTheme(event.target.checked);
-    }
-  );
-
-
-$("themeToggle")
-  ?.addEventListener(
-    "click",
-    () => {
-
-      const enabled =
-        !document.body.classList.contains(
-          "dark-theme"
-        );
-
-      toggleTheme(enabled);
-
-      if ($("darkModeSwitch")) {
-        $("darkModeSwitch").checked =
-          enabled;
-      }
-
-    }
-  );
-
-
-$("notificationButton")
-  ?.addEventListener(
-    "click",
-    () => {
-
-      toast(
-        "You have no new notifications.",
-        "Notifications"
-      );
-
-    }
-  );
-
-
-$("mobileMenu")
-  ?.addEventListener(
-    "click",
-    () => {
-
-      $("sidebar")
-        ?.classList.toggle(
-          "mobile-open"
-        );
-
-    }
-  );
-
-
-function initialize() {
-
-  loadSettings();
-
-  loadTheme();
-
-  renderAll();
-
-  showPage("dashboard");
-
-}
-
-
-initialize();
 
 </script>
 
 </body>
-</html>
+  </html>
