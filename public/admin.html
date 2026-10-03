@@ -1747,7 +1747,105 @@ label{
       id="socialLinksMessage"
       style="margin-top:12px;"
     ></div>
+    <div
+  id="socialLinkForm"
+  class="card"
+  style="
+    margin-top:16px;
+    display:none;
+  "
+>
 
+  <h3>➕ Add / Edit Social Link</h3>
+
+  <input
+    type="hidden"
+    id="socialEditId"
+  >
+
+  <label style="display:block;margin-top:12px;">
+    Platform / Channel Name
+  </label>
+
+  <input
+    id="socialName"
+    class="input"
+    placeholder="Discord"
+  >
+
+  <label style="display:block;margin-top:12px;">
+    Icon / Emoji
+  </label>
+
+  <input
+    id="socialIcon"
+    class="input"
+    placeholder="💬"
+  >
+
+  <label style="display:block;margin-top:12px;">
+    Link / URL
+  </label>
+
+  <input
+    id="socialUrl"
+    class="input"
+    placeholder="https://discord.gg/..."
+  >
+
+  <label
+    style="
+      display:block;
+      margin-top:14px;
+    "
+  >
+    <input
+      type="checkbox"
+      id="socialEnabled"
+      checked
+    >
+    Enable this link
+  </label>
+
+  <label style="display:block;margin-top:12px;">
+    Display Order
+  </label>
+
+  <input
+    id="socialOrder"
+    class="input"
+    type="number"
+    value="0"
+    min="0"
+  >
+
+  <div
+    style="
+      display:flex;
+      gap:8px;
+      flex-wrap:wrap;
+      margin-top:16px;
+    "
+  >
+
+    <button
+      class="primaryBtn"
+      onclick="saveSocialLink()"
+    >
+      💾 Save Link
+    </button>
+
+    <button
+      class="secondaryBtn"
+      onclick="closeSocialForm()"
+    >
+      ❌ Cancel
+    </button>
+
+  </div>
+
+    </div>
+    
   </div>
 
 </section>
