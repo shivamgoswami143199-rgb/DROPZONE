@@ -1148,49 +1148,51 @@ function closeMenu(){
     .classList.remove("show");
 }
 
-
-/* Navigation base */
+/* NAVIGATION */
 
 document.querySelectorAll("[data-page]").forEach(function(btn){
 
-  btn.addEventListener("click",function(){
+  btn.addEventListener("click", function(){
 
-    const page = this.dataset.page;
+    let page = this.dataset.page;
+
+    /* CREATE TOURNAMENT */
+    if(page === "create-tournament"){
+      page = "tournaments";
+
+      if(typeof resetTournamentForm === "function"){
+        resetTournamentForm();
+      }
+
+      setTimeout(function(){
+        const form = document.getElementById("tourName");
+
+        if(form){
+          form.scrollIntoView({
+            behavior:"smooth",
+            block:"start"
+          });
+
+          form.focus();
+        }
+      },100);
+    }
 
     const target = document.getElementById(page);
 
-    if(target){
+    if(!target){
+      return;
+    }
 
-      document
-        .querySelectorAll(".page")
-        .forEach(function(p){
-          p.classList.remove("active");
-        });
-
-      target.classList.add("active");
-
-}else{
-
-  document
-    .querySelectorAll(".page")
-    .forEach(function(p){
+    document.querySelectorAll(".page").forEach(function(p){
       p.classList.remove("active");
     });
 
-  const dashboard =
-    document.getElementById("dashboard");
+    target.classList.add("active");
 
-  if(dashboard){
-    dashboard.classList.add("active");
-  }
-
-    }
-
-    document
-      .querySelectorAll(".nav")
-      .forEach(function(n){
-        n.classList.remove("active");
-      });
+    document.querySelectorAll(".nav").forEach(function(n){
+      n.classList.remove("active");
+    });
 
     if(this.classList.contains("nav")){
       this.classList.add("active");
