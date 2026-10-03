@@ -1169,18 +1169,20 @@ document.querySelectorAll("[data-page]").forEach(function(btn){
 
       target.classList.add("active");
 
-    }else{
+}else{
 
-      const placeholder =
-        document.getElementById("placeholder");
+  document
+    .querySelectorAll(".page")
+    .forEach(function(p){
+      p.classList.remove("active");
+    });
 
-      document
-        .querySelectorAll(".page")
-        .forEach(function(p){
-          p.classList.remove("active");
-        });
+  const dashboard =
+    document.getElementById("dashboard");
 
-      placeholder.classList.add("active");
+  if(dashboard){
+    dashboard.classList.add("active");
+  }
 
     }
 
