@@ -3951,14 +3951,14 @@ document.querySelectorAll("[data-page]").forEach(function(btn){
       loadPlayerProfiles();
     }
     if(page === "activity"){
-  loadActivity();
+      loadActivity();
     }
       if(page === "analytics"){
-  loadAnalytics();
-          if(page === "payments"){
+      loadAnalytics();
+    }
+    if(page === "payments"){
       loadPaymentData();
     }
-
     if(page === "pending-payments"){
       loadPaymentRegistrations();
     }
