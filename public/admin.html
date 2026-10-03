@@ -4946,6 +4946,216 @@ async function loadActivity() {
   }
 
 }
+  // ================================
+// WEBSITE CONTROL
+// ================================
+
+async function loadWebsiteControl() {
+
+  const message =
+    document.getElementById("websiteControlMessage");
+
+  try {
+
+    const response = await fetch(
+      "/api/admin/settings",
+      {
+        method: "GET",
+        credentials: "include",
+        headers: {
+          "Content-Type": "application/json"
+        }
+      }
+    );
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(
+        data.error || "Failed to load website settings"
+      );
+    }
+
+    document.getElementById("wc_site_name").value =
+      data.site_name || "";
+
+    document.getElementById("wc_tagline").value =
+      data.tagline || "";
+
+    document.getElementById("wc_logo_url").value =
+      data.logo_url || "";
+
+    document.getElementById("wc_app_icon_url").value =
+      data.app_icon_url || "";
+
+    document.getElementById("wc_favicon_url").value =
+      data.favicon_url || "";
+
+    document.getElementById("wc_banner_url").value =
+      data.banner_url || "";
+
+    document.getElementById("wc_background_url").value =
+      data.background_url || "";
+
+    document.getElementById("wc_theme_color").value =
+      data.theme_color || "";
+
+    document.getElementById("wc_currency").value =
+      data.currency || "INR";
+
+    document.getElementById("wc_payment_enabled").checked =
+      !!data.payment_enabled;
+
+    document.getElementById("wc_payment_mode").value =
+      data.payment_mode || "MANUAL";
+
+    document.getElementById("wc_payment_display_name").value =
+      data.payment_display_name || "";
+
+    document.getElementById("wc_payment_upi").value =
+      data.payment_upi || "";
+
+    document.getElementById("wc_payment_qr_url").value =
+      data.payment_qr_url || "";
+
+    if (message) {
+      message.innerHTML = "✅ Website settings loaded.";
+    }
+
+  } catch (error) {
+
+    console.error(
+      "loadWebsiteControl error:",
+      error
+    );
+
+    if (message) {
+      message.innerHTML =
+        "❌ " + escapeHTML(error.message);
+    }
+
+  }
+
+}
+
+
+async function saveWebsiteControl() {
+
+  const message =
+    document.getElementById("websiteControlMessage");
+
+  try {
+
+    const body = {
+
+      site_name:
+        document.getElementById("wc_site_name").value.trim(),
+
+      tagline:
+        document.getElementById("wc_tagline").value.trim(),
+
+      logo_url:
+        document.getElementById("wc_logo_url").value.trim(),
+
+      app_icon_url:
+        document.getElementById("wc_app_icon_url").value.trim(),
+
+      favicon_url:
+        document.getElementById("wc_favicon_url").value.trim(),
+
+      banner_url:
+        document.getElementById("wc_banner_url").value.trim(),
+
+      background_url:
+        document.getElementById("wc_background_url").value.trim(),
+
+      theme_color:
+        document.getElementById("wc_theme_color").value.trim(),
+
+      currency:
+        document.getElementById("wc_currency").value.trim(),
+
+      payment_enabled:
+        document.getElementById("wc_payment_enabled").checked,
+
+      payment_mode:
+        document.getElementById("wc_payment_mode").value,
+
+      payment_display_name:
+        document
+          .getElementById("wc_payment_display_name")
+          .value
+          .trim(),
+
+      payment_upi:
+        document
+          .getElementById("wc_payment_upi")
+          .value
+          .trim(),
+
+      payment_qr_url:
+        document
+          .getElementById("wc_payment_qr_url")
+          .value
+          .trim()
+
+    };
+
+
+    if (!body.site_name) {
+      throw new Error(
+        "Website name is required"
+      );
+    }
+
+
+    const response = await fetch(
+      "/api/admin/settings",
+      {
+        method: "PUT",
+        credentials: "include",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify(body)
+      }
+    );
+
+
+    const data = await response.json();
+
+
+    if (!response.ok) {
+      throw new Error(
+        data.error || "Failed to save website settings"
+      );
+    }
+
+
+    if (message) {
+      message.innerHTML =
+        "✅ Website settings saved successfully.";
+    }
+
+
+    await loadWebsiteControl();
+
+
+  } catch (error) {
+
+    console.error(
+      "saveWebsiteControl error:",
+      error
+    );
+
+    if (message) {
+      message.innerHTML =
+        "❌ " + escapeHTML(error.message);
+    }
+
+  }
+
+}
 // ================================
 // AUTO LOAD
 // ================================
