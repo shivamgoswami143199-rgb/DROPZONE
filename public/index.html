@@ -100,7 +100,29 @@ let currentUser=null,currentTournament=null,config={};
 const $=id=>document.getElementById(id);
 async function api(url,opt={}){const r=await fetch(url,{credentials:"include",headers:{"Content-Type":"application/json",...(opt.headers||{})},...opt});let d={};try{d=await r.json()}catch{}if(!r.ok)throw new Error(d.error||"Request failed");return d}
 function esc(s){return String(s??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"}[m]))}
-function money(v){return "₹"+Number(v||0).toFixed(2).replace(".00","")}
+function money(v){
+
+  const currency =
+    String(config.currency || "INR").toUpperCase();
+
+  const symbols = {
+    INR: "₹",
+    USD: "$",
+    EUR: "€",
+    GBP: "£",
+    AED: "د.إ",
+    BDT: "৳",
+    NPR: "रू"
+  };
+
+  const symbol =
+    symbols[currency] || currency + " ";
+
+  return symbol +
+    Number(v || 0)
+      .toFixed(2)
+      .replace(".00","");
+}
 function date(v){if(!v)return "Date not set";const d=new Date(v);return Number.isNaN(d.getTime())?"Date not set":d.toLocaleString()}
 function msg(id,text,ok=false){$(id).innerHTML='<div class="notice '+(ok?"success":"error")+'">'+esc(text)+'</div>'}
 
