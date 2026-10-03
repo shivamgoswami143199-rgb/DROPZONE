@@ -2079,6 +2079,393 @@ document.addEventListener(
 
   }
 );
+  // ================================
+// DROPZONE REGISTRATION MANAGEMENT
+// ================================
+
+async function loadAllRegistrations() {
+
+  const box = document.getElementById(
+    "adminRegistrationList"
+  );
+
+  if (!box) return;
+
+  box.innerHTML =
+    "⏳ Loading registrations...";
+
+  try {
+
+    const res = await fetch(
+      "/api/admin/registrations",
+      {
+        credentials: "include"
+      }
+    );
+
+    const data = await res.json();
+
+    if (!res.ok) {
+      throw new Error(
+        data.error ||
+        "Failed to load registrations"
+      );
+    }
+
+    if (
+      !Array.isArray(data) ||
+      data.length === 0
+    ) {
+
+      box.innerHTML = `
+        <div class="placeholder">
+          No registrations found.
+        </div>
+      `;
+
+      return;
+    }
+
+    box.innerHTML = data.map(
+      function(r) {
+
+        const payment =
+          String(
+            r.payment_status || ""
+          ).toUpperCase();
+
+        const status =
+          String(
+            r.status || ""
+          ).toUpperCase();
+
+        return `
+          <div
+            class="card"
+            style="margin-top:12px"
+          >
+
+            <h3>
+              🎮 ${escapeHTML(
+                r.tournament_name ||
+                "Tournament"
+              )}
+            </h3>
+
+            <div style="margin-top:8px">
+              <b>👤 Player:</b>
+              ${escapeHTML(
+                r.player_name ||
+                "Player"
+              )}
+            </div>
+
+            <div>
+              <b>📧 Email:</b>
+              ${escapeHTML(
+                r.player_email || "-"
+              )}
+            </div>
+
+            <div>
+              <b>🎮 FF Username:</b>
+              ${escapeHTML(
+                r.ff_username || "-"
+              )}
+            </div>
+
+            <div>
+              <b>🆔 FF UID:</b>
+              ${escapeHTML(
+                r.ff_uid || "-"
+              )}
+            </div>
+
+            <div>
+              <b>🎟️ Slot:</b>
+              ${
+                r.slot_no ||
+                "Not assigned"
+              }
+            </div>
+
+            <div>
+              <b>💰 Entry Fee:</b>
+              ₹${Number(
+                r.entry_fee || 0
+              )}
+            </div>
+
+            <div>
+              <b>📌 Status:</b>
+              ${escapeHTML(
+                status || "-"
+              )}
+            </div>
+
+            <div>
+              <b>💳 Payment:</b>
+              ${escapeHTML(
+                payment || "-"
+              )}
+            </div>
+
+            <div>
+              <b>🧾 Payment Ref:</b>
+              ${escapeHTML(
+                r.payment_ref || "-"
+              )}
+            </div>
+
+            <div
+              style="
+                display:flex;
+                gap:8px;
+                flex-wrap:wrap;
+                margin-top:14px
+              "
+            >
+
+              ${
+                status !== "REJECTED" &&
+                status !== "CANCELLED"
+                  ? `
+                    <button
+                      class="primaryBtn"
+                      onclick="confirmRegistration(${r.id})"
+                    >
+                      ✅ Confirm
+                    </button>
+                  `
+                  : ""
+              }
+
+              ${
+                status !== "REJECTED" &&
+                status !== "CANCELLED"
+                  ? `
+                    <button
+                      class="secondaryBtn"
+                      onclick="rejectRegistration(${r.id})"
+                    >
+                      ❌ Reject
+                    </button>
+                  `
+                  : ""
+              }
+
+              ${
+                payment === "PENDING"
+                  ? `
+                    <button
+                      class="primaryBtn"
+                      onclick="verifyRegistrationPayment(${r.id})"
+                    >
+                      💳 Mark Paid
+                    </button>
+                  `
+                  : ""
+              }
+
+            </div>
+
+          </div>
+        `;
+      }
+    ).join("");
+
+  } catch (err) {
+
+    box.innerHTML = `
+      <div class="message">
+        ❌ ${escapeHTML(
+          err.message
+        )}
+      </div>
+    `;
+
+  }
+
+}
+
+
+// ================================
+// CONFIRM REGISTRATION
+// ================================
+
+async function confirmRegistration(id) {
+
+  if (
+    !confirm(
+      "Confirm this registration?"
+    )
+  ) {
+    return;
+  }
+
+  try {
+
+    const res = await fetch(
+      `/api/admin/registrations/${id}`,
+      {
+        method: "PUT",
+        credentials: "include",
+        headers: {
+          "Content-Type":
+            "application/json"
+        },
+        body: JSON.stringify({
+          status: "CONFIRMED"
+        })
+      }
+    );
+
+    const data = await res.json();
+
+    if (!res.ok) {
+      throw new Error(
+        data.error ||
+        "Failed to confirm registration"
+      );
+    }
+
+    await loadAllRegistrations();
+
+  } catch (err) {
+
+    alert(
+      "❌ " + err.message
+    );
+
+  }
+
+}
+
+
+// ================================
+// REJECT REGISTRATION
+// ================================
+
+async function rejectRegistration(id) {
+
+  if (
+    !confirm(
+      "Reject this registration?"
+    )
+  ) {
+    return;
+  }
+
+  try {
+
+    const res = await fetch(
+      `/api/admin/registrations/${id}`,
+      {
+        method: "PUT",
+        credentials: "include",
+        headers: {
+          "Content-Type":
+            "application/json"
+        },
+        body: JSON.stringify({
+          status: "REJECTED"
+        })
+      }
+    );
+
+    const data = await res.json();
+
+    if (!res.ok) {
+      throw new Error(
+        data.error ||
+        "Failed to reject registration"
+      );
+    }
+
+    await loadAllRegistrations();
+
+  } catch (err) {
+
+    alert(
+      "❌ " + err.message
+    );
+
+  }
+
+}
+
+
+// ================================
+// VERIFY PAYMENT
+// ================================
+
+async function verifyRegistrationPayment(id) {
+
+  if (
+    !confirm(
+      "Mark this payment as PAID?"
+    )
+  ) {
+    return;
+  }
+
+  try {
+
+    const res = await fetch(
+      `/api/admin/registrations/${id}/payment`,
+      {
+        method: "POST",
+        credentials: "include",
+        headers: {
+          "Content-Type":
+            "application/json"
+        },
+        body: JSON.stringify({
+          payment_status: "PAID"
+        })
+      }
+    );
+
+    const data = await res.json();
+
+    if (!res.ok) {
+      throw new Error(
+        data.error ||
+        "Payment verification failed"
+      );
+    }
+
+    await loadAllRegistrations();
+
+  } catch (err) {
+
+    alert(
+      "❌ " + err.message
+    );
+
+  }
+
+}
+
+
+// ================================
+// LOAD REGISTRATIONS ON PAGE OPEN
+// ================================
+
+document.addEventListener(
+  "DOMContentLoaded",
+  function() {
+
+    if (
+      document.getElementById(
+        "adminRegistrationList"
+      )
+    ) {
+      loadAllRegistrations();
+    }
+
+  }
+);
 // ================================
 // DROPZONE TOURNAMENT MANAGEMENT
 // ================================
