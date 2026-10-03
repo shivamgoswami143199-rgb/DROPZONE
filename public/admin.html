@@ -1273,6 +1273,51 @@ label{
   </div>
 
 </section>
+  <!-- REGISTRATIONS MANAGEMENT -->
+
+<section id="registrations" class="page">
+
+  <h1 class="title">📝 Registrations</h1>
+
+  <p class="desc">
+    Manage tournament registrations, players, slots and payment status.
+  </p>
+
+  <div class="card">
+
+    <div
+      style="
+        display:flex;
+        gap:8px;
+        flex-wrap:wrap;
+        align-items:center;
+      "
+    >
+
+      <h3 style="flex:1">
+        📋 All Registrations
+      </h3>
+
+      <button
+        class="secondaryBtn"
+        onclick="loadAllRegistrations()"
+      >
+        🔄 Refresh
+      </button>
+
+    </div>
+
+    <div
+      id="adminRegistrationList"
+      style="margin-top:14px"
+    >
+      ⏳ Loading registrations...
+    </div>
+
+  </div>
+
+</section>
+  
 </main>
 
 
