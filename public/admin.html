@@ -1849,6 +1849,257 @@ label{
   </div>
 
 </section>
+  <!-- ================================
+     PAYMENTS & MONEY
+================================ -->
+
+<section id="payments" class="page">
+
+  <h1 class="title">💳 Payment Dashboard</h1>
+
+  <p class="desc">
+    Manage payments, revenue and money activity.
+  </p>
+
+  <div class="grid">
+
+    <div class="card">
+      <h3>💰 Total Collected</h3>
+      <div
+        id="moneyTotalCollected"
+        style="font-size:26px;font-weight:bold;margin-top:10px;"
+      >
+        ₹0
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>⏳ Pending</h3>
+      <div
+        id="moneyPending"
+        style="font-size:26px;font-weight:bold;margin-top:10px;"
+      >
+        0
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>✅ Paid</h3>
+      <div
+        id="moneyPaid"
+        style="font-size:26px;font-weight:bold;margin-top:10px;"
+      >
+        0
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>❌ Failed</h3>
+      <div
+        id="moneyFailed"
+        style="font-size:26px;font-weight:bold;margin-top:10px;"
+      >
+        0
+      </div>
+    </div>
+
+  </div>
+
+  <div class="card" style="margin-top:14px;">
+
+    <h3>📊 Payment Activity</h3>
+
+    <div
+      id="paymentDashboardList"
+      style="margin-top:14px;"
+    >
+      Loading...
+    </div>
+
+  </div>
+
+</section>
+
+
+<section id="pending-payments" class="page">
+
+  <h1 class="title">⏳ Pending Payments</h1>
+
+  <p class="desc">
+    Verify player payment references and approve or reject payments.
+  </p>
+
+  <div class="card">
+
+    <div
+      id="pendingPaymentsList"
+      style="margin-top:4px;"
+    >
+      Loading pending payments...
+    </div>
+
+  </div>
+
+</section>
+
+
+<section id="paid-payments" class="page">
+
+  <h1 class="title">✅ Paid Payments</h1>
+
+  <p class="desc">
+    View successfully verified payments.
+  </p>
+
+  <div class="card">
+
+    <div
+      id="paidPaymentsList"
+      style="margin-top:4px;"
+    >
+      Loading paid payments...
+    </div>
+
+  </div>
+
+</section>
+
+
+<section id="failed-payments" class="page">
+
+  <h1 class="title">❌ Failed Payments</h1>
+
+  <p class="desc">
+    View failed or rejected payments.
+  </p>
+
+  <div class="card">
+
+    <div
+      id="failedPaymentsList"
+      style="margin-top:4px;"
+    >
+      Loading failed payments...
+    </div>
+
+  </div>
+
+</section>
+
+
+<section id="refunds" class="page">
+
+  <h1 class="title">↩️ Refunds</h1>
+
+  <p class="desc">
+    Manage refunded tournament payments.
+  </p>
+
+  <div class="card">
+
+    <div
+      id="refundPaymentsList"
+      style="margin-top:4px;"
+    >
+      Loading refunds...
+    </div>
+
+  </div>
+
+</section>
+
+
+<section id="payment-settings" class="page">
+
+  <h1 class="title">💰 Payment Settings</h1>
+
+  <p class="desc">
+    Configure how payments are displayed and processed.
+  </p>
+
+  <div class="card">
+
+    <label>
+      <input
+        type="checkbox"
+        id="moneyPaymentEnabled"
+      >
+      Enable Payments
+    </label>
+
+    <label style="margin-top:14px;">
+      Payment Mode
+    </label>
+
+    <select
+      id="moneyPaymentMode"
+      class="input"
+    >
+      <option value="MANUAL">
+        MANUAL
+      </option>
+
+      <option value="ONLINE">
+        ONLINE
+      </option>
+    </select>
+
+    <label style="margin-top:10px;">
+      Payment Display Name
+    </label>
+
+    <input
+      id="moneyPaymentName"
+      class="input"
+      placeholder="UPI Payment"
+    >
+
+    <label style="margin-top:10px;">
+      UPI ID
+    </label>
+
+    <input
+      id="moneyPaymentUpi"
+      class="input"
+      placeholder="example@upi"
+    >
+
+    <label style="margin-top:10px;">
+      QR Code URL
+    </label>
+
+    <input
+      id="moneyPaymentQr"
+      class="input"
+      placeholder="https://..."
+    >
+
+    <label style="margin-top:10px;">
+      Currency
+    </label>
+
+    <input
+      id="moneyCurrency"
+      class="input"
+      placeholder="INR"
+    >
+
+    <button
+      class="primaryBtn"
+      onclick="saveMoneyPaymentSettings()"
+      style="width:100%;margin-top:10px;"
+    >
+      💾 Save Payment Settings
+    </button>
+
+    <div
+      id="moneyPaymentMessage"
+      style="margin-top:12px;"
+    ></div>
+
+  </div>
+
+</section>
 <!-- SLOT MANAGEMENT -->
 
 <section id="slots" class="page">
