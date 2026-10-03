@@ -827,7 +827,257 @@ app.delete("/api/admin/tournaments/:id", admin, (req, res) => {
   audit(req.user.id, "DELETE_TOURNAMENT", `Tournament ${id}`);
   res.json({ ok: true });
 });
+/* =========================
+   ADMIN TOURNAMENT TEMPLATES
+========================= */
 
+function getTournamentTemplates() {
+  return safeJson(
+    getSetting("tournament_templates", "[]"),
+    []
+  );
+}
+
+function saveTournamentTemplates(list) {
+  setSetting(
+    "tournament_templates",
+    JSON.stringify(list)
+  );
+}
+
+app.get(
+  "/api/admin/tournament-templates",
+  admin,
+  (req, res) => {
+    res.json(getTournamentTemplates());
+  }
+);
+
+app.post(
+  "/api/admin/tournament-templates",
+  admin,
+  (req, res) => {
+
+    const b = req.body || {};
+
+    const name = String(
+      b.name || ""
+    ).trim();
+
+    if (!name) {
+      return res.status(400).json({
+        error: "Template name is required"
+      });
+    }
+
+    const mode = String(
+      b.mode || "SQUAD"
+    ).toUpperCase();
+
+    if (!["SOLO", "DUO", "SQUAD"].includes(mode)) {
+      return res.status(400).json({
+        error: "Invalid template mode"
+      });
+    }
+
+    const list =
+      getTournamentTemplates();
+
+    const template = {
+      id: Date.now(),
+
+      name,
+
+      mode,
+
+      entry_fee: Math.max(
+        0,
+        num(b.entry_fee, 0)
+      ),
+
+      prize_pool: Math.max(
+        0,
+        num(b.prize_pool, 0)
+      ),
+
+      total_slots: Math.max(
+        1,
+        int(b.total_slots, 48)
+      ),
+
+      status: String(
+        b.status || "OPEN"
+      ).toUpperCase(),
+
+      banner: String(
+        b.banner || ""
+      ),
+
+      description: String(
+        b.description || ""
+      )
+    };
+
+    list.unshift(template);
+
+    saveTournamentTemplates(list);
+
+    audit(
+      req.user.id,
+      "CREATE_TOURNAMENT_TEMPLATE",
+      `Template ${template.id}`
+    );
+
+    res.status(201).json({
+      ok: true,
+      template
+    });
+  }
+);
+
+app.put(
+  "/api/admin/tournament-templates/:id",
+  admin,
+  (req, res) => {
+
+    const id =
+      Number(req.params.id);
+
+    const list =
+      getTournamentTemplates();
+
+    const index =
+      list.findIndex(
+        x => Number(x.id) === id
+      );
+
+    if (index === -1) {
+      return res.status(404).json({
+        error: "Template not found"
+      });
+    }
+
+    const old = list[index];
+    const b = req.body || {};
+
+    const name = String(
+      b.name ?? old.name
+    ).trim();
+
+    if (!name) {
+      return res.status(400).json({
+        error: "Template name is required"
+      });
+    }
+
+    const mode = String(
+      b.mode ?? old.mode
+    ).toUpperCase();
+
+    if (!["SOLO", "DUO", "SQUAD"].includes(mode)) {
+      return res.status(400).json({
+        error: "Invalid template mode"
+      });
+    }
+
+    list[index] = {
+      ...old,
+
+      name,
+
+      mode,
+
+      entry_fee: Math.max(
+        0,
+        num(
+          b.entry_fee,
+          old.entry_fee
+        )
+      ),
+
+      prize_pool: Math.max(
+        0,
+        num(
+          b.prize_pool,
+          old.prize_pool
+        )
+      ),
+
+      total_slots: Math.max(
+        1,
+        int(
+          b.total_slots,
+          old.total_slots
+        )
+      ),
+
+      status: String(
+        b.status ?? old.status
+      ).toUpperCase(),
+
+      banner: String(
+        b.banner ??
+        old.banner ??
+        ""
+      ),
+
+      description: String(
+        b.description ??
+        old.description ??
+        ""
+      )
+    };
+
+    saveTournamentTemplates(list);
+
+    audit(
+      req.user.id,
+      "UPDATE_TOURNAMENT_TEMPLATE",
+      `Template ${id}`
+    );
+
+    res.json({
+      ok: true,
+      template: list[index]
+    });
+  }
+);
+
+app.delete(
+  "/api/admin/tournament-templates/:id",
+  admin,
+  (req, res) => {
+
+    const id =
+      Number(req.params.id);
+
+    const list =
+      getTournamentTemplates();
+
+    const next =
+      list.filter(
+        x => Number(x.id) !== id
+      );
+
+    if (next.length === list.length) {
+      return res.status(404).json({
+        error: "Template not found"
+      });
+    }
+
+    saveTournamentTemplates(next);
+
+    audit(
+      req.user.id,
+      "DELETE_TOURNAMENT_TEMPLATE",
+      `Template ${id}`
+    );
+
+    res.json({
+      ok: true
+    });
+  }
+);
 /* =========================
    ADMIN REGISTRATIONS / PAYMENTS
 ========================= */
