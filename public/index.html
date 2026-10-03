@@ -126,7 +126,169 @@ function money(v){
 function date(v){if(!v)return "Date not set";const d=new Date(v);return Number.isNaN(d.getTime())?"Date not set":d.toLocaleString()}
 function msg(id,text,ok=false){$(id).innerHTML='<div class="notice '+(ok?"success":"error")+'">'+esc(text)+'</div>'}
 
-async function loadConfig(){try{config=await api("/api/config");$("siteName").textContent=config.site_name||"DROPZONE";$("tagline").textContent=config.tagline||"";document.title=config.site_name||"DROPZONE";if(config.background_url)document.body.style.backgroundImage="url('"+String(config.background_url).replace(/'/g,"%27")+"')"}catch(e){}}
+async function loadConfig(){
+
+  try{
+
+    config = await api("/api/config");
+
+    /* WEBSITE NAME */
+
+    const siteName =
+      config.site_name || "DROPZONE";
+
+    $("siteName").textContent =
+      siteName;
+
+    $("logoText").textContent =
+      siteName;
+
+    document.title =
+      siteName;
+
+
+    /* TAGLINE */
+
+    $("tagline").textContent =
+      config.tagline ||
+      "Free Fire Tournament Platform";
+
+
+    /* LOGO */
+
+    const logo =
+      $("siteLogo");
+
+    if(config.logo_url){
+
+      logo.src =
+        config.logo_url;
+
+      logo.style.display =
+        "inline-block";
+
+      $("logoText").style.display =
+        "none";
+
+    }else{
+
+      logo.removeAttribute("src");
+
+      logo.style.display =
+        "none";
+
+      $("logoText").style.display =
+        "inline";
+
+    }
+
+
+    /* FAVICON */
+
+    if(config.favicon_url){
+
+      let favicon =
+        document.getElementById(
+          "dynamicFavicon"
+        );
+
+      if(!favicon){
+
+        favicon =
+          document.createElement("link");
+
+        favicon.id =
+          "dynamicFavicon";
+
+        favicon.rel =
+          "icon";
+
+        document.head.appendChild(
+          favicon
+        );
+
+      }
+
+      favicon.href =
+        config.favicon_url;
+
+    }
+
+
+    /* BACKGROUND */
+
+    if(config.background_url){
+
+      document.body.style.backgroundImage =
+        "url('" +
+        String(config.background_url)
+          .replace(/'/g,"%27") +
+        "')";
+
+      document.body.style.backgroundSize =
+        "cover";
+
+      document.body.style.backgroundAttachment =
+        "fixed";
+
+      document.body.style.backgroundPosition =
+        "center";
+
+    }else{
+
+      document.body.style.backgroundImage =
+        "";
+
+    }
+
+
+    /* THEME COLOR */
+
+    if(config.theme_color){
+
+      document.documentElement.style
+        .setProperty(
+          "--theme-color",
+          config.theme_color
+        );
+
+    }
+
+
+    /* HOMEPAGE BANNER */
+
+    const hero =
+      document.querySelector(".hero");
+
+    if(
+      hero &&
+      config.banner_url
+    ){
+
+      hero.style.backgroundImage =
+        "linear-gradient(#0008,#0008),url('" +
+        String(config.banner_url)
+          .replace(/'/g,"%27") +
+        "')";
+
+      hero.style.backgroundSize =
+        "cover";
+
+      hero.style.backgroundPosition =
+        "center";
+
+    }
+
+  }catch(error){
+
+    console.error(
+      "loadConfig error:",
+      error
+    );
+
+  }
+
+}
 async function checkLogin(){try{const d=await api("/api/me");currentUser=d.user;showLoggedIn();loadMy();}catch(e){showLoggedOut()}}
 function showLoggedIn(){ $("loginBtn").classList.add("hidden");$("registerBtn").classList.add("hidden");$("logoutBtn").classList.remove("hidden");$("userSection").classList.remove("hidden");$("mySection").classList.remove("hidden");$("userName").textContent=currentUser.name;$("userEmail").textContent=currentUser.email;$("userFF").textContent=currentUser.ff_username||"-";$("userUID").textContent=currentUser.ff_uid||"-";$("userRole").textContent=currentUser.role}
 function showLoggedOut(){ $("loginBtn").classList.remove("hidden");$("registerBtn").classList.remove("hidden");$("logoutBtn").classList.add("hidden");$("userSection").classList.add("hidden");$("mySection").classList.add("hidden")}
