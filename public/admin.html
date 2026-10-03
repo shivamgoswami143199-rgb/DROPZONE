@@ -2403,6 +2403,45 @@ label{
 
 
 <script>
+  // ================================
+// GLOBAL API HELPER
+// ================================
+
+async function api(url, opt = {}) {
+
+  const response =
+    await fetch(
+      url,
+      {
+        credentials: "include",
+
+        headers: {
+          "Content-Type": "application/json",
+          ...(opt.headers || {})
+        },
+
+        ...opt
+      }
+    );
+
+  let data = {};
+
+  try {
+    data =
+      await response.json();
+  } catch (e) {}
+
+  if (!response.ok) {
+
+    throw new Error(
+      data.error ||
+      "Request failed"
+    );
+
+  }
+
+  return data;
+}
   /* =========================
    TOURNAMENT SCHEDULE
 ========================= */
