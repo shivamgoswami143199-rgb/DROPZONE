@@ -1449,7 +1449,430 @@ label{
 
 
 <script>
+/* =========================
+   SLOT MANAGEMENT
+========================= */
 
+async function loadSlotTournaments(){
+
+  const select =
+    document.getElementById("slotTournamentSelect");
+
+  if(!select) return;
+
+  select.innerHTML =
+    '<option value="">Loading tournaments...</option>';
+
+  try{
+
+    const res = await fetch("/api/admin/tournaments");
+
+    const data = await res.json();
+
+    if(!res.ok){
+      throw new Error(data.error || "Failed to load tournaments");
+    }
+
+    const tournaments =
+      Array.isArray(data) ? data : (data.tournaments || []);
+
+    select.innerHTML =
+      '<option value="">Select Tournament</option>';
+
+    tournaments.forEach(tournament => {
+
+      const option =
+        document.createElement("option");
+
+      option.value = tournament.id;
+
+      option.textContent =
+        `${tournament.name} — ${tournament.status || ""}`;
+
+      select.appendChild(option);
+
+    });
+
+  }catch(error){
+
+    select.innerHTML =
+      '<option value="">Failed to load tournaments</option>';
+
+    showSlotMessage(
+      "❌ " + error.message,
+      true
+    );
+
+  }
+}
+
+
+async function loadTournamentSlots(){
+
+  const select =
+    document.getElementById("slotTournamentSelect");
+
+  const tournamentId =
+    select ? select.value : "";
+
+  const grid =
+    document.getElementById("slotGrid");
+
+  const summary =
+    document.getElementById("slotSummary");
+
+  if(!tournamentId){
+
+    if(grid){
+      grid.innerHTML =
+        "Select a tournament first.";
+    }
+
+    if(summary){
+      summary.style.display = "none";
+    }
+
+    return;
+  }
+
+  if(grid){
+    grid.innerHTML =
+      "⏳ Loading slots...";
+  }
+
+  try{
+
+    const res = await fetch(
+      `/api/admin/slots?tournament_id=${encodeURIComponent(tournamentId)}`
+    );
+
+    const data = await res.json();
+
+    if(!res.ok){
+      throw new Error(
+        data.error || "Failed to load slots"
+      );
+    }
+
+    document.getElementById("slotTotal").textContent =
+      data.total_slots;
+
+    document.getElementById("slotBooked").textContent =
+      data.booked_slots;
+
+    document.getElementById("slotAvailable").textContent =
+      data.available_slots;
+
+    if(summary){
+      summary.style.display = "block";
+    }
+
+    renderSlotGrid(data.slots);
+
+  }catch(error){
+
+    if(grid){
+      grid.innerHTML =
+        `❌ ${escapeSlotHtml(error.message)}`;
+    }
+
+    showSlotMessage(
+      "❌ " + error.message,
+      true
+    );
+
+  }
+}
+
+
+function renderSlotGrid(slots){
+
+  const grid =
+    document.getElementById("slotGrid");
+
+  if(!grid) return;
+
+  if(!Array.isArray(slots) || slots.length === 0){
+
+    grid.innerHTML =
+      "No slots found.";
+
+    return;
+  }
+
+  grid.innerHTML =
+    slots.map(slot => {
+
+      const registration =
+        slot.registration;
+
+      if(!registration){
+
+        return `
+          <div
+            style="
+              padding:12px;
+              border:1px solid rgba(255,255,255,.12);
+              border-radius:12px;
+              background:rgba(255,255,255,.03);
+            "
+          >
+            <strong>Slot ${slot.slot_no}</strong>
+
+            <div
+              style="
+                margin-top:6px;
+                opacity:.7;
+              "
+            >
+              🟢 Available
+            </div>
+          </div>
+        `;
+
+      }
+
+      return `
+        <div
+          style="
+            padding:12px;
+            border:1px solid rgba(255,255,255,.12);
+            border-radius:12px;
+            background:rgba(255,255,255,.05);
+          "
+        >
+
+          <strong>
+            🎟️ Slot ${slot.slot_no}
+          </strong>
+
+          <div
+            style="
+              margin-top:8px;
+              line-height:1.5;
+            "
+          >
+
+            👤
+            ${escapeSlotHtml(
+              registration.ff_username || "Unknown"
+            )}
+
+            <br>
+
+            🆔
+            ${escapeSlotHtml(
+              registration.ff_uid || "-"
+            )}
+
+            <br>
+
+            💳
+            ${escapeSlotHtml(
+              registration.payment_status || "N/A"
+            )}
+
+            <br>
+
+            📌
+            ${escapeSlotHtml(
+              registration.status || "N/A"
+            )}
+
+          </div>
+
+          <div
+            style="
+              display:flex;
+              gap:6px;
+              flex-wrap:wrap;
+              margin-top:10px;
+            "
+          >
+
+            <button
+              class="secondaryBtn"
+              onclick="changeSlot(${registration.id}, ${slot.slot_no})"
+            >
+              ✏️ Change
+            </button>
+
+            <button
+              class="secondaryBtn"
+              onclick="releaseSlot(${registration.id})"
+            >
+              🗑️ Release
+            </button>
+
+          </div>
+
+        </div>
+      `;
+
+    }).join("");
+
+}
+
+
+async function changeSlot(
+  registrationId,
+  currentSlot
+){
+
+  const value =
+    prompt(
+      `Enter new slot number:\nCurrent slot: ${currentSlot}`
+    );
+
+  if(value === null) return;
+
+  const slotNo =
+    Number(value);
+
+  if(
+    !Number.isInteger(slotNo) ||
+    slotNo < 1
+  ){
+
+    showSlotMessage(
+      "❌ Invalid slot number.",
+      true
+    );
+
+    return;
+  }
+
+  try{
+
+    const res = await fetch(
+      `/api/admin/registrations/${registrationId}/slot`,
+      {
+        method:"PUT",
+        headers:{
+          "Content-Type":"application/json"
+        },
+        body:JSON.stringify({
+          slot_no:slotNo
+        })
+      }
+    );
+
+    const data = await res.json();
+
+    if(!res.ok){
+      throw new Error(
+        data.error || "Failed to change slot"
+      );
+    }
+
+    showSlotMessage(
+      `✅ Slot changed to ${slotNo}.`
+    );
+
+    await loadTournamentSlots();
+
+  }catch(error){
+
+    showSlotMessage(
+      "❌ " + error.message,
+      true
+    );
+
+  }
+
+}
+
+
+async function releaseSlot(
+  registrationId
+){
+
+  if(
+    !confirm(
+      "Are you sure you want to release this slot?"
+    )
+  ){
+
+    return;
+  }
+
+  try{
+
+    const res = await fetch(
+      `/api/admin/registrations/${registrationId}/slot`,
+      {
+        method:"DELETE"
+      }
+    );
+
+    const data = await res.json();
+
+    if(!res.ok){
+      throw new Error(
+        data.error || "Failed to release slot"
+      );
+    }
+
+    showSlotMessage(
+      "✅ Slot released successfully."
+    );
+
+    await loadTournamentSlots();
+
+  }catch(error){
+
+    showSlotMessage(
+      "❌ " + error.message,
+      true
+    );
+
+  }
+
+}
+
+
+function showSlotMessage(
+  message,
+  isError = false
+){
+
+  const box =
+    document.getElementById("slotMessage");
+
+  if(!box) return;
+
+  box.textContent = message;
+
+  box.style.display = "block";
+
+  box.style.marginTop = "12px";
+
+  box.style.color =
+    isError ? "#ff6b6b" : "#7cff9b";
+
+}
+
+
+function escapeSlotHtml(value){
+
+  return String(value ?? "")
+    .replace(/&/g,"&amp;")
+    .replace(/</g,"&lt;")
+    .replace(/>/g,"&gt;")
+    .replace(/"/g,"&quot;")
+    .replace(/'/g,"&#039;");
+
+}
+
+
+document.addEventListener(
+  "DOMContentLoaded",
+  function(){
+
+    loadSlotTournaments();
+
+  }
+);
 function openMenu(){
   document
     .getElementById("sidebar")
