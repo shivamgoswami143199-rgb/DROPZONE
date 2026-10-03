@@ -4257,7 +4257,20 @@ async function adminLogin() {
       })
     });
 
-    const data = await response.json();
+    const rawResponse = await response.text();
+
+let data;
+
+try {
+  data = JSON.parse(rawResponse);
+} catch (parseError) {
+  console.error("Non-JSON response:", rawResponse);
+
+  throw new Error(
+    "Server ने JSON की जगह HTML भेजा। HTTP status: " +
+    response.status
+  );
+}
 
     if (!response.ok) {
       throw new Error(data.error || "Login failed");
