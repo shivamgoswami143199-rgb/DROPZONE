@@ -2618,9 +2618,14 @@ document.querySelectorAll("[data-page]").forEach(function(btn){
     });
 
     target.classList.add("active");
-    if(page === "players"){
+        if(page === "players"){
       loadPlayers();
     }
+
+    if(page === "player-profile"){
+      loadPlayerProfiles();
+    }
+      
     document.querySelectorAll(".nav").forEach(function(n){
       n.classList.remove("active");
     });
