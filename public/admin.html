@@ -1497,6 +1497,197 @@ label{
   </div>
 
 </section>
+  <!-- WEBSITE CONTROL -->
+
+<section id="website" class="page">
+
+  <h1 class="title">🌐 Website Control</h1>
+
+  <p class="desc">
+    Control the main player-facing website settings.
+  </p>
+
+  <div class="card">
+
+    <div
+      style="
+        display:flex;
+        gap:8px;
+        flex-wrap:wrap;
+        align-items:center;
+      "
+    >
+
+      <h3 style="flex:1">
+        🌐 Website Settings
+      </h3>
+
+      <button
+        class="secondaryBtn"
+        onclick="loadWebsiteControl()"
+      >
+        🔄 Reload
+      </button>
+
+    </div>
+
+    <div style="margin-top:14px;">
+
+      <label>Website Name</label>
+      <input
+        id="wc_site_name"
+        class="input"
+        placeholder="DROPZONE"
+      >
+
+      <label>Website Tagline</label>
+      <input
+        id="wc_tagline"
+        class="input"
+        placeholder="Free Fire Tournament Platform"
+        style="margin-top:10px;"
+      >
+
+      <label>Logo URL</label>
+      <input
+        id="wc_logo_url"
+        class="input"
+        placeholder="https://..."
+        style="margin-top:10px;"
+      >
+
+      <label>App Icon URL</label>
+      <input
+        id="wc_app_icon_url"
+        class="input"
+        placeholder="https://..."
+        style="margin-top:10px;"
+      >
+
+      <label>Favicon URL</label>
+      <input
+        id="wc_favicon_url"
+        class="input"
+        placeholder="https://..."
+        style="margin-top:10px;"
+      >
+
+      <label>Homepage Banner URL</label>
+      <input
+        id="wc_banner_url"
+        class="input"
+        placeholder="https://..."
+        style="margin-top:10px;"
+      >
+
+      <label>Website Background URL</label>
+      <input
+        id="wc_background_url"
+        class="input"
+        placeholder="https://..."
+        style="margin-top:10px;"
+      >
+
+      <label>Theme Color</label>
+      <input
+        id="wc_theme_color"
+        class="input"
+        placeholder="#000000"
+        style="margin-top:10px;"
+      >
+
+      <label>Currency</label>
+      <input
+        id="wc_currency"
+        class="input"
+        placeholder="INR"
+        style="margin-top:10px;"
+      >
+
+    </div>
+
+  </div>
+
+
+  <div class="card">
+
+    <h3>💰 Payment Display</h3>
+
+    <div style="margin-top:14px;">
+
+      <label>
+        <input
+          type="checkbox"
+          id="wc_payment_enabled"
+        >
+        Enable Payment
+      </label>
+
+      <label style="display:block;margin-top:12px;">
+        Payment Mode
+      </label>
+
+      <select
+        id="wc_payment_mode"
+        class="input"
+        style="margin-top:6px;"
+      >
+        <option value="MANUAL">MANUAL</option>
+        <option value="ONLINE">ONLINE</option>
+      </select>
+
+      <label style="display:block;margin-top:10px;">
+        Payment Display Name
+      </label>
+
+      <input
+        id="wc_payment_display_name"
+        class="input"
+        placeholder="UPI Payment"
+      >
+
+      <label style="display:block;margin-top:10px;">
+        UPI ID
+      </label>
+
+      <input
+        id="wc_payment_upi"
+        class="input"
+        placeholder="example@upi"
+      >
+
+      <label style="display:block;margin-top:10px;">
+        Payment QR URL
+      </label>
+
+      <input
+        id="wc_payment_qr_url"
+        class="input"
+        placeholder="https://..."
+      >
+
+    </div>
+
+  </div>
+
+
+  <div class="card">
+
+    <button
+      class="primaryBtn"
+      onclick="saveWebsiteControl()"
+    >
+      💾 Save Website Settings
+    </button>
+
+    <div
+      id="websiteControlMessage"
+      style="margin-top:12px;"
+    ></div>
+
+  </div>
+
+</section>
 <!-- SLOT MANAGEMENT -->
 
 <section id="slots" class="page">
