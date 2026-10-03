@@ -298,7 +298,125 @@ body{
   color:white;
   margin-bottom:7px;
 }
+/* ================================
+   TOURNAMENT MANAGEMENT
+================================ */
 
+.input{
+  width:100%;
+  min-height:46px;
+  margin-top:6px;
+  margin-bottom:13px;
+  padding:11px 12px;
+  border:1px solid var(--line);
+  border-radius:11px;
+  background:#0a0e1c;
+  color:var(--text);
+  font-size:14px;
+  outline:none;
+}
+
+.input:focus{
+  border-color:var(--purple);
+  box-shadow:0 0 0 2px rgba(124,60,255,.15);
+}
+
+textarea.input{
+  min-height:100px;
+  resize:vertical;
+}
+
+select.input{
+  appearance:auto;
+}
+
+label{
+  display:block;
+  color:#b7bfd5;
+  font-size:12px;
+  font-weight:bold;
+  margin-top:4px;
+}
+
+.primaryBtn,
+.secondaryBtn{
+  min-height:44px;
+  padding:10px 14px;
+  border-radius:11px;
+  font-size:13px;
+  font-weight:bold;
+  cursor:pointer;
+  border:1px solid var(--line);
+}
+
+.primaryBtn{
+  background:var(--purple);
+  color:white;
+  border-color:var(--purple);
+}
+
+.secondaryBtn{
+  background:#0a0e1c;
+  color:#dce2f5;
+}
+
+.primaryBtn:active,
+.secondaryBtn:active{
+  transform:scale(.97);
+}
+
+.message{
+  margin-top:10px;
+  color:#20d889;
+  font-size:12px;
+  font-weight:bold;
+  line-height:1.5;
+}
+
+#tournamentList .card,
+#registrationList .card{
+  background:#0d1324;
+}
+
+#tournamentList h3,
+#registrationList h3{
+  font-size:16px;
+  margin-bottom:8px;
+}
+
+#tournamentList .card div,
+#registrationList .card div{
+  color:#aeb7cf;
+  font-size:12px;
+  line-height:1.7;
+}
+
+#tournamentList .card b,
+#registrationList .card b{
+  color:#f5f7ff;
+}
+
+@media(max-width:420px){
+
+  .main{
+    padding:12px;
+  }
+
+  .card{
+    padding:13px;
+  }
+
+  .title{
+    font-size:21px;
+  }
+
+  .primaryBtn,
+  .secondaryBtn{
+    min-height:46px;
+    flex:1;
+  }
+
+}
 /* DESKTOP */
 
 @media(min-width:768px){
