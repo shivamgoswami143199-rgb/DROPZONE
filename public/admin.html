@@ -3428,6 +3428,160 @@ async function loadSocialLinks() {
 
 }
   // ================================
+// MATCH MANAGEMENT
+// ================================
+
+async function loadMatchManagement() {
+
+  const box =
+    document.getElementById(
+      "matchManagementList"
+    );
+
+  if (!box) return;
+
+  box.innerHTML =
+    "Loading matches...";
+
+  try {
+
+    const tournaments =
+      await api(
+        "/api/admin/tournaments"
+      );
+
+    if (
+      !Array.isArray(tournaments) ||
+      tournaments.length === 0
+    ) {
+
+      box.innerHTML = `
+        <div style="
+          padding:20px;
+          text-align:center;
+          opacity:.7;
+        ">
+          📭 No matches / tournaments found.
+        </div>
+      `;
+
+      return;
+    }
+
+    box.innerHTML =
+      tournaments.map(t => {
+
+        const roomId =
+          t.room_id || "Not set";
+
+        const roomPassword =
+          t.room_password || "Not set";
+
+        return `
+          <div
+            class="card"
+            style="
+              margin-top:10px;
+              border:1px solid rgba(255,255,255,.08);
+            "
+          >
+
+            <div style="
+              display:flex;
+              justify-content:space-between;
+              gap:12px;
+              flex-wrap:wrap;
+            ">
+
+              <div>
+
+                <h3>
+                  🎮 ${escapeSlotHtml(
+                    t.name || "Unnamed Match"
+                  )}
+                </h3>
+
+                <div style="margin-top:8px;">
+                  🆔 Match ID:
+                  <strong>
+                    ${Number(t.id)}
+                  </strong>
+                </div>
+
+                <div style="margin-top:6px;">
+                  🎯 Mode:
+                  ${escapeSlotHtml(
+                    t.mode || "-"
+                  )}
+                </div>
+
+                <div style="margin-top:6px;">
+                  📌 Status:
+                  <strong>
+                    ${escapeSlotHtml(
+                      t.status || "-"
+                    )}
+                  </strong>
+                </div>
+
+                <div style="margin-top:6px;">
+                  👥 Slots:
+                  ${Number(t.booked_slots || 0)}
+                  /
+                  ${Number(t.total_slots || 0)}
+                </div>
+
+                <div style="margin-top:6px;">
+                  🔑 Room ID:
+                  <strong>
+                    ${escapeSlotHtml(
+                      roomId
+                    )}
+                  </strong>
+                </div>
+
+                <div style="margin-top:6px;">
+                  🔐 Room Password:
+                  <strong>
+                    ${escapeSlotHtml(
+                      roomPassword
+                    )}
+                  </strong>
+                </div>
+
+              </div>
+
+            </div>
+
+          </div>
+        `;
+
+      }).join("");
+
+  } catch (error) {
+
+    console.error(
+      "loadMatchManagement error:",
+      error
+    );
+
+    box.innerHTML = `
+      <div style="
+        padding:18px;
+        color:#ff526d;
+      ">
+        ❌ Failed to load matches:
+        ${escapeSlotHtml(
+          error.message ||
+          "Unknown error"
+        )}
+      </div>
+    `;
+
+  }
+
+}
+  // ================================
 // PAYMENTS & MONEY
 // ================================
 
