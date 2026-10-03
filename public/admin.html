@@ -4213,6 +4213,9 @@ document.querySelectorAll("[data-page]").forEach(function(btn){
     if(page === "payment-settings"){
       loadMoneyPaymentSettings();
     }
+    if(page === "matches"){
+      loadMatchManagement();
+    }
   
     document.querySelectorAll(".nav").forEach(function(n){
       n.classList.remove("active");
