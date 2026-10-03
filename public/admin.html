@@ -2994,6 +2994,122 @@ function closeSocialForm() {
 
   form.style.display = "none";
 
+// ================================
+// LOAD SOCIAL LINKS
+// ================================
+
+async function loadSocialLinks() {
+
+  const list =
+    document.getElementById("socialLinksList");
+
+  const message =
+    document.getElementById("socialLinksMessage");
+
+  if (!list) return;
+
+  try {
+
+    list.innerHTML =
+      "⏳ Loading social links...";
+
+    const data =
+      await api("/api/admin/social-links");
+
+    const links =
+      Array.isArray(data.links)
+        ? data.links
+        : [];
+
+    if (!links.length) {
+
+      list.innerHTML =
+        "No social/community links added yet.";
+
+      return;
+
+    }
+
+    links.sort(
+      (a,b) =>
+        Number(a.order || 0) -
+        Number(b.order || 0)
+    );
+
+    list.innerHTML =
+      links.map(link => `
+
+        <div
+          class="card"
+          style="
+            margin-top:10px;
+            display:flex;
+            gap:10px;
+            align-items:center;
+            flex-wrap:wrap;
+          "
+        >
+
+          <div style="font-size:24px;">
+            ${escapeSlotHtml(link.icon || "🔗")}
+          </div>
+
+          <div style="flex:1;min-width:180px;">
+
+            <strong>
+              ${escapeSlotHtml(link.name)}
+            </strong>
+
+            <div
+              style="
+                font-size:12px;
+                opacity:.7;
+                margin-top:4px;
+                word-break:break-all;
+              "
+            >
+              ${escapeSlotHtml(link.url)}
+            </div>
+
+            <div style="margin-top:4px;">
+              ${link.enabled ? "🟢 Enabled" : "🔴 Disabled"}
+              • Order: ${Number(link.order || 0)}
+            </div>
+
+          </div>
+
+          <button
+            class="secondaryBtn"
+            onclick='editSocialLink(${JSON.stringify(link).replace(/'/g,"&#39;")})'
+          >
+            ✏️ Edit
+          </button>
+
+        </div>
+
+      `).join("");
+
+    if (message) {
+      message.textContent = "";
+    }
+
+  } catch (error) {
+
+    console.error(
+      "loadSocialLinks error:",
+      error
+    );
+
+    list.innerHTML =
+      "❌ Failed to load social links.";
+
+    if (message) {
+      message.textContent =
+        error.message || "Failed to load social links.";
+    }
+
+  }
+
 }
 function openMenu(){
   document
