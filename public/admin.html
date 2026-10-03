@@ -4217,6 +4217,168 @@ document.addEventListener(
 
   }
 );
+  /* =========================
+   DROPZONE ADMIN LOGIN
+========================= */
+
+async function adminLogin() {
+  const emailInput = document.getElementById("adminLoginEmail");
+  const passwordInput = document.getElementById("adminLoginPassword");
+  const button = document.getElementById("adminLoginButton");
+  const message = document.getElementById("adminLoginMessage");
+
+  if (!emailInput || !passwordInput || !button || !message) {
+    console.error("Admin login elements not found.");
+    return;
+  }
+
+  const email = emailInput.value.trim().toLowerCase();
+  const password = passwordInput.value;
+
+  if (!email || !password) {
+    message.textContent = "❌ Email और password दोनों डालो।";
+    return;
+  }
+
+  button.disabled = true;
+  button.textContent = "⏳ Logging in...";
+  message.textContent = "";
+
+  try {
+    const response = await fetch("/api/login", {
+      method: "POST",
+      credentials: "include",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        email: email,
+        password: password
+      })
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(data.error || "Login failed");
+    }
+
+    if (!data.user) {
+      throw new Error("User information नहीं मिली।");
+    }
+
+    if (
+      data.user.role !== "OWNER" &&
+      data.user.role !== "ADMIN"
+    ) {
+      await fetch("/api/logout", {
+        method: "POST",
+        credentials: "include"
+      });
+
+      throw new Error("इस account को Admin access नहीं है।");
+    }
+
+    message.textContent = "✅ Admin Login Successful!";
+    button.textContent = "✅ Logged in";
+
+    setTimeout(function () {
+      const loginScreen =
+        document.getElementById("adminLoginScreen");
+
+      if (loginScreen) {
+        loginScreen.style.display = "none";
+      }
+
+      document.body.classList.add("admin-authenticated");
+
+      window.scrollTo({
+        top: 0,
+        behavior: "smooth"
+      });
+
+    }, 500);
+
+  } catch (error) {
+    console.error("Admin login error:", error);
+
+    message.textContent =
+      "❌ " + (error.message || "Login failed");
+
+    button.disabled = false;
+    button.textContent = "🔑 Login";
+  }
+}
+
+
+/* =========================
+   CHECK ADMIN SESSION
+========================= */
+
+async function checkAdminSession() {
+  const loginScreen =
+    document.getElementById("adminLoginScreen");
+
+  if (!loginScreen) return;
+
+  try {
+    const response = await fetch("/api/me", {
+      method: "GET",
+      credentials: "include"
+    });
+
+    const data = await response.json();
+
+    if (
+      response.ok &&
+      data.user &&
+      (
+        data.user.role === "OWNER" ||
+        data.user.role === "ADMIN"
+      )
+    ) {
+      loginScreen.style.display = "none";
+      return;
+    }
+
+  } catch (error) {
+    console.log("Admin session check failed:", error);
+  }
+
+  loginScreen.style.display = "flex";
+}
+
+
+/* =========================
+   ENTER KEY LOGIN
+========================= */
+
+document.addEventListener("DOMContentLoaded", function () {
+
+  const emailInput =
+    document.getElementById("adminLoginEmail");
+
+  const passwordInput =
+    document.getElementById("adminLoginPassword");
+
+  if (emailInput) {
+    emailInput.addEventListener("keydown", function (event) {
+      if (event.key === "Enter") {
+        adminLogin();
+      }
+    });
+  }
+
+  if (passwordInput) {
+    passwordInput.addEventListener("keydown", function (event) {
+      if (event.key === "Enter") {
+        adminLogin();
+      }
+    });
+  }
+
+  checkAdminSession();
+});
 </script>
 
 </body>
