@@ -4371,6 +4371,119 @@ async function loadPlayers() {
   }
 
     }
+  async function loadPlayerProfiles() {
+
+  const container =
+    document.getElementById("playerProfileContent");
+
+  if (!container) {
+    return;
+  }
+
+  container.innerHTML = "⏳ Loading player profiles...";
+
+  try {
+
+    const response = await fetch(
+      "/api/admin/users",
+      {
+        method: "GET",
+        credentials: "include",
+        headers: {
+          "Content-Type": "application/json"
+        }
+      }
+    );
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(
+        data.error || "Failed to load player profiles"
+      );
+    }
+
+    if (!Array.isArray(data)) {
+      throw new Error(
+        "Invalid player profile data"
+      );
+    }
+
+    if (data.length === 0) {
+
+      container.innerHTML =
+        "👤 No player profiles found.";
+
+      return;
+    }
+
+    container.innerHTML = data.map(function(player) {
+
+      return `
+        <div
+          class="card"
+          style="
+            margin-bottom:10px;
+            padding:14px;
+          "
+        >
+
+          <div
+            style="
+              font-size:18px;
+              font-weight:700;
+            "
+          >
+            👤 ${escapeHTML(player.name || "Unknown")}
+          </div>
+
+          <div style="margin-top:8px;">
+            📧 ${escapeHTML(player.email || "No email")}
+          </div>
+
+          <div style="margin-top:5px;">
+            🎮 Free Fire UID:
+            ${escapeHTML(player.ff_uid || "Not set")}
+          </div>
+
+          <div style="margin-top:5px;">
+            🎮 Free Fire Username:
+            ${escapeHTML(player.ff_username || "Not set")}
+          </div>
+
+          <div style="margin-top:5px;">
+            🔐 Role:
+            <b>${escapeHTML(player.role || "PLAYER")}</b>
+          </div>
+
+          <div style="margin-top:5px;">
+            🆔 Player ID:
+            ${escapeHTML(player.id)}
+          </div>
+
+        </div>
+      `;
+
+    }).join("");
+
+  } catch (error) {
+
+    console.error(
+      "loadPlayerProfiles error:",
+      error
+    );
+
+    container.innerHTML = `
+      <div class="card">
+        ❌ Player Profiles load नहीं हो पाए।
+        <br><br>
+        ${escapeHTML(error.message)}
+      </div>
+    `;
+
+  }
+
+  }
 // ================================
 // AUTO LOAD
 // ================================
