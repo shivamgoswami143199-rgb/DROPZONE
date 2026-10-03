@@ -2649,7 +2649,9 @@ document.querySelectorAll("[data-page]").forEach(function(btn){
     if(page === "player-profile"){
       loadPlayerProfiles();
     }
-      
+      if(page === "analytics"){
+  loadAnalytics();
+    }
     document.querySelectorAll(".nav").forEach(function(n){
       n.classList.remove("active");
     });
