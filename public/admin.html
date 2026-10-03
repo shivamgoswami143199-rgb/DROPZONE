@@ -453,7 +453,74 @@ label{
 </head>
 
 <body>
+<!-- ADMIN LOGIN -->
+<div id="adminLoginScreen" style="
+  position:fixed;
+  inset:0;
+  z-index:99999;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:20px;
+  background:#070914;
+">
 
+  <div class="card" style="
+    width:100%;
+    max-width:420px;
+  ">
+
+    <div style="text-align:center;margin-bottom:20px">
+      <div style="font-size:42px">🔐</div>
+
+      <h1 style="margin:8px 0">
+        DROPZONE Admin
+      </h1>
+
+      <p style="opacity:.7;margin:0">
+        Secure administrator login
+      </p>
+    </div>
+
+    <label>Email</label>
+
+    <input
+      id="adminLoginEmail"
+      class="input"
+      type="email"
+      autocomplete="username"
+      placeholder="Admin email"
+    >
+
+    <label style="display:block;margin-top:12px">
+      Password
+    </label>
+
+    <input
+      id="adminLoginPassword"
+      class="input"
+      type="password"
+      autocomplete="current-password"
+      placeholder="Admin password"
+    >
+
+    <button
+      id="adminLoginButton"
+      class="primaryBtn"
+      onclick="adminLogin()"
+      style="width:100%;margin-top:16px"
+    >
+      🔑 Login
+    </button>
+
+    <div
+      id="adminLoginMessage"
+      class="message"
+      style="margin-top:12px"
+    ></div>
+
+  </div>
+</div>
 <!-- MOBILE HEADER -->
 
 <header class="topbar">
