@@ -322,7 +322,7 @@ function tournamentRow(row) {
 function roomAllowed(reg, tournament) {
   if (!reg || !tournament) return false;
   if (reg.status !== "CONFIRMED") return false;
-  if (paymentRequired() && reg.payment_status !== "PAID") return false;
+  if (tournamentPaymentRequired(tournament) && reg.payment_status !== "PAID")
   if (!tournament.room_id && !tournament.room_password) return false;
 
   if (tournament.room_publish_at) {
@@ -700,7 +700,7 @@ app.post("/api/registrations/:id/payment", auth, (req, res) => {
   if (reg.user_id !== req.user.id) return res.status(403).json({ error: "Not your registration" });
   if (!tournamentPaymentRequired(reg))
     return res.status(400).json({ error: "Payment is currently disabled" });
-  }
+ 
 
   const ref = String(req.body?.payment_ref || req.body?.utr || req.body?.transaction_id || "").trim();
   if (!ref) return res.status(400).json({ error: "Payment reference/UTR is required" });
