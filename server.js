@@ -1039,28 +1039,37 @@ app.put("/api/admin/tournaments/:id", admin, (req, res) => {
   const b = req.body || {};
   const name = String(b.name ?? old.name).trim();
   if (!name) return res.status(400).json({ error: "Tournament name is required" });
-
-  db.prepare(`
-    UPDATE tournaments SET
-      name=?, mode=?, entry_fee=?, prize_pool=?, total_slots=?,
-      event_at=?, status=?, banner=?, description=?,
-      room_id=?, room_password=?, room_publish_at=?
-    WHERE id=?
-  `).run(
-    name,
-    String(b.mode ?? old.mode),
-    Math.max(0, num(b.entry_fee, old.entry_fee)),
-    Math.max(0, num(b.prize_pool, old.prize_pool)),
-    Math.max(1, int(b.total_slots, old.total_slots)),
-    b.event_at !== undefined ? isoOrNull(b.event_at) : old.event_at,
-    String(b.status ?? old.status),
-    String(b.banner ?? old.banner ?? ""),
-    String(b.description ?? old.description ?? ""),
-    String(b.room_id ?? old.room_id ?? ""),
-    String(b.room_password ?? old.room_password ?? ""),
-    b.room_publish_at !== undefined ? isoOrNull(b.room_publish_at) : old.room_publish_at,
-    id
-  );
+db.prepare(`
+  UPDATE tournaments SET
+    name=?, mode=?, entry_fee=?, prize_pool=?, total_slots=?,
+    event_at=?, status=?, banner=?, description=?,
+    room_id=?, room_password=?, room_publish_at=?,
+    payment_required=?, payment_title=?, payment_description=?,
+    payment_qr_image=?
+  WHERE id=?
+`).run(
+  name,
+  String(b.mode ?? old.mode),
+  Math.max(0, num(b.entry_fee, old.entry_fee)),
+  Math.max(0, num(b.prize_pool, old.prize_pool)),
+  Math.max(1, int(b.total_slots, old.total_slots)),
+  b.event_at !== undefined ? isoOrNull(b.event_at) : old.event_at,
+  String(b.status ?? old.status),
+  String(b.banner ?? old.banner ?? ""),
+  String(b.description ?? old.description ?? ""),
+  String(b.room_id ?? old.room_id ?? ""),
+  String(b.room_password ?? old.room_password ?? ""),
+  b.room_publish_at !== undefined
+    ? isoOrNull(b.room_publish_at)
+    : old.room_publish_at,
+  b.payment_required !== undefined
+    ? (b.payment_required ? 1 : 0)
+    : old.payment_required,
+  String(b.payment_title ?? old.payment_title ?? ""),
+  String(b.payment_description ?? old.payment_description ?? ""),
+  String(b.payment_qr_image ?? old.payment_qr_image ?? ""),
+  id
+);
 
   audit(req.user.id, "UPDATE_TOURNAMENT", `Tournament ${id}`);
   res.json({ ok: true, tournament: tournamentRow(db.prepare("SELECT * FROM tournaments WHERE id=?").get(id)) });
