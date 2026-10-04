@@ -997,12 +997,11 @@ app.post("/api/admin/tournaments", admin, (req, res) => {
   if (!name) return res.status(400).json({ error: "Tournament name is required" });
 
   const result = db.prepare(`
-const result = db.prepare(`
   INSERT INTO tournaments(
     name,mode,entry_fee,prize_pool,total_slots,event_at,status,
     banner,description,room_id,room_password,room_publish_at,
     payment_required,payment_title,payment_description,payment_qr_image
-  ) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)
+  VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)
 `).run(
   name,
   String(b.mode || "SQUAD"),
