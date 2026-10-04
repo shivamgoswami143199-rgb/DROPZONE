@@ -103,7 +103,26 @@ CREATE TABLE IF NOT EXISTS audit_logs (
   created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 `);
+const tournamentColumns =
+  db.prepare(
+    "PRAGMA table_info(tournaments)"
+  ).all();
 
+const hasPaymentRequired =
+  tournamentColumns.some(
+    column =>
+      column.name === "payment_required"
+  );
+
+if (!hasPaymentRequired) {
+
+  db.exec(`
+    ALTER TABLE tournaments
+    ADD COLUMN payment_required
+    INTEGER DEFAULT NULL
+  `);
+
+}
 function getSetting(key, fallback = "") {
   const row = db.prepare("SELECT value FROM settings WHERE key = ?").get(key);
   return row ? row.value : fallback;
