@@ -1062,6 +1062,50 @@ label{
       placeholder="0"
     >
 
+    <label style="display:block;margin-top:14px;">
+  <input
+    type="checkbox"
+    id="tourPaymentRequired"
+  >
+  💳 Require Payment for Slot Booking
+</label>
+
+<label style="display:block;margin-top:14px;">
+  Payment Title
+</label>
+
+<input
+  id="tourPaymentTitle"
+  class="input"
+  placeholder="UPI Payment"
+>
+
+<label style="display:block;margin-top:10px;">
+  Payment Instructions
+</label>
+
+<textarea
+  id="tourPaymentInstructions"
+  class="input"
+  rows="3"
+  placeholder="Scan the QR code and complete the payment."
+></textarea>
+
+<label style="display:block;margin-top:10px;">
+  QR Code Image
+</label>
+
+<input
+  id="tourPaymentQr"
+  class="input"
+  type="file"
+  accept="image/*"
+>
+
+<div
+  id="tourPaymentQrPreview"
+  style="margin-top:10px;"
+></div>
     <label>Prize Pool</label>
     <input
       id="tourPrize"
