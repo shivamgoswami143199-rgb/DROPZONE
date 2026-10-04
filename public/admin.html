@@ -1,4 +1,4 @@
-z<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -5443,7 +5443,22 @@ async function loadTournaments() {
 async function saveTournament() {
 
   const id = document.getElementById("tourId").value;
+  const qrFile =
+    document.getElementById("tourPaymentQr").files[0];
 
+  if (qrFile) {
+    const qrImage =
+      await new Promise((resolve, reject) => {
+        const reader = new FileReader();
+
+        reader.onload = () => resolve(reader.result);
+        reader.onerror = reject;
+
+        reader.readAsDataURL(qrFile);
+      });
+
+    window.tournamentQrImage = qrImage;
+  }
   const payload = {
     name: document.getElementById("tourName").value.trim(),
     mode: document.getElementById("tourMode").value,
@@ -5470,6 +5485,17 @@ async function saveTournament() {
     room_publish_at: toISODate(
       document.getElementById("roomPublish").value
     )
+        payment_required:
+      document.getElementById("tourPaymentRequired").checked,
+
+    payment_title:
+      document.getElementById("tourPaymentTitle").value.trim(),
+
+    payment_description:
+      document.getElementById("tourPaymentInstructions").value.trim(),
+
+    payment_qr_image:
+      window.tournamentQrImage || "",
   };
 
   if (!payload.name) {
