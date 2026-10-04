@@ -192,6 +192,17 @@ function paymentRequired() {
   return getSetting("payment_enabled") === "1";
 }
 
+function tournamentPaymentRequired(tournament) {
+  if (
+    tournament &&
+    tournament.payment_required !== null &&
+    tournament.payment_required !== undefined
+  ) {
+    return Number(tournament.payment_required) === 1;
+  }
+
+  return paymentRequired();
+}
 function audit(userId, action, detail = "") {
   db.prepare(`
     INSERT INTO audit_logs(user_id, action, detail)
@@ -624,7 +635,7 @@ app.post("/api/tournaments/:id/register", auth, (req, res) => {
     return res.status(400).json({ error: "Free Fire username and UID are required" });
   }
 
-  const paymentNeeded = paymentRequired();
+  const paymentNeeded = tournamentPaymentRequired(tournament);
   const status = paymentNeeded ? "PENDING" : "CONFIRMED";
   const paymentStatus = paymentNeeded ? "PENDING" : "NOT_REQUIRED";
   const slot = nextSlot(tournamentId);
@@ -680,14 +691,14 @@ app.post("/api/register-tournament", auth, (req, res) => {
 app.post("/api/registrations/:id/payment", auth, (req, res) => {
   const id = int(req.params.id);
   const reg = db.prepare(`
-    SELECT r.*, t.entry_fee
+    SELECT r.*, t.entry_fee, t.payment_required
     FROM registrations r JOIN tournaments t ON t.id=r.tournament_id
     WHERE r.id=?
   `).get(id);
 
   if (!reg) return res.status(404).json({ error: "Registration not found" });
   if (reg.user_id !== req.user.id) return res.status(403).json({ error: "Not your registration" });
-  if (!paymentRequired()) {
+  if (!tournamentPaymentRequired(reg))
     return res.status(400).json({ error: "Payment is currently disabled" });
   }
 
