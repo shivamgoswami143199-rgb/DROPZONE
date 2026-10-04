@@ -123,6 +123,32 @@ if (!hasPaymentRequired) {
   `);
 
 }
+const paymentColumns =
+  db.prepare(
+    "PRAGMA table_info(tournaments)"
+  ).all();
+
+const paymentFields = [
+  ["payment_title", "TEXT DEFAULT ''"],
+  ["payment_description", "TEXT DEFAULT ''"],
+  ["payment_qr_image", "TEXT DEFAULT ''"]
+];
+
+for (const [columnName, columnDefinition] of paymentFields) {
+
+  const exists = paymentColumns.some(
+    column => column.name === columnName
+  );
+
+  if (!exists) {
+    db.exec(`
+      ALTER TABLE tournaments
+      ADD COLUMN ${columnName}
+      ${columnDefinition}
+    `);
+  }
+
+}
 function getSetting(key, fallback = "") {
   const row = db.prepare("SELECT value FROM settings WHERE key = ?").get(key);
   return row ? row.value : fallback;
