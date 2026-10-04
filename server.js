@@ -997,24 +997,30 @@ app.post("/api/admin/tournaments", admin, (req, res) => {
   if (!name) return res.status(400).json({ error: "Tournament name is required" });
 
   const result = db.prepare(`
-    INSERT INTO tournaments(
-      name,mode,entry_fee,prize_pool,total_slots,event_at,status,
-      banner,description,room_id,room_password,room_publish_at
-    ) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)
-  `).run(
-    name,
-    String(b.mode || "SQUAD"),
-    Math.max(0, num(b.entry_fee, 0)),
-    Math.max(0, num(b.prize_pool, 0)),
-    Math.max(1, int(b.total_slots, 48)),
-    isoOrNull(b.event_at),
-    String(b.status || "OPEN"),
-    String(b.banner || ""),
-    String(b.description || ""),
-    String(b.room_id || ""),
-    String(b.room_password || ""),
-    isoOrNull(b.room_publish_at)
-  );
+const result = db.prepare(`
+  INSERT INTO tournaments(
+    name,mode,entry_fee,prize_pool,total_slots,event_at,status,
+    banner,description,room_id,room_password,room_publish_at,
+    payment_required,payment_title,payment_description,payment_qr_image
+  ) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)
+`).run(
+  name,
+  String(b.mode || "SQUAD"),
+  Math.max(0, num(b.entry_fee, 0)),
+  Math.max(0, num(b.prize_pool, 0)),
+  Math.max(1, int(b.total_slots, 48)),
+  isoOrNull(b.event_at),
+  String(b.status || "OPEN"),
+  String(b.banner || ""),
+  String(b.description || ""),
+  String(b.room_id || ""),
+  String(b.room_password || ""),
+  isoOrNull(b.room_publish_at),
+  b.payment_required ? 1 : 0,
+  String(b.payment_title || ""),
+  String(b.payment_description || ""),
+  String(b.payment_qr_image || "")
+);
 
   audit(req.user.id, "CREATE_TOURNAMENT", `Tournament ${result.lastInsertRowid}`);
   res.status(201).json({
