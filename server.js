@@ -322,7 +322,11 @@ function tournamentRow(row) {
 function roomAllowed(reg, tournament) {
   if (!reg || !tournament) return false;
   if (reg.status !== "CONFIRMED") return false;
-  if (tournamentPaymentRequired(tournament) && reg.payment_status !== "PAID") return false;
+  if (
+  tournamentPaymentRequired(tournament) &&
+  reg.payment_status !== "PAID"
+)  return false;
+   
   if (!tournament.room_id && !tournament.room_password) return false;
 
   if (tournament.room_publish_at) {
